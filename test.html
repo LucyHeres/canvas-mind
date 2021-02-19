@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link
+      type="text/css"
+      rel="stylesheet"
+      href="jsmind-master/style/jsmind.css"
+    />
+    <script
+      type="text/javascript"
+      src="jsmind-master/js/jsmind_copy.js"
+    ></script>
+    <style>
+      #jsmind_container {
+        width: 100vh;
+        height: 100vh;
+        border: 1px solid;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="jsmind_container"></div>
+    <script type="text/javascript">
+      var mind = {
+        /* 元数据，定义思维导图的名称、作者、版本等信息 */
+        meta: {
+          name: "jsMind-demo-tree",
+          author: "hizzgdev@163.com",
+          version: "0.2",
+        },
+        /* 数据格式声明 */
+        format: "node_tree",
+        /* 数据内容 */
+        data: {
+          id: "root",
+          topic: "jsMind1",
+          children: [
+            {
+              id: "easy",
+              topic: "Easy",
+              direction: "left",
+              expanded: false,
+              children: [
+                { id: "easy1", topic: "Easy to show" },
+                { id: "easy2", topic: "Easy to edit" },
+                { id: "easy3", topic: "Easy to store" },
+                { id: "easy4", topic: "Easy to embed" },
+              ],
+            },
+            {
+              id: "open",
+              topic: "Open Source",
+              direction: "right",
+              expanded: true,
+              children: [
+                { id: "open1", topic: "on GitHub" },
+                { id: "open2", topic: "BSD License" },
+              ],
+            },
+            {
+              id: "powerful",
+              topic: "Powerful",
+              direction: "right",
+              children: [
+                { id: "powerful1", topic: "Base on Javascript" },
+                { id: "powerful2", topic: "Base on HTML5" },
+                { id: "powerful3", topic: "Depends on you" },
+              ],
+            },
+            {
+              id: "fdsafd",
+              topic: "fdsaf",
+              direction: "right",
+              children: [
+                {
+                  id: "powerful11",
+                  topic: "Base on Javascript",
+                  direction: "right",
+                  children: [
+                    { id: "powerful1111", topic: "Base on Javascript" },
+                    { id: "powerful2111", topic: "Base on HTML5" },
+                    { id: "powerful3111", topic: "Depends on you" },
+                  ],
+                },
+                { id: "powerful21", topic: "Base on HTML5" },
+                { id: "powerful31", topic: "Depends on you" },
+                { id: "powerful41", topic: "Depends on you" },
+                { id: "powerful51", topic: "Depends on you" },
+                { id: "powerful61", topic: "Depends on you" },
+                { id: "powerful71", topic: "Depends on you" },
+              ],
+            },
+            {
+              id: "other",
+              topic: "test node",
+              direction: "left",
+              children: [
+                { id: "other1", topic: "I'm from local variable" },
+                { id: "other2", topic: "I can do everything" },
+              ],
+            },
+          ],
+        },
+      };
+
+      var options = {
+        // options 将在下一章中详细介绍
+        container: "jsmind_container", // [必选] 容器的ID，或者为容器的对象
+        editable: true, // [可选] 是否启用编辑
+        theme: "orange", // [可选] 主题
+      };
+      var jm = new jsMind(options);
+      jm.show(mind);
+    </script>
+  </body>
+</html>

@@ -28,5 +28,154 @@
     </div>
 
     <script src="./mind.js"></script>
+    <script>
+      // 绘制节点
+      var options={ container:"#canvas-container", keyNode_w: 320, keyNode_h: 100 };
+      var node_array=[
+        {
+          content: "中心节点1",
+          isRoot: true,
+          expanded: true,
+          children: [
+            {
+              content: "子节点1-1",
+              direction: 1,
+              expanded: true,
+              children: [
+                {
+                  content: "子节点1-1-1",
+                  direction: 1,
+                },
+                {
+                  content: "子节点1-1-2",
+                  direction: 1,
+                },
+              ],
+            },
+            {
+              content: "子节点1-2",
+              direction: -1,
+              expanded: true,
+              children: [
+                {
+                  content: "子节点1-2-1",
+                  direction: -1,
+                },
+                {
+                  content: "子节点1-2-2",
+                  direction: -1,
+                },
+                {
+                  content: "子节点1-2-3",
+                  direction: -1,
+                },
+              ],
+            },
+            {
+              content: "子节点1-3",
+              direction: 1,
+              expanded: true,
+              children: [
+                {
+                  content: "子节点1-3-1",
+                  direction: 1,
+                },
+                {
+                  content: "子节点1-3-2",
+                  direction: 1,
+                },
+                {
+                  content: "子节点1-3-3",
+                  direction: 1,
+                },
+                {
+                  content: "子节点1-3-4",
+                  direction: 1,
+                },
+                {
+                  content: "子节点1-3-5",
+                  direction: 1,
+                },
+              ],
+            },
+          ],
+        },
+        {
+          content: "中心节点2",
+          isRoot: true,
+          expanded: true,
+          children: [
+            {
+              content: "子节点2-1",
+              direction: -1,
+              expanded: true,
+              children: [
+                {
+                  content: "子节点2-1-1",
+                  direction: -1,
+                },
+                {
+                  content: "子节点2-1-2",
+                  direction: -1,
+                },
+              ],
+            },
+            {
+              content: "子节点2-2",
+              direction: -1,
+              expanded: true,
+              children: [
+                {
+                  content: "子节点2-2-1",
+                  direction: -1,
+                },
+                {
+                  content: "子节点2-2-2",
+                  direction: -1,
+                },
+              ],
+            },
+          ],
+        },
+        {
+          content: "中心节点3",
+          isRoot: true,
+          expanded: true,
+          children: [
+            {
+              content: "子节点3-1",
+              direction: 1,
+              expanded: true,
+              children: [
+                {
+                  content: "子节点3-1-1",
+                  direction: 1,
+                },
+                {
+                  content: "子节点3-1-2",
+                  direction: 1,
+                },
+              ],
+            },
+            {
+              content: "子节点3-2",
+              direction: 1,
+              expanded: true,
+              children: [
+                {
+                  content: "子节点3-2-1",
+                  direction: 1,
+                },
+                {
+                  content: "子节点3-2-2",
+                  direction: 1,
+                },
+              ],
+            },
+          ],
+        },
+      ];
+      new qjMind(options, node_array);
+    </script>
   </body>
 </html>

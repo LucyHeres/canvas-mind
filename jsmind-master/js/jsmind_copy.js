@@ -299,8 +299,6 @@
                 }
             }
             var node_index = node_after.index + 0.5;
-            console.log(1)
-
             return this.add_node(node_after.parent, nodeid, topic, data, node_index);
         },
 

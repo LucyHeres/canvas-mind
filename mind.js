@@ -7,7 +7,6 @@
     this.ratio = null;
     this.canvas_center_pos = {};
     this.init();
-    this.createCanvas();
     this.addEvent();
 
     this.mind = new qjm.Mind(this, opts, data);
@@ -32,16 +31,7 @@
         1;
       // canvas的实际渲染倍率
       this.ratio = devicePixelRatio / backingStoreRatio;
-      this.canvas_center_pos = this.getCanvasCenterPos();
-    },
-    // 计算画布中心
-    getCanvasCenterPos() {
-      return {
-        x: this.canvas.width / this.ratio / 2,
-        y: this.canvas.height / this.ratio / 2,
-      };
-    },
-    createCanvas() {
+
       var oldWidth = this.canvas.width;
       var oldHeight = this.canvas.height;
 
@@ -51,32 +41,54 @@
       this.canvas.style.width = oldWidth + "px";
       this.canvas.style.height = oldHeight + "px";
       this.ctx.scale(this.ratio, this.ratio);
+
+      this.canvas_center_pos = this.getCanvasCenterPos();
+    },
+    clearCanvas() {
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    },
+    // 计算画布中心
+    getCanvasCenterPos() {
+      return {
+        x: this.canvas.width / this.ratio / 2,
+        y: this.canvas.height / this.ratio / 2,
+      };
     },
     addEvent() {
-      this.canvas.addEventListener("click", (e) => {
-        var scale = 0.5;
-        this.ctx.scale(0.5, 0.5);
-        this.ctx.translate(canvas.width*scale,canvas.height*scale)
-        this.mind.show_view();
-
-        // if (e.ctrlKey) {
-        //   if (e.deltaY > 0) {
-        //     scale = 1 / e.deltaY;
-        //     this.ctx.scale(scale, scale);
-        //     this.ctx.translate(canvas.width*scale,canvas.height*scale)
-        //     this.mind.show_view();
-        //   }
-        //   if (e.deltaY < 0) {
-        //     scale = -e.deltaX;
-        //     this.ctx.scale(scale, scale);
-        //     this.mind.show_view();
-        //   }
-        // }
-      });
+      this.canvas.addEventListener(
+        "wheel",
+        qjm.util.throttle((e) => {
+          if (e.ctrlKey) {
+            var scale;
+            if (e.deltaY > 0) scale = 0.9;
+            if (e.deltaY < 0) scale = 1.1;
+            this.clearCanvas();
+            this.ctx.scale(scale, scale);
+            this.ctx.translate(
+              (this.canvas.width / this.ratio) * (1 - scale),
+              (this.canvas.height / this.ratio) * (1 - scale)
+            );
+            this.mind.show_view();
+          }
+        }, 50)
+      );
     },
   };
 
   qjm.util = {
+    throttle(fn, wait) {
+      let timer;
+      return function () {
+        if (!timer) {
+          timer = setTimeout(() => {
+            fn.apply(this, arguments);
+            clearTimeout(timer);
+            timer = null;
+          }, wait);
+        }
+      };
+    },
+
     newid() {
       return (
         new Date().getTime().toString(16) + Math.random().toString(16).substr(2)

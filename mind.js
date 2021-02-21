@@ -2,23 +2,34 @@
   var qjm = function (opts, data) {
     this.opts = opts;
     this.node_json = data;
+    this.canvas_container = null;
     this.canvas = null;
     this.ctx = null;
     this.ratio = null;
+    this.scale = 1;
     this.canvas_center_pos = {};
     this.init();
-    this.addEvent();
+    this.add_event();
 
     this.mind = new qjm.Mind(this, opts, data);
   };
   qjm.prototype = {
     init() {
-      var canvas_container = document.querySelector(this.opts.container);
-      this.canvas = canvas_container.querySelector("canvas");
+      this.canvas_container = document.querySelector(this.opts.container);
+      this.canvas = this.canvas_container.querySelector("canvas");
       this.ctx = this.canvas.getContext("2d");
-      this.canvas.width = window.innerWidth * 3;
-      this.canvas.height = window.innerHeight * 3;
-      this.ctx.textBaseline = "top";
+
+      var w = this.canvas_container.offsetWidth * 3;
+      var h = this.canvas_container.offsetHeight * 3;
+      this.canvas.width = w;
+      this.canvas.height = h;
+      this.canvas.style.width = w + "px";
+      this.canvas.style.height = h + "px";
+      this.canvas.style.left =
+        -w / 2 + this.canvas_container.offsetWidth / 2 + "px";
+      this.canvas.style.top =
+        -h / 2 + this.canvas_container.offsetHeight / 2 + "px";
+
       // 屏幕的设备像素比
       var devicePixelRatio = window.devicePixelRatio || 1;
       // 浏览器在渲染canvas之前存储画布信息的像素比
@@ -31,15 +42,8 @@
         1;
       // canvas的实际渲染倍率
       this.ratio = devicePixelRatio / backingStoreRatio;
-
-      var oldWidth = this.canvas.width;
-      var oldHeight = this.canvas.height;
-
-      this.canvas.width = oldWidth * this.ratio;
-      this.canvas.height = oldHeight * this.ratio;
-
-      this.canvas.style.width = oldWidth + "px";
-      this.canvas.style.height = oldHeight + "px";
+      this.canvas.width *= this.ratio;
+      this.canvas.height *= this.ratio;
       this.ctx.scale(this.ratio, this.ratio);
 
       this.canvas_center_pos = this.getCanvasCenterPos();
@@ -54,24 +58,94 @@
         y: this.canvas.height / this.ratio / 2,
       };
     },
-    addEvent() {
+    add_event() {
+      this.add_event_zoom();
+      this.add_event_dragmove();
+    },
+    add_event_zoom() {
+      // 禁用原生页面缩放
+      window.addEventListener(
+        "mousewheel",
+        function (event) {
+          if (event.ctrlKey === true || event.metaKey) {
+            event.preventDefault();
+          }
+        },
+        { passive: false }
+      );
+      //firefox
+      window.addEventListener(
+        "DOMMouseScroll",
+        function (event) {
+          if (event.ctrlKey === true || event.metaKey) {
+            event.preventDefault();
+          }
+        },
+        { passive: false }
+      );
+      // canvas缩放
       this.canvas.addEventListener(
         "wheel",
         qjm.util.throttle((e) => {
+          e.stopPropagation();
+          e.preventDefault();
           if (e.ctrlKey) {
-            var scale;
-            if (e.deltaY > 0) scale = 0.9;
-            if (e.deltaY < 0) scale = 1.1;
-            this.clearCanvas();
-            this.ctx.scale(scale, scale);
-            this.ctx.translate(
-              (this.canvas.width / this.ratio) * (1 - scale),
-              (this.canvas.height / this.ratio) * (1 - scale)
-            );
-            this.mind.show_view();
+            if (e.deltaY > 0) {
+              this.scale -= 0.05;
+            }
+            if (e.deltaY < 0) {
+              this.scale += 0.05;
+            }
+            if (this.scale < 0.2 || this.scale > 1.2) return;
+            this.canvas.style.transform = "scale(" + this.scale + ")";
           }
-        }, 50)
+        }, 35)
       );
+    },
+    add_event_dragmove() {
+      var canvas_container = this.canvas_container;
+      var canvas = this.canvas;
+      var canvas_ratio = this.ratio;
+      var isDown = false;
+      var x, y, l, t;
+      function _mousemove(e) {
+        if (isDown == false) {
+          return;
+        }
+        //获取x和y
+        var nx = e.clientX;
+        var ny = e.clientY;
+        //计算移动后的左偏移量和顶部的偏移量
+        var nl = l + nx - x;
+        var nt = t + ny - y;
+
+        canvas.style.left = nl + "px";
+        canvas.style.top = nt + "px";
+        return false;
+      }
+      function _mouseup(e) {
+        //开关关闭
+        canvas.style.cursor = "default";
+        canvas_container.removeEventListener("mousemove", _mousemove);
+        canvas_container.removeEventListener("mouseup", _mouseup);
+        isDown = false;
+      }
+      canvas_container.addEventListener("mousedown", (e) => {
+        console.log("mousedown", this.canvas.width, this.canvas.height);
+        //获取x坐标和y坐标
+        x = e.clientX;
+        y = e.clientY;
+
+        //获取左部和顶部的偏移量
+        l = parseFloat(canvas.style.left) || 0;
+        t = parseFloat(canvas.style.top) || 0;
+        //开关打开
+        isDown = true;
+        canvas.style.cursor = "move";
+        canvas_container.addEventListener("mousemove", _mousemove);
+        canvas_container.addEventListener("mouseup", _mouseup);
+        return false;
+      });
     },
   };
 

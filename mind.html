@@ -6,32 +6,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <style>
-      body {
+      * {
         box-sizing: border-box;
-        margin: 0;
-        padding: 10px;
+      }
+      body{
+        padding:0;
+        margin:0;
+      }
+      #canvas-container {
+        width: 100vw;
+        height: 100vh;
+        overflow: auto;
+        background-color: #f8f8f8;
+        border: 1px solid;
+        position:relative;
+      }
+      canvas{
+        position:absolute;
+        left:10px;top:10px;
+        border:1px solid red;
       }
     </style>
   </head>
   <body>
-    <div
-      id="canvas-container"
-      style="
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        background-color: #f8f8f8;
-        border: 1px solid;
-      "
-    >
-      <canvas id="canvas" width="800" height="400"></canvas>
+    <div id="canvas-container">
+      <canvas id="canvas"></canvas>
     </div>
 
     <script src="./mind.js"></script>
     <script>
       // 绘制节点
-      var options={ container:"#canvas-container", keyNode_w: 320, keyNode_h: 100 };
-      var node_array=[
+      var options = {
+        container: "#canvas-container",
+        keyNode_w: 320,
+        keyNode_h: 100,
+      };
+      var node_array = [
         {
           content: "中心节点1",
           isRoot: true,

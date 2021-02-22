@@ -111,15 +111,15 @@
       var isDown = false;
       var x, y, l, t;
       function _mousemove(e) {
-        if (isDown == false) {
-          return;
-        }
+        if (!isDown) return;
         //获取x和y
         var nx = e.clientX;
         var ny = e.clientY;
         //计算移动后的左偏移量和顶部的偏移量
         var nl = l + nx - x;
         var nt = t + ny - y;
+        // 如果移动距离过小，则认定为click事件
+        if (Math.abs(nx - x) <= 1 && Math.abs(ny - y) <= 1) return;
 
         canvas.style.left = nl + "px";
         canvas.style.top = nt + "px";
@@ -133,7 +133,6 @@
         isDown = false;
       }
       canvas_container.addEventListener("mousedown", (e) => {
-        console.log("mousedown", this.canvas.width, this.canvas.height);
         //获取x坐标和y坐标
         x = e.clientX;
         y = e.clientY;
@@ -143,12 +142,13 @@
         t = parseFloat(canvas.style.top) || 0;
         //开关打开
         isDown = true;
-        canvas.style.cursor = "move";
+        canvas.style.cursor = "grabbing";
         canvas_container.addEventListener("mousemove", _mousemove);
         canvas_container.addEventListener("mouseup", _mouseup);
         return false;
       });
     },
+    
   };
 
   qjm.util = {
@@ -252,7 +252,7 @@
       ctx.beginPath();
       ctx.fillStyle = "#ffffff";
       ctx.shadowBlur = 20;
-      ctx.shadowColor = "#f2f2f2";
+      ctx.shadowColor = "rgba(31,35,41,0.12)";
 
       ctx.fillRect(
         this.x - this.width / 2,
@@ -342,14 +342,15 @@
         this._drawHub(this.hubPos, this.children.length);
       }
     },
-    _drawHub(pos,child_len) {
+    _drawHub(pos, child_len) {
       var ctx = this.qjm.ctx;
       ctx.beginPath();
       ctx.arc(pos[0], pos[1], 10, 0, Math.PI * 2, false);
       ctx.closePath();
       ctx.fillStyle = "#ffffff";
       ctx.shadowBlur = 10;
-      ctx.shadowColor = "#f2f2f2";
+      ctx.shadowColor = "rgba(31,35,41,0.08)";
+
       ctx.fill();
 
       if (child_len > 0) {
@@ -454,9 +455,9 @@
         node.drawLine_to_child();
         for (let index = 0; index < node.children.length; index++) {
           let child_node = node.children[index];
-          if(node.expanded) child_node.drawLine_to_parent();
+          if (node.expanded) child_node.drawLine_to_parent();
           node.drawHub();
-          if(node.expanded) this._draw_lines(child_node);
+          if (node.expanded) this._draw_lines(child_node);
         }
       }
     },

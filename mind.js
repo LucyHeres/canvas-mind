@@ -6,7 +6,7 @@
     this.canvas = null;
     this.ctx = null;
     this.ratio = null;
-    this.scale = 1;
+    this.scale = 0.3;
     this.canvas_center_pos = {};
     this.init();
     this.add_event();
@@ -47,6 +47,8 @@
       this.ctx.scale(this.ratio, this.ratio);
 
       this.canvas_center_pos = this.getCanvasCenterPos();
+
+      this.canvas.style.transform = "scale(" + this.scale + ")";
     },
     clearCanvas() {
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -298,16 +300,21 @@
         if (this.get_children_nodes(1).length) {
           ctx.moveTo(this.x + (1 * this.width) / 2, this.y);
           ctx.lineTo(this.hubPos_r[0], this.hubPos_r[1]);
+          ctx.stroke();
+          this.drawHub(this.hubPos_r, this.get_children_nodes(1).length);
         }
         if (this.get_children_nodes(-1).length) {
           ctx.moveTo(this.x + (-1 * this.width) / 2, this.y);
           ctx.lineTo(this.hubPos_l[0], this.hubPos_l[1]);
+          ctx.stroke();
+          this.drawHub(this.hubPos_l, this.get_children_nodes(-1).length);
         }
       } else {
         ctx.moveTo(this.x + (this.direction * this.width) / 2, this.y);
         ctx.lineTo(this.hubPos[0], this.hubPos[1]);
+        ctx.stroke();
+        this.drawHub(this.hubPos, this.children.length);
       }
-      ctx.stroke();
     },
     drawLine_to_parent() {
       var ctx = this.qjm.ctx;
@@ -323,12 +330,42 @@
       }
       ctx.stroke();
     },
+    drawHub(pos, child_len) {
+      if (this.isRoot) {
+        if (this.get_children_nodes(1).length) {
+          this._drawHub(this.hubPos_r, this.get_children_nodes(1).length);
+        }
+        if (this.get_children_nodes(-1).length) {
+          this._drawHub(this.hubPos_l, this.get_children_nodes(-1).length);
+        }
+      } else {
+        this._drawHub(this.hubPos, this.children.length);
+      }
+    },
+    _drawHub(pos,child_len) {
+      var ctx = this.qjm.ctx;
+      ctx.beginPath();
+      ctx.arc(pos[0], pos[1], 10, 0, Math.PI * 2, false);
+      ctx.closePath();
+      ctx.fillStyle = "#ffffff";
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = "#f2f2f2";
+      ctx.fill();
+
+      if (child_len > 0) {
+        ctx.fillStyle = "#000000";
+        ctx.font = "30px";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(child_len, pos[0], pos[1]);
+      }
+    },
     getHubPos() {
       if (this.isRoot) {
-        this.hubPos_l = [this.x + -1 * (this.width / 2 + 55), this.y];
-        this.hubPos_r = [this.x + 1 * (this.width / 2 + 55), this.y];
+        this.hubPos_l = [this.x + -1 * (this.width / 2 + 40), this.y];
+        this.hubPos_r = [this.x + 1 * (this.width / 2 + 40), this.y];
       } else {
-        this.hubPos = [this.x + this.direction * (this.width / 2 + 55), this.y];
+        this.hubPos = [this.x + this.direction * (this.width / 2 + 40), this.y];
       }
     },
     get_children_nodes(dir) {
@@ -413,12 +450,13 @@
     },
     _draw_lines(node) {
       if (node.parent && !node.parent.expanded) return;
-      if (node.children && node.expanded) {
+      if (node.children) {
         node.drawLine_to_child();
         for (let index = 0; index < node.children.length; index++) {
           let child_node = node.children[index];
-          child_node.drawLine_to_parent();
-          this._draw_lines(child_node);
+          if(node.expanded) child_node.drawLine_to_parent();
+          node.drawHub();
+          if(node.expanded) this._draw_lines(child_node);
         }
       }
     },

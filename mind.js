@@ -1,4 +1,8 @@
 (function (window) {
+  // TODO:
+  // 1.canvas画布尺寸有限制，如果分支很多，该如何显示?
+  // 2.root节点的左右expanded没有分开，待解决，需要在初始化数据node_json中作区分，
+  //   如，把children字段拆分成children_l,children_r，把expanded字段拆分成expanded_l,expanded_r
   var qjm = function (opts, data, fn) {
     this.opts = opts;
     this.node_json = data;

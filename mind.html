@@ -9,9 +9,9 @@
       * {
         box-sizing: border-box;
       }
-      body{
-        padding:0;
-        margin:0;
+      body {
+        padding: 0;
+        margin: 0;
       }
       #canvas-container {
         width: 100vw;
@@ -19,12 +19,13 @@
         overflow: auto;
         background-color: #f8f8f8;
         border: 1px solid;
-        position:relative;
+        position: relative;
       }
-      canvas{
-        position:absolute;
-        left:10px;top:10px;
-        border:1px solid red;
+      canvas {
+        position: absolute;
+        left: 10px;
+        top: 10px;
+        border: 1px solid red;
       }
     </style>
   </head>
@@ -40,6 +41,7 @@
         container: "#canvas-container",
         keyNode_w: 320,
         keyNode_h: 100,
+        hub_radius: 10,
       };
       var node_array = [
         {
@@ -49,16 +51,16 @@
           children: [
             {
               content: "子节点1-1",
-              direction: 1,
+              direction: -1,
               expanded: true,
               children: [
                 {
                   content: "子节点1-1-1",
-                  direction: 1,
+                  direction: -1,
                 },
                 {
                   content: "子节点1-1-2",
-                  direction: 1,
+                  direction: -1,
                 },
               ],
             },
@@ -104,6 +106,26 @@
                 },
                 {
                   content: "子节点1-3-5",
+                  direction: 1,
+                },
+                {
+                  content: "子节点1-3-6",
+                  direction: 1,
+                },
+                {
+                  content: "子节点1-3-7",
+                  direction: 1,
+                },
+                {
+                  content: "子节点1-3-8",
+                  direction: 1,
+                },
+                {
+                  content: "子节点1-3-9",
+                  direction: 1,
+                },
+                {
+                  content: "子节点1-3-10",
                   direction: 1,
                 },
               ],
@@ -182,10 +204,39 @@
                 },
               ],
             },
+            {
+              content: "子节点3-3",
+              direction: 1,
+              expanded: true,
+              children: [
+                {
+                  content: "子节点3-3-1",
+                  direction: 1,
+                },
+                {
+                  content: "子节点3-3-2",
+                  direction: 1,
+                },
+                {
+                  content: "子节点3-3-3",
+                  direction: 1,
+                },
+                {
+                  content: "子节点3-3-4",
+                  direction: 1,
+                },
+              ],
+            },
           ],
         },
       ];
-      new qjMind(options, node_array);
+      var qjMind = new qjMind(options, node_array, {
+        keyNodeClick:function(node){
+          console.log('点击了',node.content)
+          //
+        },
+      });
+     
     </script>
   </body>
 </html>

@@ -3,6 +3,13 @@
   // 1.canvas画布尺寸有限制，如果分支很多，该如何显示?
   // 2.root节点的左右expanded没有分开，待解决，需要在初始化数据node_json中作区分，
   //   如，把children字段拆分成children_l,children_r，把expanded字段拆分成expanded_l,expanded_r
+
+  const isValueNull = function (val) {
+    return val === "" || val === null || val === undefined;
+  };
+
+
+  
   var qjm = function (opts, data, fn) {
     this.opts = opts;
     this.node_json = data;
@@ -11,10 +18,9 @@
     this.canvas = null;
     this.ctx = null;
     this.ratio = null;
-    this.scale = 0.3;
+    this.scale = 1;
     this.canvas_center_pos = {};
     this.all_node_pos_map = {};
-    this.canvas_offset = { left: 0, top: 0 };
     this.mind = null;
 
     this.init();
@@ -27,17 +33,12 @@
       this.canvas = this.canvas_container.querySelector("canvas");
       this.ctx = this.canvas.getContext("2d");
 
-      var w = this.canvas_container.offsetWidth * 5;
-      var h = this.canvas_container.offsetHeight * 5;
+      var w = this.canvas_container.offsetWidth;
+      var h = this.canvas_container.offsetHeight;
       this.canvas.width = w;
       this.canvas.height = h;
       this.canvas.style.width = w + "px";
       this.canvas.style.height = h + "px";
-
-      this.canvas_offset.left = -w / 2 + this.canvas_container.offsetWidth / 2;
-      this.canvas_offset.top = -h / 2 + this.canvas_container.offsetHeight / 2;
-      this.canvas.style.left = this.canvas_offset.left + "px";
-      this.canvas.style.top = this.canvas_offset.top + "px";
 
       // 屏幕的设备像素比
       var devicePixelRatio = window.devicePixelRatio || 1;
@@ -56,16 +57,20 @@
       this.ctx.scale(this.ratio, this.ratio);
 
       this.canvas_center_pos = this.getCanvasCenterPos();
-
-      this.canvas.style.transform = "scale(" + this.scale + ")";
     },
     create_mind() {
       this.mind = new qjm.Mind(this, this.opts, this.node_json);
     },
     clearCanvas() {
-      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      // this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      this.ctx.clearRect(
+        -this.canvas.width,
+        -this.canvas.height,
+        2 * this.canvas.width,
+        2 * this.canvas.height
+      );
     },
-    changeLayout(){
+    changeLayout() {
       this.clearCanvas();
       this.mind.init();
     },
@@ -106,43 +111,64 @@
       this.canvas.addEventListener(
         "wheel",
         qjm.util.throttle((e) => {
+          let zoom = 1;
           e.stopPropagation();
           e.preventDefault();
           if (e.ctrlKey) {
-            if (e.deltaY > 0) {
-              this.scale -= 0.05;
-            }
-            if (e.deltaY < 0) {
-              this.scale += 0.05;
-            }
-            if (this.scale < 0.2 || this.scale > 1.2) return;
-            this.canvas.style.transform = "scale(" + this.scale + ")";
+            if (e.deltaY > 0) zoom = 0.95;
+            if (e.deltaY < 0) zoom = 1.05;
+            this.scale *= zoom;
+
+            this.ctx.clearRect(
+              -this.canvas.width,
+              -this.canvas.height,
+              2 * this.canvas.width,
+              2 * this.canvas.height
+            );
+
+            this.ctx.translate(e.offsetX, e.offsetY);
+            this.ctx.scale(zoom, zoom);
+            this.ctx.translate(-e.offsetX, -e.offsetY);
+
+            // this.ctx.save();
+            // this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+            // this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            // this.ctx.restore();
+            this.ctx.fillStyle = this.randomColor();
+            this.ctx.rect(0, 0, this.canvas.width, this.canvas.height);
+            this.ctx.stroke();
+            // this.mind.change_nodes_pos('scale',{scale:zoom});
+            this.mind.show_view();
           }
-        }, 35)
+        }, 20)
       );
+    },
+    randomColor() {
+      var r = Math.floor(Math.random() * 255 + 1);
+      var g = Math.floor(Math.random() * 255 + 1);
+      var b = Math.floor(Math.random() * 255 + 1);
+      return `rgb(${r},${g},${b})`;
     },
     add_event_dragmove() {
       var canvas_container = this.canvas_container;
       var canvas = this.canvas;
-      var canvas_ratio = this.ratio;
-      var canvas_offset = this.canvas_offset;
+      var scale = this.scale;
+      var ctx = this.ctx;
+      var mind = this.mind;
       var isDown = false;
-      var x, y, l, t;
+      var x, y;
       function _mousemove(e) {
         if (!isDown) return;
-        //获取x和y
-        var nx = e.clientX;
-        var ny = e.clientY;
-        //计算移动后的左偏移量和顶部的偏移量
-        var nl = l + nx - x;
-        var nt = t + ny - y;
-        // 如果移动距离过小，则认定为click事件
-        if (Math.abs(nx - x) <= 1 && Math.abs(ny - y) <= 1) return;
+        ctx.translate(e.clientX - x, e.clientY - y);
 
-        canvas_offset.left = nl;
-        canvas_offset.top = nt;
-        canvas.style.left = nl + "px";
-        canvas.style.top = nt + "px";
+        ctx.save();
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.restore();
+
+        mind.init();
+        x = e.clientX;
+        y = e.clientY;
         return false;
       }
       function _mouseup(e) {
@@ -157,9 +183,6 @@
         x = e.clientX;
         y = e.clientY;
 
-        //获取左部和顶部的偏移量
-        l = canvas_offset.left;
-        t = canvas_offset.top;
         //开关打开
         isDown = true;
         canvas.style.cursor = "grabbing";
@@ -176,6 +199,7 @@
       canvas.addEventListener("click", (e) => {
         var ex = e.offsetX,
           ey = e.offsetY;
+        console.log("点击了", ex, ey);
         var all_nodes = this.all_node_pos_map;
         // 点击内容节点
         for (var i = 0; i < all_nodes["keynode"].length; i++) {
@@ -224,7 +248,6 @@
         }
       };
     },
-
     newid() {
       return (
         new Date().getTime().toString(16) + Math.random().toString(16).substr(2)
@@ -313,7 +336,10 @@
     },
     drawRect() {
       var ctx = this.qjm.ctx;
-      if (!this.x || !this.y) return;
+      if (isValueNull(this.x) || isValueNull(this.y)) {
+        return;
+      }
+      ctx.save();
       ctx.beginPath();
       ctx.fillStyle = "#ffffff";
       ctx.shadowBlur = 20;
@@ -326,39 +352,60 @@
         this.height
       );
       ctx.fill();
+      ctx.restore();
 
       this.set_mind_pos_map("keynode", this);
     },
-    drawText() {
+    _drawMultiText(str, initX, initY, maxWidth, maxLine) {
       var ctx = this.qjm.ctx;
-      ctx.beginPath();
-      var textDOM = `<svg xmlns='http://www.w3.org/2000/svg' width='320' height='100'>
-                    <foreignObject width='100%' height='100%'>
-                      <div xmlns='http://www.w3.org/1999/xhtml'>
-                        <div style="width:320px;height:100px;display: flex;padding:16px 18px 16px 12px;font-size:12px;">
-                          <div style="flex-shrink:0;width:30px;height:30px;background-color: #1bc489;border-radius: 50%;margin-right:8px;"></div>
-                          <div style="width:260px;">
-                            <div style="width:100%;display:flex;align-items:center;justify-content: space-between;">
-                              <div>${this.content}</div>
-                              <div>进度10%</div>
-                            </div>
-                            <div style="width:100%;margin-top:8px;height:40px;font-size:14px;text-align:justify">副标题副标题副标题副标题副标题副标题副标题副标题副标题</div>
-                          </div>
-                        </div>
-                      </div>
-                    </foreignObject>
-                  </svg>`;
-      var DOMURL = self.URL || self.webkitURL || self;
-      var img = new Image();
-      var svg = new Blob([textDOM], {
-        type: "image/svg+xml;charset=utf-8",
-      });
-      var url = DOMURL.createObjectURL(svg);
-      img.onload = () => {
-        ctx.drawImage(img, this.x - this.width / 2, this.y - this.height / 2);
-        DOMURL.revokeObjectURL(url);
+      var lineWidth = 0;
+      var lastSubStrIndex = 0;
+      var lineNum = 0;
+      for (let i = 0; i < str.length; i++) {
+        lineWidth += ctx.measureText(str[i]).width;
+        if (lineWidth > this.width - 60) {
+          lineNum += 1;
+          if (lineNum > maxLine) {
+            return;
+          }
+          ctx.fillText(str.substring(lastSubStrIndex, i), initX, initY);
+          initY += 20;
+          lineWidth = 0;
+          lastSubStrIndex = i;
+        }
+        if (i == str.length - 1) {
+          ctx.fillText(str.substring(lastSubStrIndex, i + 1), initX, initY);
+        }
+      }
+    },
+    drawText() {
+      var obj = {
+        avatarName: "G",
+        name: "刘新",
+        dept: "前端组",
+        content: "发到哪萨克放得开撒九分裤都是建安发的减肥的卡萨了发",
       };
-      img.src = url;
+      var ctx = this.qjm.ctx;
+      var x0 = this.x - this.width / 2;
+      var y0 = this.y - this.height / 2;
+      // 画头像
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(x0 + 30, y0 + 30, 15, 0, Math.PI * 2, false);
+      ctx.closePath();
+      ctx.fillStyle = "#1bc489";
+      ctx.fill();
+      ctx.restore();
+      // 姓名+部门名
+      ctx.save();
+      ctx.font = "12px Arial";
+      ctx.fillStyle = "#000000";
+      ctx.textBaseline = "top";
+      ctx.textAlign = "left";
+      ctx.fillText(obj.name + "  " + obj.dept, x0 + 54, y0 + 20);
+      ctx.font = "14px Arial";
+      this._drawMultiText(obj.content, x0 + 54, y0 + 46, this.width - 60, 2);
+      ctx.restore();
     },
     drawLine_to_child() {
       var ctx = this.qjm.ctx;
@@ -385,6 +432,7 @@
     },
     drawLine_to_parent() {
       var ctx = this.qjm.ctx;
+      ctx.save();
       ctx.beginPath();
       ctx.moveTo(this.x - (this.direction * this.width) / 2, this.y);
       if (this.parent.isRoot) {
@@ -396,6 +444,7 @@
         ctx.lineTo(this.parent.hubPos[0], this.parent.hubPos[1]);
       }
       ctx.stroke();
+      ctx.restore();
     },
     drawHub(pos, child_len) {
       if (this.isRoot) {
@@ -414,20 +463,24 @@
     },
     _drawHub(pos, child_len) {
       var ctx = this.qjm.ctx;
-      ctx.beginPath();
-      ctx.arc(pos[0], pos[1], 10, 0, Math.PI * 2, false);
-      ctx.closePath();
+      ctx.save();
       ctx.fillStyle = "#ffffff";
       ctx.shadowBlur = 10;
       ctx.shadowColor = "rgba(31,35,41,0.08)";
+      ctx.beginPath();
+      ctx.arc(pos[0], pos[1], 10, 0, Math.PI * 2);
+      ctx.closePath();
       ctx.fill();
+      ctx.restore();
 
       if (child_len > 0) {
+        ctx.save();
         ctx.fillStyle = "#000000";
         ctx.font = "30px";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillText(child_len, pos[0], pos[1]);
+        ctx.restore();
       }
     },
     getHubPos() {
@@ -449,6 +502,7 @@
     this.canvas_center = null;
     this.node_json = [].concat(node_json);
     this.nodes = [];
+    this.nodes_flat_array = [];
     this.expanded_node_group = [];
     this.total_height = 0;
     this.total_max_node_length = 0;
@@ -461,7 +515,18 @@
       this.canvas_center = this.qjm.getCanvasCenterPos();
       this.get_expanded_node_group();
       this.get_group_max_length();
-      this.layout();
+      this.layout(); //给每个节点赋值xy坐标值
+      this.show_view();
+    },
+    change_nodes_pos(change_type, obj) {
+      var array = this.nodes_flat_array;
+      for (var i = 0; i < array.length; i++) {
+        if (change_type == "scale") {
+          array[i].x *= obj.scale;
+          array[i].y *= obj.scale;
+        }
+      }
+      console.log("所有节点", this.nodes_flat_array[0].x);
       this.show_view();
     },
     get_nodes() {
@@ -489,7 +554,7 @@
     },
 
     add_node(node_json) {
-      return new qjm.KeyNode(this.qjm, {
+      let node = new qjm.KeyNode(this.qjm, {
         id: qjm.util.newid(),
         content: node_json.content,
         x: node_json.x,
@@ -503,6 +568,8 @@
         direction: node_json.direction,
         isRoot: node_json.isRoot,
       });
+      this.nodes_flat_array.push(node);
+      return node;
     },
 
     show_view() {

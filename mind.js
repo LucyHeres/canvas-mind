@@ -1,15 +1,12 @@
 (function (window) {
   // TODO:
-  // 1.canvas画布尺寸有限制，如果分支很多，该如何显示?
-  // 2.root节点的左右expanded没有分开，待解决，需要在初始化数据node_json中作区分，
+  // 1.root节点的左右expanded没有分开，待解决，需要在初始化数据node_json中作区分，
   //   如，把children字段拆分成children_l,children_r，把expanded字段拆分成expanded_l,expanded_r
 
   const isValueNull = function (val) {
     return val === "" || val === null || val === undefined;
   };
 
-
-  
   var qjm = function (opts, data, fn) {
     this.opts = opts;
     this.node_json = data;
@@ -62,7 +59,6 @@
       this.mind = new qjm.Mind(this, this.opts, this.node_json);
     },
     clearCanvas() {
-      // this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
       this.ctx.clearRect(
         -this.canvas.width,
         -this.canvas.height,
@@ -108,65 +104,38 @@
         { passive: false }
       );
       // canvas缩放
-      this.canvas.addEventListener(
-        "wheel",
-        qjm.util.throttle((e) => {
-          let zoom = 1;
-          e.stopPropagation();
-          e.preventDefault();
-          if (e.ctrlKey) {
-            if (e.deltaY > 0) zoom = 0.95;
-            if (e.deltaY < 0) zoom = 1.05;
-            this.scale *= zoom;
+      this.canvas.addEventListener("wheel", (e) => {
+        let zoom = 1;
+        e.stopPropagation();
+        e.preventDefault();
+        if (e.ctrlKey) {
+          if (e.deltaY > 0) zoom = 0.95;
+          if (e.deltaY < 0) zoom = 1.05;
+          this.scale *= zoom;
 
-            this.ctx.clearRect(
-              -this.canvas.width,
-              -this.canvas.height,
-              2 * this.canvas.width,
-              2 * this.canvas.height
-            );
+          this.clearCanvas();
+          this.ctx.translate(e.offsetX, e.offsetY);
+          this.ctx.scale(zoom, zoom);
+          this.ctx.translate(-e.offsetX, -e.offsetY);
 
-            this.ctx.translate(e.offsetX, e.offsetY);
-            this.ctx.scale(zoom, zoom);
-            this.ctx.translate(-e.offsetX, -e.offsetY);
-
-            // this.ctx.save();
-            // this.ctx.setTransform(1, 0, 0, 1, 0, 0);
-            // this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-            // this.ctx.restore();
-            this.ctx.fillStyle = this.randomColor();
-            this.ctx.rect(0, 0, this.canvas.width, this.canvas.height);
-            this.ctx.stroke();
-            // this.mind.change_nodes_pos('scale',{scale:zoom});
+          requestAnimationFrame(() => {
             this.mind.show_view();
-          }
-        }, 20)
-      );
-    },
-    randomColor() {
-      var r = Math.floor(Math.random() * 255 + 1);
-      var g = Math.floor(Math.random() * 255 + 1);
-      var b = Math.floor(Math.random() * 255 + 1);
-      return `rgb(${r},${g},${b})`;
+          });
+        }
+      });
     },
     add_event_dragmove() {
-      var canvas_container = this.canvas_container;
+      var t = this;
       var canvas = this.canvas;
-      var scale = this.scale;
-      var ctx = this.ctx;
-      var mind = this.mind;
       var isDown = false;
       var x, y;
       function _mousemove(e) {
         if (!isDown) return;
-        ctx.translate(e.clientX - x, e.clientY - y);
-
-        ctx.save();
-        ctx.setTransform(1, 0, 0, 1, 0, 0);
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.restore();
-
-        mind.init();
+        t.clearCanvas();
+        t.ctx.translate((e.clientX - x)/t.scale, (e.clientY - y)/t.scale);
+        requestAnimationFrame(() => {
+          t.mind.show_view();
+        });
         x = e.clientX;
         y = e.clientY;
         return false;
@@ -174,32 +143,33 @@
       function _mouseup(e) {
         //开关关闭
         canvas.style.cursor = "default";
-        canvas_container.removeEventListener("mousemove", _mousemove);
-        canvas_container.removeEventListener("mouseup", _mouseup);
+        canvas.removeEventListener("mousemove", _mousemove);
+        canvas.removeEventListener("mouseup", _mouseup);
         isDown = false;
       }
-      canvas_container.addEventListener("mousedown", (e) => {
+      canvas.addEventListener("mousedown", (e) => {
         //获取x坐标和y坐标
         x = e.clientX;
         y = e.clientY;
-
         //开关打开
         isDown = true;
         canvas.style.cursor = "grabbing";
-        canvas_container.addEventListener("mousemove", _mousemove);
-        canvas_container.addEventListener("mouseup", _mouseup);
+        canvas.addEventListener("mousemove", _mousemove);
+        canvas.addEventListener("mouseup", _mouseup);
         return false;
       });
     },
     add_event_click() {
       var canvas = this.canvas;
       var ctx = this.ctx;
-      console.log(this.all_node_pos_map);
-
       canvas.addEventListener("click", (e) => {
-        var ex = e.offsetX,
-          ey = e.offsetY;
-        console.log("点击了", ex, ey);
+        // 矩阵换算鼠标点击位置对应的新坐标
+        var cT = ctx.getTransform();
+        let matrix = [cT.a, cT.b, cT.c, cT.d, cT.e, cT.f];
+        var newxy = this._getXY(matrix, e.offsetX, e.offsetY);
+        var ex = newxy.x;
+        var ey = newxy.y;
+
         var all_nodes = this.all_node_pos_map;
         // 点击内容节点
         for (var i = 0; i < all_nodes["keynode"].length; i++) {
@@ -232,6 +202,12 @@
           }
         }
       });
+    },
+    // 矩阵换算
+    _getXY(matrix, mouseX, mouseY) {
+      var newX = (mouseX * this.ratio - matrix[4]) / matrix[0];
+      var newY = (mouseY * this.ratio - matrix[5]) / matrix[3];
+      return { x: newX, y: newY };
     },
   };
 
@@ -288,7 +264,7 @@
     },
   };
 
-  // 文本节点构造函数
+  // 节点构造函数
   qjm.KeyNode = function (qjm, args) {
     let {
       id,
@@ -409,24 +385,32 @@
     },
     drawLine_to_child() {
       var ctx = this.qjm.ctx;
-      ctx.beginPath();
+      ctx.save();
       if (this.isRoot) {
         if (this.get_children_nodes(1).length) {
+          ctx.beginPath();
           ctx.moveTo(this.x + (1 * this.width) / 2, this.y);
           ctx.lineTo(this.hubPos_r[0], this.hubPos_r[1]);
+          ctx.closePath();
           ctx.stroke();
+          ctx.restore();
           this.drawHub(this.hubPos_r, this.get_children_nodes(1).length);
         }
         if (this.get_children_nodes(-1).length) {
+          ctx.beginPath();
           ctx.moveTo(this.x + (-1 * this.width) / 2, this.y);
           ctx.lineTo(this.hubPos_l[0], this.hubPos_l[1]);
+          ctx.closePath();
           ctx.stroke();
           this.drawHub(this.hubPos_l, this.get_children_nodes(-1).length);
         }
       } else {
+        ctx.beginPath();
         ctx.moveTo(this.x + (this.direction * this.width) / 2, this.y);
         ctx.lineTo(this.hubPos[0], this.hubPos[1]);
+        ctx.closePath();
         ctx.stroke();
+        ctx.restore();
         this.drawHub(this.hubPos, this.children.length);
       }
     },
@@ -496,6 +480,7 @@
     },
   };
 
+  // 树图构造函数
   qjm.Mind = function (qjm, opts, node_json) {
     this.qjm = qjm;
     this.opts = opts;
@@ -516,17 +501,6 @@
       this.get_expanded_node_group();
       this.get_group_max_length();
       this.layout(); //给每个节点赋值xy坐标值
-      this.show_view();
-    },
-    change_nodes_pos(change_type, obj) {
-      var array = this.nodes_flat_array;
-      for (var i = 0; i < array.length; i++) {
-        if (change_type == "scale") {
-          array[i].x *= obj.scale;
-          array[i].y *= obj.scale;
-        }
-      }
-      console.log("所有节点", this.nodes_flat_array[0].x);
       this.show_view();
     },
     get_nodes() {

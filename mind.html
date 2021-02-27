@@ -35,6 +35,9 @@
 
     <script src="./mind.js"></script>
     <script>
+      var container = document.querySelector("#canvas-container");
+      container.style.width = window.innerWidth +'px';
+      container.style.height = window.innerHeight+'px';
       // 绘制节点
       var options = {
         container: "#canvas-container",

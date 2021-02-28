@@ -36,8 +36,8 @@
     <script src="./mind.js"></script>
     <script>
       var container = document.querySelector("#canvas-container");
-      container.style.width = window.innerWidth +'px';
-      container.style.height = window.innerHeight+'px';
+      container.style.width = window.innerWidth + "px";
+      container.style.height = window.innerHeight + "px";
       // 绘制节点
       var options = {
         container: "#canvas-container",
@@ -49,7 +49,8 @@
         {
           content: "中心节点1",
           isRoot: true,
-          expanded: false,
+          expanded_l: false,
+          expanded_r: false,
           children: [
             {
               content: "子节点1-1",
@@ -133,11 +134,13 @@
               ],
             },
           ],
+            
         },
         {
           content: "中心节点2",
           isRoot: true,
-          expanded: true,
+          expanded_l: false,
+          expanded_r: false,
           children: [
             {
               content: "子节点2-1",
@@ -166,79 +169,33 @@
                 {
                   content: "子节点2-2-2",
                   direction: -1,
-                },
+                }
               ],
             },
-          ],
-        },
-        {
-          content: "中心节点3",
-          isRoot: true,
-          expanded: true,
-          children: [
             {
-              content: "子节点3-1",
+              content: "子节点2-3",
               direction: 1,
               expanded: true,
               children: [
                 {
-                  content: "子节点3-1-1",
+                  content: "子节点2-3-1",
                   direction: 1,
                 },
                 {
-                  content: "子节点3-1-2",
+                  content: "子节点2-3-2",
                   direction: 1,
-                },
-              ],
-            },
-            {
-              content: "子节点3-2",
-              direction: 1,
-              expanded: true,
-              children: [
-                {
-                  content: "子节点3-2-1",
-                  direction: 1,
-                },
-                {
-                  content: "子节点3-2-2",
-                  direction: 1,
-                },
-              ],
-            },
-            {
-              content: "子节点3-3",
-              direction: 1,
-              expanded: true,
-              children: [
-                {
-                  content: "子节点3-3-1",
-                  direction: 1,
-                },
-                {
-                  content: "子节点3-3-2",
-                  direction: 1,
-                },
-                {
-                  content: "子节点3-3-3",
-                  direction: 1,
-                },
-                {
-                  content: "子节点3-3-4",
-                  direction: 1,
-                },
+                }
               ],
             },
           ],
         },
       ];
       var qjMind = new qjMind(options, node_array, {
-        keyNodeClick:function(node){
-          console.log('点击了',node.content)
+        keyNodeClick: function (node) {
+          console.log("点击了", node.content);
           //
         },
       });
-     
     </script>
   </body>
 </html>

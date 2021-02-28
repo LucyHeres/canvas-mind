@@ -1,8 +1,5 @@
 (function (window) {
-  // TODO:
-  // 1.root节点的左右expanded没有分开，待解决，需要在初始化数据node_json中作区分，
-  //   如，把children字段拆分成children_l,children_r，把expanded字段拆分成expanded_l,expanded_r
-
+ 
   const isValueNull = function (val) {
     return val === "" || val === null || val === undefined;
   };
@@ -132,7 +129,7 @@
       function _mousemove(e) {
         if (!isDown) return;
         t.clearCanvas();
-        t.ctx.translate((e.clientX - x)/t.scale, (e.clientY - y)/t.scale);
+        t.ctx.translate((e.clientX - x) / t.scale, (e.clientY - y) / t.scale);
         requestAnimationFrame(() => {
           t.mind.show_view();
         });
@@ -180,7 +177,7 @@
             p.y - p.height / 2 <= ey &&
             ey <= p.y + p.height / 2
           ) {
-            console.log("点击了keynode:" + p.content);
+            console.log("点击了keynode:" + p.content, p.x, p.y);
             this.fn.keyNodeClick && this.fn.keyNodeClick(p);
             return;
           }
@@ -195,7 +192,9 @@
               100
             ) {
               console.log(`点击了${p.content}的hub节点${type}`);
-              p.expanded = !p.expanded;
+              if (type == "hubPos_l") p.expanded_l = !p.expanded_l;
+              if (type == "hubPos_r") p.expanded_r = !p.expanded_r;
+              if (type == "hubPos") p.expanded = !p.expanded;
               this.changeLayout();
               return;
             }
@@ -265,39 +264,29 @@
   };
 
   // 节点构造函数
-  qjm.KeyNode = function (qjm, args) {
-    let {
-      id,
-      content,
-      x,
-      y,
-      width,
-      height,
-      child_index,
-      children,
-      rank_index,
-      expanded,
-      direction,
-      isRoot,
-    } = args;
+  qjm.KeyNode = function (qjm, node_json) {
     this.qjm = qjm;
-    this.id = id;
-    this.content = content;
-    this.x = x;
-    this.y = y;
-    this.width = width;
-    this.height = height;
-    this.child_index = child_index;
-    this.rank_index = rank_index;
-    this.children = children;
-    this.expanded = expanded;
-    this.direction = direction;
-    this.isRoot = isRoot;
-
+    this.id = node_json.id || 0;
+    this.content = node_json.content;
+    this.x = node_json.x;
+    this.y = node_json.y;
+    this.width = qjm.opts.keyNode_w;
+    this.height = qjm.opts.keyNode_h;
+    this.child_index = node_json.child_index;
+    this.rank_index = node_json.rank_index;
+    this.direction = node_json.direction;
+    this.isRoot = node_json.isRoot;
     this.parent = null;
-    this.hubPos = null;
-    this.hubPos_r = null;
-    this.hubPos_l = null;
+    this.children = node_json.children;
+    if (this.root) {
+      this.expanded_l = node_json.expanded_l;
+      this.expanded_r = node_json.expanded_r;
+      this.hubPos_l = null;
+      this.hubPos_r = null;
+    } else {
+      this.hubPos = null;
+      this.expanded = node_json.expanded;
+    }
   };
   qjm.KeyNode.prototype = {
     show() {
@@ -359,7 +348,7 @@
         avatarName: "G",
         name: "刘新",
         dept: "前端组",
-        content: "发到哪萨克放得开撒九分裤都是建安发的减肥的卡萨了发",
+        content: this.content,
       };
       var ctx = this.qjm.ctx;
       var x0 = this.x - this.width / 2;
@@ -502,6 +491,7 @@
       this.get_group_max_length();
       this.layout(); //给每个节点赋值xy坐标值
       this.show_view();
+      console.log(this.nodes);
     },
     get_nodes() {
       for (var i = 0; i < this.node_json.length; i++) {
@@ -528,20 +518,8 @@
     },
 
     add_node(node_json) {
-      let node = new qjm.KeyNode(this.qjm, {
-        id: qjm.util.newid(),
-        content: node_json.content,
-        x: node_json.x,
-        y: node_json.y,
-        width: this.opts.keyNode_w,
-        height: this.opts.keyNode_h,
-        child_index: node_json.child_index,
-        children: node_json.children,
-        rank_index: node_json.rank_index,
-        expanded: node_json.expanded,
-        direction: node_json.direction,
-        isRoot: node_json.isRoot,
-      });
+      let node = new qjm.KeyNode(this.qjm, node_json);
+      node.id = qjm.util.newid();
       this.nodes_flat_array.push(node);
       return node;
     },
@@ -550,11 +528,17 @@
       for (var i = 0; i < this.nodes.length; i++) {
         this._draw_nodes(this.nodes[i]);
         this._draw_lines(this.nodes[i]);
-        //每组的间隔
+        //TODO:每组的间隔
       }
     },
     _draw_nodes(node) {
-      if (node.parent && !node.parent.expanded) return;
+      if (node.parent && node.parent.isRoot) {
+        if (node.direction === -1 && !node.parent.expanded_l) return;
+        if (node.direction === 1 && !node.parent.expanded_r) return;
+      }
+      if (node.parent && !node.parent.isRoot) {
+        if (!node.parent.expanded) return;
+      }
       node.show();
       if (node.children) {
         for (let index = 0; index < node.children.length; index++) {
@@ -564,15 +548,24 @@
       }
     },
     _draw_lines(node) {
-      if (node.parent && !node.parent.expanded) return;
+      if (node.parent && node.parent.isRoot) {
+        if (node.direction === -1 && !node.parent.expanded_l) return;
+        if (node.direction === 1 && !node.parent.expanded_r) return;
+      }
+      if (node.parent && !node.parent.isRoot) {
+        if (!node.parent.expanded) return;
+      }
+      if (node.parent) {
+        node.drawLine_to_parent();
+      }
       if (node.children) {
         node.drawLine_to_child();
         for (let index = 0; index < node.children.length; index++) {
-          if (node.expanded) {
-            let child_node = node.children[index];
-            child_node.drawLine_to_parent();
-            this._draw_lines(child_node);
-          }
+          // if (node.expanded) {
+          let child_node = node.children[index];
+          //   child_node.drawLine_to_parent();
+          this._draw_lines(child_node);
+          // }
         }
         node.drawHub();
       }
@@ -609,7 +602,11 @@
           if (!group_info.expanded_nodes_r[rankid + 1])
             group_info.expanded_nodes_r[rankid + 1] = [];
 
-          if (obj.children && obj.children.length && obj.expanded) {
+          if (
+            obj.children &&
+            obj.children.length &&
+            (obj.expanded || obj.expanded_l || obj.expanded_r)
+          ) {
             var children_l = [],
               children_r = [];
             obj.children.forEach((item) => {
@@ -711,30 +708,48 @@
       for (var i = 0; i < t.nodes.length; i++) {
         var group = t.nodes[i];
         var dir = group.group_info.max_side_direction;
-        t._layout(
-          group.group_info.expanded_nodes_r,
-          1,
-          group.group_info.center_pos
+        var expanded_nodes_l = group.group_info.expanded_nodes_l;
+        var expanded_nodes_r = group.group_info.expanded_nodes_r;
+        // 比较左右两边的高度，值大则反向布局，值小的正向布局
+        // 左边
+        var rank_max_nodes_length_l = qjm.util.flatArray(
+          expanded_nodes_l[expanded_nodes_l.length - 1]
         );
-        t._layout(
-          group.group_info.expanded_nodes_l,
-          -1,
-          group.group_info.center_pos
+        // 右边
+        var rank_max_nodes_length_r = qjm.util.flatArray(
+          expanded_nodes_r[expanded_nodes_r.length - 1]
         );
+        if (rank_max_nodes_length_l > rank_max_nodes_length_r) {
+          t._layout_backward(expanded_nodes_l, -1, group.group_info.center_pos);
+          console.log(
+            "左大于右",
+            expanded_nodes_l[0].content,
+            expanded_nodes_l[0].y
+          );
+          t._layout_forward(expanded_nodes_r, 1, group.group_info.center_pos);
+        } else {
+          t._layout_backward(expanded_nodes_r, 1, group.group_info.center_pos);
+          console.log(
+            "右大于左",
+            expanded_nodes_l[0].content,
+            expanded_nodes_r[0].y
+          );
+          t._layout_forward(expanded_nodes_l, -1, group.group_info.center_pos);
+        }
       }
     },
 
-    // 从末级节点向根节点推定位
-    _layout(expanded_nodes, dir, group_center_pos) {
+    // 反向推定位：从末级节点向根节点推定位
+    _layout_backward(expanded_nodes, dir, group_center_pos) {
       // 末级
       var expanded_rank_max = expanded_nodes.length - 1;
       var rank_max_nodes = qjm.util.flatArray(
         expanded_nodes[expanded_rank_max]
       );
-
       let rank_max_nodes_total_height =
         rank_max_nodes.length * this.opts.keyNode_h +
         (rank_max_nodes.length - 1) * 20;
+
       let top_h =
         group_center_pos.y -
         rank_max_nodes_total_height / 2 +
@@ -769,6 +784,21 @@
               node.y = (children[0].y + children[children.length - 1].y) / 2;
             }
           }
+        }
+      }
+    },
+    // 正向推定位：从根级节点向末级推定位
+    _layout_forward(expanded_nodes, dir, group_center_pos) {
+      var y0 = expanded_nodes[0].y;
+      this._layout_backward(expanded_nodes, dir, group_center_pos);
+      var y1 = expanded_nodes[0].y;
+      var diff = y1 - y0;
+      for (var i = 0; i < expanded_nodes.length; i++) {
+        var curr_rank_nodes = expanded_nodes[i]; //i为级数
+        var curr_rank_nodes_flat = qjm.util.flatArray(curr_rank_nodes);
+        for (var j = 0; j < curr_rank_nodes_flat.length; j++) {
+          var node = curr_rank_nodes_flat[j];
+          if (!node.isEmpty) node.y -= diff;
         }
       }
     },

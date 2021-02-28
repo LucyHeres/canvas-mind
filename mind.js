@@ -1,5 +1,4 @@
 (function (window) {
- 
   const isValueNull = function (val) {
     return val === "" || val === null || val === undefined;
   };
@@ -177,7 +176,7 @@
             p.y - p.height / 2 <= ey &&
             ey <= p.y + p.height / 2
           ) {
-            console.log("点击了keynode:" + p.content, p.x, p.y);
+            // console.log("点击了keynode:" + p.content, p.x, p.y);
             this.fn.keyNodeClick && this.fn.keyNodeClick(p);
             return;
           }
@@ -191,7 +190,7 @@
               Math.pow(ex - p[type][0], 2) + Math.pow(ey - p[type][1], 2) <
               100
             ) {
-              console.log(`点击了${p.content}的hub节点${type}`);
+              // console.log(`点击了${p.content}的hub节点${type}`);
               if (type == "hubPos_l") p.expanded_l = !p.expanded_l;
               if (type == "hubPos_r") p.expanded_r = !p.expanded_r;
               if (type == "hubPos") p.expanded = !p.expanded;
@@ -491,7 +490,6 @@
       this.get_group_max_length();
       this.layout(); //给每个节点赋值xy坐标值
       this.show_view();
-      console.log(this.nodes);
     },
     get_nodes() {
       for (var i = 0; i < this.node_json.length; i++) {
@@ -721,19 +719,9 @@
         );
         if (rank_max_nodes_length_l > rank_max_nodes_length_r) {
           t._layout_backward(expanded_nodes_l, -1, group.group_info.center_pos);
-          console.log(
-            "左大于右",
-            expanded_nodes_l[0].content,
-            expanded_nodes_l[0].y
-          );
           t._layout_forward(expanded_nodes_r, 1, group.group_info.center_pos);
         } else {
           t._layout_backward(expanded_nodes_r, 1, group.group_info.center_pos);
-          console.log(
-            "右大于左",
-            expanded_nodes_l[0].content,
-            expanded_nodes_r[0].y
-          );
           t._layout_forward(expanded_nodes_l, -1, group.group_info.center_pos);
         }
       }

@@ -414,14 +414,29 @@
       ctx.beginPath();
       var moveToX = this.x - (this.direction * this.width) / 2;
       var moveToY = this.y;
-      ctx.moveTo(moveToX,moveToY);
+      ctx.moveTo(moveToX, moveToY);
       if (this.parent.isRoot) {
         this.direction === 1 &&
-          ctx.quadraticCurveTo(moveToX-50,moveToY,this.parent.hubPos_r[0], this.parent.hubPos_r[1]);
+          ctx.quadraticCurveTo(
+            moveToX - 50,
+            moveToY,
+            this.parent.hubPos_r[0],
+            this.parent.hubPos_r[1]
+          );
         this.direction === -1 &&
-          ctx.quadraticCurveTo(moveToX+50,moveToY,this.parent.hubPos_l[0], this.parent.hubPos_l[1]);
+          ctx.quadraticCurveTo(
+            moveToX + 50,
+            moveToY,
+            this.parent.hubPos_l[0],
+            this.parent.hubPos_l[1]
+          );
       } else {
-        ctx.quadraticCurveTo(this.direction===1?moveToX-50:moveToX+50,moveToY,this.parent.hubPos[0], this.parent.hubPos[1]);
+        ctx.quadraticCurveTo(
+          this.direction === 1 ? moveToX - 50 : moveToX + 50,
+          moveToY,
+          this.parent.hubPos[0],
+          this.parent.hubPos[1]
+        );
       }
       ctx.stroke();
       ctx.restore();

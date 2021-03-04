@@ -55,11 +55,16 @@
       this.mind = new qjm.Mind(this, this.opts, this.node_json);
     },
     clearCanvas() {
+      // 矩阵换算鼠标点击位置对应的新坐标
+      var cT = this.ctx.getTransform();
+      let matrix = [cT.a, cT.b, cT.c, cT.d, cT.e, cT.f];
+      var lt = this._getXY(matrix, 0, 0);
+      var rb = this._getXY(matrix, this.canvas_container.offsetWidth, this.canvas_container.offsetHeight);
       this.ctx.clearRect(
-        -this.canvas.width,
-        -this.canvas.height,
-        2 * this.canvas.width,
-        2 * this.canvas.height
+        lt.x,
+        lt.y,
+        rb.x-lt.x,
+        rb.y-lt.y
       );
     },
     changeLayout() {

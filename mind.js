@@ -272,7 +272,8 @@
   qjm.KeyNode = function (qjm, node_json) {
     this.qjm = qjm;
     this.id = node_json.id || 0;
-    this.content = node_json.content;
+    this.text = node_json.text;
+    this.shape = node_json.shape;
     this.x = node_json.x;
     this.y = node_json.y;
     this.width = qjm.opts.keyNode_w;
@@ -297,7 +298,7 @@
     show() {
       this.getHubPos();
       this.drawRect();
-      this.drawText();
+      this.drawContent();
     },
     set_mind_pos_map(type, node_pos) {
       var map = this.qjm.all_node_pos_map;
@@ -326,56 +327,78 @@
 
       this.set_mind_pos_map("keynode", this);
     },
-    _drawMultiText(str, initX, initY, maxWidth, maxLine) {
+    _drawText(str, x, y, w, h, lineHeight) {
       var ctx = this.qjm.ctx;
       var lineWidth = 0;
       var lastSubStrIndex = 0;
       var lineNum = 0;
       for (let i = 0; i < str.length; i++) {
         lineWidth += ctx.measureText(str[i]).width;
-        if (lineWidth > this.width - 60) {
+        if (lineWidth > w) {
           lineNum += 1;
-          if (lineNum > maxLine) {
+          if (lineNum * lineHeight > h) {
             return;
           }
-          ctx.fillText(str.substring(lastSubStrIndex, i), initX, initY);
-          initY += 20;
+          ctx.fillText(str.substring(lastSubStrIndex, i), x, y);
+          y += lineHeight;
           lineWidth = 0;
           lastSubStrIndex = i;
         }
         if (i == str.length - 1) {
-          ctx.fillText(str.substring(lastSubStrIndex, i + 1), initX, initY);
+          ctx.fillText(str.substring(lastSubStrIndex, i + 1), x, y);
         }
       }
     },
-    drawText() {
-      var obj = {
-        avatarName: "G",
-        name: "刘新",
-        dept: "前端组",
-        content: this.content,
-      };
+    _drawAvatar(left, top, r, centerText) {
+      var ctx = this.qjm.ctx;
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(left, top, r, 0, Math.PI * 2, false);
+      ctx.closePath();
+      ctx.fillStyle = "#1bc489";
+      ctx.fill();
+      // 头像中心文字
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "12px April";
+      ctx.textBaseline = "middle";
+      ctx.textAlign = "center";
+      ctx.fillText(centerText, left, top);
+
+      ctx.restore();
+    },
+    drawContent() {
       var ctx = this.qjm.ctx;
       var x0 = this.x - this.width / 2;
       var y0 = this.y - this.height / 2;
       // 画头像
-      ctx.save();
-      ctx.beginPath();
-      ctx.arc(x0 + 30, y0 + 30, 15, 0, Math.PI * 2, false);
-      ctx.closePath();
-      ctx.fillStyle = "#1bc489";
-      ctx.fill();
-      ctx.restore();
+      for (var i = 0; i < this.shape.length; i++) {
+        var shapeobj = this.shape[i];
+        if (shapeobj.type == "circle")
+          this._drawAvatar(
+            x0 + shapeobj.left,
+            y0 + shapeobj.top,
+            shapeobj.r,
+            shapeobj.text
+          );
+      }
       // 姓名+部门名
-      ctx.save();
-      ctx.font = "12px Arial";
-      ctx.fillStyle = "#000000";
-      ctx.textBaseline = "top";
-      ctx.textAlign = "left";
-      ctx.fillText(obj.name + "  " + obj.dept, x0 + 54, y0 + 20);
-      ctx.font = "14px Arial";
-      this._drawMultiText(obj.content, x0 + 54, y0 + 46, this.width - 60, 2);
-      ctx.restore();
+      for (var i = 0; i < this.text.length; i++) {
+        var textobj = this.text[i];
+        ctx.save();
+        ctx.font = textobj.fontsize + "px April";
+        ctx.fillStyle = textobj.color;
+        ctx.textBaseline = "top";
+        ctx.textAlign = "left";
+        this._drawText(
+          textobj.value,
+          x0 + textobj.left,
+          y0 + textobj.top,
+          textobj.width,
+          textobj.height,
+          textobj.lineHeight
+        );
+        ctx.restore();
+      }
     },
     drawLine_to_child() {
       var ctx = this.qjm.ctx;

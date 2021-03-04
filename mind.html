@@ -38,147 +38,219 @@
       };
       var node_array = [
         {
-          content: "中心节点1",
+          text: [
+            {
+              value: "刘新",
+              top: 20,
+              left: 54,
+              width: 40,
+              height: 16,
+              fontsize: 16,
+              lineHeight: 16,
+              color: "#666666",
+            },
+            {
+              value: "前端组",
+              top: 20,
+              left: 100,
+              width: 80,
+              height: 16,
+              fontsize: 16,
+              lineHeight: 16,
+              color: "#666666",
+            },
+            {
+              value: "进度：30%",
+              top: 22,
+              left: 235,
+              width: 90,
+              height: 14,
+              fontsize: 14,
+              lineHeight: 14,
+              color: "#666666",
+            },
+            {
+              value: "防静电卡萨就放得开了撒就付款的撒酒疯考虑到撒娇爱发科",
+              top: 50,
+              left: 54,
+              width: 254,
+              height: 40,
+              fontsize: 14,
+              lineHeight: 20,
+              color: "#333333",
+            },
+          ],
+          shape: [
+            {
+              type: "circle",
+              background: "#1bc489",
+              left: 30,
+              top: 30,
+              r: 15,
+              text: "刘",
+            },
+          ],
           isRoot: true,
           expanded_l: false,
           expanded_r: false,
-          children: [
-            {
-              content: "子节点1-1",
-              direction: -1,
-              expanded: true,
-              children: [
-                {
-                  content: "子节点1-1-1",
-                  direction: -1,
-                },
-                {
-                  content: "子节点1-1-2",
-                  direction: -1,
-                },
-              ],
-            },
-            {
-              content: "子节点1-2",
-              direction: -1,
-              expanded: true,
-              children: [
-                {
-                  content: "子节点1-2-1",
-                  direction: -1,
-                },
-                {
-                  content: "子节点1-2-2",
-                  direction: -1,
-                },
-                {
-                  content: "子节点1-2-3",
-                  direction: -1,
-                },
-              ],
-            },
-            {
-              content: "子节点1-3",
-              direction: 1,
-              expanded: true,
-              children: [
-                {
-                  content: "子节点1-3-1",
-                  direction: 1,
-                },
-                {
-                  content: "子节点1-3-2",
-                  direction: 1,
-                },
-                {
-                  content: "子节点1-3-3",
-                  direction: 1,
-                },
-                {
-                  content: "子节点1-3-4",
-                  direction: 1,
-                },
-                {
-                  content: "子节点1-3-5",
-                  direction: 1,
-                },
-                {
-                  content: "子节点1-3-6",
-                  direction: 1,
-                },
-                {
-                  content: "子节点1-3-7",
-                  direction: 1,
-                },
-                {
-                  content: "子节点1-3-8",
-                  direction: 1,
-                },
-                {
-                  content: "子节点1-3-9",
-                  direction: 1,
-                },
-                {
-                  content: "子节点1-3-10",
-                  direction: 1,
-                },
-              ],
-            },
-          ],
-            
-        },
-        {
-          content: "中心节点2",
-          isRoot: true,
-          expanded_l: false,
-          expanded_r: false,
-          children: [
-            {
-              content: "子节点2-1",
-              direction: -1,
-              expanded: true,
-              children: [
-                {
-                  content: "子节点2-1-1",
-                  direction: -1,
-                },
-                {
-                  content: "子节点2-1-2",
-                  direction: -1,
-                },
-              ],
-            },
-            {
-              content: "子节点2-2",
-              direction: -1,
-              expanded: true,
-              children: [
-                {
-                  content: "子节点2-2-1",
-                  direction: -1,
-                },
-                {
-                  content: "子节点2-2-2",
-                  direction: -1,
-                }
-              ],
-            },
-            {
-              content: "子节点2-3",
-              direction: 1,
-              expanded: true,
-              children: [
-                {
-                  content: "子节点2-3-1",
-                  direction: 1,
-                },
-                {
-                  content: "子节点2-3-2",
-                  direction: 1,
-                }
-              ],
-            },
-          ],
+          // children: [
+          //   {
+          //     text: [
+          //       {
+          //         value: "刘新",
+          //         top: 20,
+          //         left: 54,
+          //         width: 30,
+          //         height: 12,
+          //         fontsize: 12,
+          //         lineHeight: 12,
+          //         color: "#333",
+          //       },
+          //       {
+          //         value: "前端组",
+          //         top: 20,
+          //         left: 100,
+          //         width: 30,
+          //         height: 12,
+          //         fontsize: 12,
+          //         lineHeight: 12,
+          //         color: "#444",
+          //       },
+          //     ],
+          //     direction: -1,
+          //     expanded: false,
+          //     children: [
+          //       {
+          //         text: [
+          //           {
+          //             value: "刘新",
+          //             top: 20,
+          //             left: 54,
+          //             width: 30,
+          //             height: 12,
+          //             fontsize: 12,
+          //             lineHeight: 12,
+          //             color: "#333",
+          //           },
+          //           {
+          //             value: "前端组",
+          //             top: 20,
+          //             left: 100,
+          //             width: 30,
+          //             height: 12,
+          //             fontsize: 12,
+          //             lineHeight: 12,
+          //             color: "#444",
+          //           },
+          //         ],
+          //         direction: -1,
+          //       },
+          //       {
+          //         text: [
+          //           {
+          //             value: "刘新",
+          //             top: 20,
+          //             left: 54,
+          //             width: 30,
+          //             height: 12,
+          //             fontsize: 12,
+          //             lineHeight: 12,
+          //             color: "#333",
+          //           },
+          //           {
+          //             value: "前端组",
+          //             top: 20,
+          //             left: 100,
+          //             width: 30,
+          //             height: 12,
+          //             fontsize: 12,
+          //             lineHeight: 12,
+          //             color: "#444",
+          //           },
+          //         ],
+          //         direction: -1,
+          //       },
+          //     ],
+          //   },
+          //   {
+          //     text: [
+          //       {
+          //         value: "刘新",
+          //         top: 20,
+          //         left: 54,
+          //         width: 30,
+          //         height: 12,
+          //         fontsize: 12,
+          //         lineHeight: 12,
+          //         color: "#333",
+          //       },
+          //       {
+          //         value: "前端组",
+          //         top: 20,
+          //         left: 100,
+          //         width: 30,
+          //         height: 12,
+          //         fontsize: 12,
+          //         lineHeight: 12,
+          //         color: "#444",
+          //       },
+          //     ],
+          //     direction: 1,
+          //     expanded: false,
+          //     children: [
+          //       {
+          //         text: [
+          //           {
+          //             value: "刘新",
+          //             top: 20,
+          //             left: 54,
+          //             width: 30,
+          //             height: 12,
+          //             fontsize: 12,
+          //             lineHeight: 12,
+          //             color: "#333",
+          //           },
+          //           {
+          //             value: "前端组",
+          //             top: 20,
+          //             left: 100,
+          //             width: 30,
+          //             height: 12,
+          //             fontsize: 12,
+          //             lineHeight: 12,
+          //             color: "#444",
+          //           },
+          //         ],
+          //         direction: -1,
+          //       },
+          //       {
+          //         text: [
+          //           {
+          //             value: "刘新",
+          //             top: 20,
+          //             left: 54,
+          //             width: 30,
+          //             height: 12,
+          //             fontsize: 12,
+          //             lineHeight: 12,
+          //             color: "#333",
+          //           },
+          //           {
+          //             value: "前端组",
+          //             top: 20,
+          //             left: 100,
+          //             width: 30,
+          //             height: 12,
+          //             fontsize: 12,
+          //             lineHeight: 12,
+          //             color: "#444",
+          //           },
+          //         ],
+          //         direction: -1,
+          //       },
+          //     ],
+          //   },
+          // ],
         },
       ];
       var qjMind = new qjMind(options, node_array, {

@@ -23,7 +23,8 @@
   qjm.prototype = {
     init() {
       this.canvas_container = document.querySelector(this.opts.container);
-      this.canvas = this.canvas_container.querySelector("canvas");
+      this.canvas = document.createElement("canvas");
+      this.canvas_container.appendChild(this.canvas);
       this.ctx = this.canvas.getContext("2d");
 
       var w = this.canvas_container.offsetWidth;
@@ -59,13 +60,12 @@
       var cT = this.ctx.getTransform();
       let matrix = [cT.a, cT.b, cT.c, cT.d, cT.e, cT.f];
       var lt = this._getXY(matrix, 0, 0);
-      var rb = this._getXY(matrix, this.canvas_container.offsetWidth, this.canvas_container.offsetHeight);
-      this.ctx.clearRect(
-        lt.x,
-        lt.y,
-        rb.x-lt.x,
-        rb.y-lt.y
+      var rb = this._getXY(
+        matrix,
+        this.canvas_container.offsetWidth,
+        this.canvas_container.offsetHeight
       );
+      this.ctx.clearRect(lt.x, lt.y, rb.x - lt.x, rb.y - lt.y);
     },
     changeLayout() {
       this.clearCanvas();
@@ -112,6 +112,7 @@
         if (e.ctrlKey) {
           if (e.deltaY > 0) zoom = 0.95;
           if (e.deltaY < 0) zoom = 1.05;
+          if (this.scale * zoom > 1.1 || this.scale * zoom < 0.8) return;
           this.scale *= zoom;
 
           this.clearCanvas();
@@ -311,8 +312,8 @@
       ctx.save();
       ctx.beginPath();
       ctx.fillStyle = "#ffffff";
-      ctx.shadowBlur = 20;
-      ctx.shadowColor = "rgba(31,35,41,0.12)";
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = "rgba(31,35,41,0.08)";
 
       ctx.fillRect(
         this.x - this.width / 2,
@@ -411,14 +412,16 @@
       var ctx = this.qjm.ctx;
       ctx.save();
       ctx.beginPath();
-      ctx.moveTo(this.x - (this.direction * this.width) / 2, this.y);
+      var moveToX = this.x - (this.direction * this.width) / 2;
+      var moveToY = this.y;
+      ctx.moveTo(moveToX,moveToY);
       if (this.parent.isRoot) {
         this.direction === 1 &&
-          ctx.lineTo(this.parent.hubPos_r[0], this.parent.hubPos_r[1]);
+          ctx.quadraticCurveTo(moveToX-50,moveToY,this.parent.hubPos_r[0], this.parent.hubPos_r[1]);
         this.direction === -1 &&
-          ctx.lineTo(this.parent.hubPos_l[0], this.parent.hubPos_l[1]);
+          ctx.quadraticCurveTo(moveToX+50,moveToY,this.parent.hubPos_l[0], this.parent.hubPos_l[1]);
       } else {
-        ctx.lineTo(this.parent.hubPos[0], this.parent.hubPos[1]);
+        ctx.quadraticCurveTo(this.direction===1?moveToX-50:moveToX+50,moveToY,this.parent.hubPos[0], this.parent.hubPos[1]);
       }
       ctx.stroke();
       ctx.restore();
@@ -442,7 +445,7 @@
       var ctx = this.qjm.ctx;
       ctx.save();
       ctx.fillStyle = "#ffffff";
-      ctx.shadowBlur = 10;
+      ctx.shadowBlur = 6;
       ctx.shadowColor = "rgba(31,35,41,0.08)";
       ctx.beginPath();
       ctx.arc(pos[0], pos[1], 10, 0, Math.PI * 2);

@@ -11,7 +11,7 @@
     this.canvas = null;
     this.ctx = null;
     this.ratio = null;
-    this.scale = 1;
+    this.scale = 0.8;
     this.canvas_center_pos = {};
     this.all_node_pos_map = {};
     this.mind = null;
@@ -48,9 +48,12 @@
       this.ratio = devicePixelRatio / backingStoreRatio;
       this.canvas.width *= this.ratio;
       this.canvas.height *= this.ratio;
-      this.ctx.scale(this.ratio, this.ratio);
-
       this.canvas_center_pos = this.getCanvasCenterPos();
+      this.ctx.scale(this.ratio, this.ratio);
+      // 初始化缩放
+      this.ctx.translate(this.canvas_center_pos.x,this.canvas_center_pos.y);
+      this.ctx.scale(this.scale, this.scale);
+      this.ctx.translate(-this.canvas_center_pos.x,-this.canvas_center_pos.y);
     },
     create_mind() {
       this.mind = new qjm.Mind(this, this.opts, this.node_json);
@@ -112,7 +115,7 @@
         if (e.ctrlKey) {
           if (e.deltaY > 0) zoom = 0.95;
           if (e.deltaY < 0) zoom = 1.05;
-          if (this.scale * zoom > 1.1 || this.scale * zoom < 0.8) return;
+          if (this.scale * zoom > 1.1 || this.scale * zoom < 0.5) return;
           this.scale *= zoom;
 
           this.clearCanvas();
@@ -276,22 +279,29 @@
     this.shape = node_json.shape;
     this.x = node_json.x;
     this.y = node_json.y;
-    this.width = qjm.opts.keyNode_w;
-    this.height = qjm.opts.keyNode_h;
+    this.width = qjm.opts.keyNode_w || 320;
+    this.height = qjm.opts.keyNode_h || 100;
+    this.hub_radius = qjm.opts.hub_radius || 10;
+    this.line_color = qjm.opts.line_color || "#e3e4e5";
+
     this.child_index = node_json.child_index;
     this.rank_index = node_json.rank_index;
     this.direction = node_json.direction;
     this.isRoot = node_json.isRoot;
     this.parent = null;
     this.children = node_json.children;
-    if (this.root) {
+
+    if (this.isRoot) {
       this.expanded_l = node_json.expanded_l;
       this.expanded_r = node_json.expanded_r;
+      this.children_count_l = node_json.children_count_l;
+      this.children_count_r = node_json.children_count_r;
       this.hubPos_l = null;
       this.hubPos_r = null;
     } else {
       this.hubPos = null;
       this.expanded = node_json.expanded;
+      this.children_count = node_json.children_count;
     }
   };
   qjm.KeyNode.prototype = {
@@ -349,7 +359,7 @@
         }
       }
     },
-    _drawCircle(left, top, r, centerText,bgcolor) {
+    _drawCircle(left, top, r, centerText, bgcolor) {
       var ctx = this.qjm.ctx;
       ctx.save();
       ctx.beginPath();
@@ -359,11 +369,11 @@
       ctx.fill();
       ctx.restore();
     },
-    _drawRect(left, top, w, h,bgcolor) {
+    _drawRect(left, top, w, h, bgcolor) {
       var ctx = this.qjm.ctx;
       ctx.save();
       ctx.fillStyle = bgcolor;
-      ctx.fillRect(left,top,w,h);
+      ctx.fillRect(left, top, w, h);
       ctx.restore();
     },
     drawContent() {
@@ -414,31 +424,34 @@
       var ctx = this.qjm.ctx;
       ctx.save();
       if (this.isRoot) {
-        if (this.get_children_nodes(1).length) {
+        if (this.children_count_r) {
           ctx.beginPath();
           ctx.moveTo(this.x + (1 * this.width) / 2, this.y);
+          ctx.strokeStyle = this.line_color;
           ctx.lineTo(this.hubPos_r[0], this.hubPos_r[1]);
           ctx.closePath();
           ctx.stroke();
           ctx.restore();
-          this.drawHub(this.hubPos_r, this.get_children_nodes(1).length);
+          this.drawHub(this.hubPos_r, this.children_count_r);
         }
-        if (this.get_children_nodes(-1).length) {
+        if (this.children_count_l) {
           ctx.beginPath();
           ctx.moveTo(this.x + (-1 * this.width) / 2, this.y);
+          ctx.strokeStyle = this.line_color;
           ctx.lineTo(this.hubPos_l[0], this.hubPos_l[1]);
           ctx.closePath();
           ctx.stroke();
-          this.drawHub(this.hubPos_l, this.get_children_nodes(-1).length);
+          this.drawHub(this.hubPos_l, this.children_count_l);
         }
       } else {
         ctx.beginPath();
         ctx.moveTo(this.x + (this.direction * this.width) / 2, this.y);
+        ctx.strokeStyle = this.line_color;
         ctx.lineTo(this.hubPos[0], this.hubPos[1]);
         ctx.closePath();
         ctx.stroke();
         ctx.restore();
-        this.drawHub(this.hubPos, this.children.length);
+        this.drawHub(this.hubPos, this.children_count);
       }
     },
     drawLine_to_parent() {
@@ -448,6 +461,7 @@
       var moveToX = this.x - (this.direction * this.width) / 2;
       var moveToY = this.y;
       ctx.moveTo(moveToX, moveToY);
+      ctx.strokeStyle = this.line_color;
       if (this.parent.isRoot) {
         this.direction === 1 &&
           ctx.quadraticCurveTo(
@@ -476,16 +490,16 @@
     },
     drawHub(pos, child_len) {
       if (this.isRoot) {
-        if (this.get_children_nodes(1).length) {
-          this._drawHub(this.hubPos_r, this.get_children_nodes(1).length);
+        if (this.children_count_r) {
+          this._drawHub(this.hubPos_r, this.children_count_r);
           this.set_mind_pos_map("hubPos_r", this);
         }
-        if (this.get_children_nodes(-1).length) {
-          this._drawHub(this.hubPos_l, this.get_children_nodes(-1).length);
+        if (this.children_count_l) {
+          this._drawHub(this.hubPos_l, this.children_count_l);
           this.set_mind_pos_map("hubPos_l", this);
         }
       } else {
-        this._drawHub(this.hubPos, this.children.length);
+        this._drawHub(this.hubPos, this.children_count);
         this.set_mind_pos_map("hubPos", this);
       }
     },
@@ -496,7 +510,7 @@
       ctx.shadowBlur = 6;
       ctx.shadowColor = "rgba(31,35,41,0.08)";
       ctx.beginPath();
-      ctx.arc(pos[0], pos[1], 10, 0, Math.PI * 2);
+      ctx.arc(pos[0], pos[1], this.hub_radius, 0, Math.PI * 2);
       ctx.closePath();
       ctx.fill();
       ctx.restore();
@@ -615,11 +629,8 @@
       if (node.children) {
         node.drawLine_to_child();
         for (let index = 0; index < node.children.length; index++) {
-          // if (node.expanded) {
           let child_node = node.children[index];
-          //   child_node.drawLine_to_parent();
           this._draw_lines(child_node);
-          // }
         }
         node.drawHub();
       }

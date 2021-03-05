@@ -297,7 +297,7 @@
   qjm.KeyNode.prototype = {
     show() {
       this.getHubPos();
-      this.drawRect();
+      this.drawKeyNode();
       this.drawContent();
     },
     set_mind_pos_map(type, node_pos) {
@@ -305,7 +305,7 @@
       if (!map[type]) map[type] = [];
       map[type].push(node_pos);
     },
-    drawRect() {
+    drawKeyNode() {
       var ctx = this.qjm.ctx;
       if (isValueNull(this.x) || isValueNull(this.y)) {
         return;
@@ -349,21 +349,21 @@
         }
       }
     },
-    _drawAvatar(left, top, r, centerText) {
+    _drawCircle(left, top, r, centerText,bgcolor) {
       var ctx = this.qjm.ctx;
       ctx.save();
       ctx.beginPath();
       ctx.arc(left, top, r, 0, Math.PI * 2, false);
       ctx.closePath();
-      ctx.fillStyle = "#1bc489";
+      ctx.fillStyle = bgcolor;
       ctx.fill();
-      // 头像中心文字
-      ctx.fillStyle = "#ffffff";
-      ctx.font = "12px April";
-      ctx.textBaseline = "middle";
-      ctx.textAlign = "center";
-      ctx.fillText(centerText, left, top);
-
+      ctx.restore();
+    },
+    _drawRect(left, top, w, h,bgcolor) {
+      var ctx = this.qjm.ctx;
+      ctx.save();
+      ctx.fillStyle = bgcolor;
+      ctx.fillRect(left,top,w,h);
       ctx.restore();
     },
     drawContent() {
@@ -373,13 +373,23 @@
       // 画头像
       for (var i = 0; i < this.shape.length; i++) {
         var shapeobj = this.shape[i];
-        if (shapeobj.type == "circle")
-          this._drawAvatar(
+        if (shapeobj.type == "circle") {
+          this._drawCircle(
             x0 + shapeobj.left,
             y0 + shapeobj.top,
             shapeobj.r,
-            shapeobj.text
+            shapeobj.text,
+            shapeobj.background
           );
+        } else {
+          this._drawRect(
+            x0 + shapeobj.left,
+            y0 + shapeobj.top,
+            shapeobj.width,
+            shapeobj.height,
+            shapeobj.background
+          );
+        }
       }
       // 姓名+部门名
       for (var i = 0; i < this.text.length; i++) {

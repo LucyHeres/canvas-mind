@@ -134,7 +134,7 @@ function parseJson(array, dir) {
       {
         value: obj.dangerDesc,
         top: 22,
-        left: 150,
+        left: 260,
         width: 90,
         height: 14,
         fontsize: 14,
@@ -145,7 +145,7 @@ function parseJson(array, dir) {
       {
         value: obj.schedule + "%",
         top: 22,
-        left: 235,
+        left: 265,
         width: 90,
         height: 14,
         fontsize: 14,

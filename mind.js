@@ -51,9 +51,9 @@
       this.canvas_center_pos = this.getCanvasCenterPos();
       this.ctx.scale(this.ratio, this.ratio);
       // 初始化缩放
-      this.ctx.translate(this.canvas_center_pos.x,this.canvas_center_pos.y);
+      this.ctx.translate(this.canvas_center_pos.x, this.canvas_center_pos.y);
       this.ctx.scale(this.scale, this.scale);
-      this.ctx.translate(-this.canvas_center_pos.x,-this.canvas_center_pos.y);
+      this.ctx.translate(-this.canvas_center_pos.x, -this.canvas_center_pos.y);
     },
     create_mind() {
       this.mind = new qjm.Mind(this, this.opts, this.node_json);
@@ -337,8 +337,9 @@
 
       this.set_mind_pos_map("keynode", this);
     },
-    _drawText(str, x, y, w, h, lineHeight) {
+    _drawText(str, x, y, w, h, lineHeight, textAlign) {
       var ctx = this.qjm.ctx;
+      ctx.textAlign = textAlign || "left";
       var lineWidth = 0;
       var lastSubStrIndex = 0;
       var lineNum = 0;
@@ -408,14 +409,14 @@
         ctx.font = textobj.fontsize + "px April";
         ctx.fillStyle = textobj.color;
         ctx.textBaseline = "top";
-        ctx.textAlign = "left";
         this._drawText(
           textobj.value,
           x0 + textobj.left,
           y0 + textobj.top,
           textobj.width,
           textobj.height,
-          textobj.lineHeight
+          textobj.lineHeight,
+          textobj.textAlign
         );
         ctx.restore();
       }
@@ -491,16 +492,20 @@
     drawHub(pos, child_len) {
       if (this.isRoot) {
         if (this.children_count_r) {
+          console.log(this.children_count_r);
           this._drawHub(this.hubPos_r, this.children_count_r);
           this.set_mind_pos_map("hubPos_r", this);
         }
         if (this.children_count_l) {
+          console.log(this.children_count_l);
           this._drawHub(this.hubPos_l, this.children_count_l);
           this.set_mind_pos_map("hubPos_l", this);
         }
       } else {
-        this._drawHub(this.hubPos, this.children_count);
-        this.set_mind_pos_map("hubPos", this);
+        if (this.children_count) {
+          this._drawHub(this.hubPos, this.children_count);
+          this.set_mind_pos_map("hubPos", this);
+        }
       }
     },
     _drawHub(pos, child_len) {
@@ -626,7 +631,7 @@
       if (node.parent) {
         node.drawLine_to_parent();
       }
-      if (node.children) {
+      if (node.children.length) {
         node.drawLine_to_child();
         for (let index = 0; index < node.children.length; index++) {
           let child_node = node.children[index];

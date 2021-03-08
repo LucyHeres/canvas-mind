@@ -3,9 +3,8 @@
     return val === "" || val === null || val === undefined;
   };
 
-  var qjm = function (opts, data, fn) {
+  var qjm = function (opts, fn) {
     this.opts = opts;
-    this.node_json = data;
     this.fn = fn;
     this.canvas_container = null;
     this.canvas = null;
@@ -17,10 +16,13 @@
     this.mind = null;
 
     this.init();
-    this.create_mind();
-    this.add_event();
   };
   qjm.prototype = {
+    render(data) {
+      this.node_json = data;
+      this.create_mind();
+      this.add_event();
+    },
     init() {
       this.canvas_container = document.querySelector(this.opts.container);
       this.canvas = document.createElement("canvas");
@@ -274,7 +276,7 @@
   // 节点构造函数
   qjm.KeyNode = function (qjm, node_json) {
     this.qjm = qjm;
-    this.id = node_json.id || 0;
+    this.objectiveId = node_json.objectiveId || 0;
     this.text = node_json.text;
     this.shape = node_json.shape;
     this.x = node_json.x;

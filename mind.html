@@ -38,12 +38,13 @@
         hub_radius: 10,
         line_color: "#e3e4e5",
       };
-      var qjMind = new qjMind(options, node_array, {
+      var qjMind = new qjMind(options, {
         keyNodeClick: function (node) {
-          console.log("点击了", node.content);
+          console.log("点击了okr节点", node.objectiveId);
           //
         },
       });
+      qjMind.render(node_array);
     </script>
   </body>
 </html>

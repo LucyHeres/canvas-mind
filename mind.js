@@ -866,9 +866,9 @@
   if (typeof module !== "undefined" && typeof exports === "object") {
     module.exports = qjm;
   } else if (typeof define === "function" && (define.amd || define.cmd)) {
-    define(function () {
-      return qjm;
-    });
+    define([], qjm);
+  } else if (typeof exports === "object") {
+    exports["qjMind"] = qjm;
   } else {
     window["qjMind"] = qjm;
   }

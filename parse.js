@@ -2,11 +2,12 @@ var array = [
   {
     objectiveId: "1",
     employeeId: "uuid",
-    employeeName: "张",
-    departmentName: "策划部",
-    dangerDesc: "正常",
+    employeeName: "迪丽热aa",
+    departmentName: "策划部的技术部",
+    dangerDesc: "有风险",
     schedule: "30",
-    objectiveDesc: "这里是内容!",
+    objectiveDesc:
+      "这里是内容!这里是内容!这里是内容!这里是内容!这里是内容!这里是内容!这里是内容!这里是内容!这里是内容!这里是内容!这里是内容!",
     superCount: 1,
     childCount: 1,
 
@@ -87,6 +88,16 @@ var array = [
   },
 ];
 
+function getScheduleColor(dangerDesc) {
+  return (
+    {
+      正常: "#16A0FF",
+      有风险: "#FFAE11",
+      已延期: "#F73838",
+    }[dangerDesc] || "#333333"
+  );
+}
+
 function initRoot() {
   for (var i = 0; i < array.length; i++) {
     array[i].isRoot = true;
@@ -99,7 +110,7 @@ function parseJson(array, dir) {
     var obj = array[i];
     var newObj = {};
     newObj.objectiveId = obj.objectiveId;
-    if(obj.isRoot) newObj.isRoot = obj.isRoot;
+    if (obj.isRoot) newObj.isRoot = obj.isRoot;
     newObj.text = [
       {
         value: obj.employeeName.slice(0, 1),
@@ -109,13 +120,13 @@ function parseJson(array, dir) {
         height: 14,
         fontsize: 12,
         lineHeight: 12,
-        color: "#ffffff",
+        color: "#1BC489",
       },
       {
         value: obj.employeeName,
         top: 20,
         left: 54,
-        width: 40,
+        width: 60,
         height: 16,
         fontsize: 16,
         lineHeight: 16,
@@ -124,7 +135,7 @@ function parseJson(array, dir) {
       {
         value: obj.departmentName,
         top: 20,
-        left: 100,
+        left: 130,
         width: 80,
         height: 16,
         fontsize: 16,
@@ -132,31 +143,21 @@ function parseJson(array, dir) {
         color: "#666666",
       },
       {
-        value: obj.dangerDesc,
+        value: obj.dangerDesc + obj.schedule + " %",
         top: 22,
-        left: 260,
-        width: 90,
+        left: 245,
+        width: 110,
         height: 14,
         fontsize: 14,
         lineHeight: 14,
         textAlign: "right",
-        color: "#666666",
-      },
-      {
-        value: obj.schedule + "%",
-        top: 22,
-        left: 265,
-        width: 90,
-        height: 14,
-        fontsize: 14,
-        lineHeight: 14,
-        color: "#666666",
+        color: getScheduleColor(obj.dangerDesc),
       },
       {
         value: obj.objectiveDesc,
         top: 50,
         left: 54,
-        width: 254,
+        width: 250,
         height: 40,
         fontsize: 14,
         lineHeight: 20,
@@ -166,7 +167,7 @@ function parseJson(array, dir) {
     newObj.shape = [
       {
         type: "rect",
-        background: "#d8d8d8",
+        background: getScheduleColor(obj.dangerDesc),
         left: 0,
         top: 0,
         width: 3,
@@ -174,7 +175,7 @@ function parseJson(array, dir) {
       },
       {
         type: "circle",
-        background: "#1bc489",
+        background: "rgba(27,196,137,0.10)",
         left: 30,
         top: 30,
         r: 15,

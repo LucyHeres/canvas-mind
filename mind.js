@@ -337,26 +337,23 @@
 
       this.set_mind_pos_map("keynode", this);
     },
-    _drawText(str, x, y, w, h, lineHeight, textAlign) {
+    _drawText(str, x, y, w, h, fontsize, lineHeight, textAlign) {
       var ctx = this.qjm.ctx;
       ctx.textAlign = textAlign || "left";
-      var lineWidth = 0;
-      var lastSubStrIndex = 0;
-      var lineNum = 0;
+      var currSumWidth = 0;
+      var lineNum = 1;
       for (let i = 0; i < str.length; i++) {
-        lineWidth += ctx.measureText(str[i]).width;
-        if (lineWidth > w) {
-          lineNum += 1;
-          if (lineNum * lineHeight > h) {
+        ctx.fillText(str[i], x + currSumWidth, y);
+        currSumWidth += ctx.measureText(str[i]).width;
+        if (i === str.length - 1) return;
+        if (currSumWidth + ctx.measureText(str[i + 1]).width > w) {
+          if (lineHeight * (lineNum + 1) > h) {
+            ctx.fillText("...", x + currSumWidth, y);
             return;
           }
-          ctx.fillText(str.substring(lastSubStrIndex, i), x, y);
           y += lineHeight;
-          lineWidth = 0;
-          lastSubStrIndex = i;
-        }
-        if (i == str.length - 1) {
-          ctx.fillText(str.substring(lastSubStrIndex, i + 1), x, y);
+          lineNum += 1;
+          currSumWidth = 0;
         }
       }
     },
@@ -415,6 +412,7 @@
           y0 + textobj.top,
           textobj.width,
           textobj.height,
+          textobj.fontsize,
           textobj.lineHeight,
           textobj.textAlign
         );
@@ -492,12 +490,10 @@
     drawHub(pos, child_len) {
       if (this.isRoot) {
         if (this.children_count_r) {
-          console.log(this.children_count_r);
           this._drawHub(this.hubPos_r, this.children_count_r);
           this.set_mind_pos_map("hubPos_r", this);
         }
         if (this.children_count_l) {
-          console.log(this.children_count_l);
           this._drawHub(this.hubPos_l, this.children_count_l);
           this.set_mind_pos_map("hubPos_l", this);
         }

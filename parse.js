@@ -169,10 +169,10 @@ function parseJson(array, dir) {
     ];
 
     if (obj.isRoot) {
-      newObj.expanded_l = false;
-      newObj.expanded_r = false;
-      newObj.children_count_l = obj.superCount;
-      newObj.children_count_r = obj.childCount;
+      newObj.expandedLeft = false;
+      newObj.expandedRight = false;
+      newObj.childrenCountLeft = obj.superCount;
+      newObj.childrenCountRight = obj.childCount;
       newObj.children = [];
       if(obj.superOkr)newObj.children = newObj.children.concat(parseJson(obj.superOkr, -1));
       if(obj.childOkr)newObj.children = newObj.children.concat(parseJson(obj.childOkr, 1));
@@ -181,11 +181,11 @@ function parseJson(array, dir) {
       newObj.direction = dir;
       newObj.children = [];
       if (dir === -1 && obj.superCount) {
-        newObj.children_count = obj.superCount;
+        newObj.childrenCount = obj.superCount;
         if(obj.superOkr)newObj.children = newObj.children.concat(parseJson(obj.superOkr, -1));
       }
       if (dir === 1 && obj.childCount) {
-        newObj.children_count = obj.childCount;
+        newObj.childrenCount = obj.childCount;
         if(obj.childOkr)newObj.children = newObj.children.concat(parseJson(obj.childOkr, 1));
       }
     }
@@ -195,4 +195,4 @@ function parseJson(array, dir) {
 }
 
 initRoot(array);
-var node_array = parseJson(array);
+var nodeArray = parseJson(array);

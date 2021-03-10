@@ -6,31 +6,31 @@
   var qjm = function (opts, fn) {
     this.opts = opts;
     this.fn = fn;
-    this.canvas_container = null;
+    this.canvasContainer = null;
     this.canvas = null;
     this.ctx = null;
     this.ratio = null;
     this.scale = 0.8;
-    this.canvas_center_pos = {};
-    this.all_node_pos_map = {};
+    this.canvasCenterPos = {};
+    this.allNodePosMap = {};
     this.mind = null;
 
     this.init();
   };
   qjm.prototype = {
     render(data) {
-      this.node_json = data;
+      this.nodeJson = data;
       this.create_mind();
       this.add_event();
     },
     init() {
-      this.canvas_container = document.querySelector(this.opts.container);
+      this.canvasContainer = document.querySelector(this.opts.container);
       this.canvas = document.createElement("canvas");
-      this.canvas_container.appendChild(this.canvas);
+      this.canvasContainer.appendChild(this.canvas);
       this.ctx = this.canvas.getContext("2d");
 
-      var w = this.canvas_container.offsetWidth;
-      var h = this.canvas_container.offsetHeight;
+      var w = this.canvasContainer.offsetWidth;
+      var h = this.canvasContainer.offsetHeight;
       this.canvas.width = w;
       this.canvas.height = h;
       this.canvas.style.width = w + "px";
@@ -50,15 +50,15 @@
       this.ratio = devicePixelRatio / backingStoreRatio;
       this.canvas.width *= this.ratio;
       this.canvas.height *= this.ratio;
-      this.canvas_center_pos = this.getCanvasCenterPos();
+      this.canvasCenterPos = this.getCanvasCenterPos();
       this.ctx.scale(this.ratio, this.ratio);
       // 初始化缩放
-      this.ctx.translate(this.canvas_center_pos.x, this.canvas_center_pos.y);
+      this.ctx.translate(this.canvasCenterPos.x, this.canvasCenterPos.y);
       this.ctx.scale(this.scale, this.scale);
-      this.ctx.translate(-this.canvas_center_pos.x, -this.canvas_center_pos.y);
+      this.ctx.translate(-this.canvasCenterPos.x, -this.canvasCenterPos.y);
     },
     create_mind() {
-      this.mind = new qjm.Mind(this, this.opts, this.node_json);
+      this.mind = new qjm.Mind(this, this.opts, this.nodeJson);
     },
     clearCanvas() {
       // 矩阵换算鼠标点击位置对应的新坐标
@@ -67,8 +67,8 @@
       var lt = this._getXY(matrix, 0, 0);
       var rb = this._getXY(
         matrix,
-        this.canvas_container.offsetWidth,
-        this.canvas_container.offsetHeight
+        this.canvasContainer.offsetWidth,
+        this.canvasContainer.offsetHeight
       );
       this.ctx.clearRect(lt.x, lt.y, rb.x - lt.x, rb.y - lt.y);
     },
@@ -177,7 +177,7 @@
         var ex = newxy.x;
         var ey = newxy.y;
 
-        var all_nodes = this.all_node_pos_map;
+        var all_nodes = this.allNodePosMap;
         // 点击内容节点
         for (var i = 0; i < all_nodes["keynode"].length; i++) {
           let p = all_nodes["keynode"][i];
@@ -202,8 +202,8 @@
               100
             ) {
               // console.log(`点击了${p.content}的hub节点${type}`);
-              if (type == "hubPos_l") p.expanded_l = !p.expanded_l;
-              if (type == "hubPos_r") p.expanded_r = !p.expanded_r;
+              if (type == "hubPosLeft") p.expandedLeft = !p.expandedLeft;
+              if (type == "hubPosRight") p.expandedRight = !p.expandedRight;
               if (type == "hubPos") p.expanded = !p.expanded;
               if(!p.children || !p.children.length){
                 this.fn.hubNodeClick && this.fn.hubNodeClick(p);
@@ -278,36 +278,36 @@
   };
 
   // 节点构造函数
-  qjm.KeyNode = function (qjm, node_json) {
+  qjm.KeyNode = function (qjm, nodeJson) {
     this.qjm = qjm;
-    this.objectiveId = node_json.objectiveId || 0;
-    this.text = node_json.text;
-    this.shape = node_json.shape;
-    this.x = node_json.x;
-    this.y = node_json.y;
-    this.width = qjm.opts.keyNode_w || 320;
-    this.height = qjm.opts.keyNode_h || 100;
-    this.hub_radius = qjm.opts.hub_radius || 10;
-    this.line_color = qjm.opts.line_color || "#e3e4e5";
+    this.objectiveId = nodeJson.objectiveId || 0;
+    this.text = nodeJson.text;
+    this.shape = nodeJson.shape;
+    this.x = nodeJson.x;
+    this.y = nodeJson.y;
+    this.width = qjm.opts.keyNodeWidth || 320;
+    this.height = qjm.opts.keyNodeHeight || 100;
+    this.hubRadius = qjm.opts.hubRadius || 10;
+    this.lineColor = qjm.opts.lineColor || "#e3e4e5";
 
-    this.child_index = node_json.child_index;
-    this.rank_index = node_json.rank_index;
-    this.direction = node_json.direction;
-    this.isRoot = node_json.isRoot;
+    this.childIndex = nodeJson.childIndex;
+    this.rankIndex = nodeJson.rankIndex;
+    this.direction = nodeJson.direction;
+    this.isRoot = nodeJson.isRoot;
     this.parent = null;
-    this.children = node_json.children;
+    this.children = nodeJson.children;
 
     if (this.isRoot) {
-      this.expanded_l = node_json.expanded_l;
-      this.expanded_r = node_json.expanded_r;
-      this.children_count_l = node_json.children_count_l;
-      this.children_count_r = node_json.children_count_r;
-      this.hubPos_l = null;
-      this.hubPos_r = null;
+      this.expandedLeft = nodeJson.expandedLeft;
+      this.expandedRight = nodeJson.expandedRight;
+      this.childrenCountLeft = nodeJson.childrenCountLeft;
+      this.childrenCountRight = nodeJson.childrenCountRight;
+      this.hubPosLeft = null;
+      this.hubPosRight = null;
     } else {
       this.hubPos = null;
-      this.expanded = node_json.expanded;
-      this.children_count = node_json.children_count;
+      this.expanded = nodeJson.expanded;
+      this.childrenCount = nodeJson.childrenCount;
     }
   };
   qjm.KeyNode.prototype = {
@@ -316,10 +316,10 @@
       this.drawKeyNode();
       this.drawContent();
     },
-    set_mind_pos_map(type, node_pos) {
-      var map = this.qjm.all_node_pos_map;
+    set_mind_pos_map(type, nodePos) {
+      var map = this.qjm.allNodePosMap;
       if (!map[type]) map[type] = [];
-      map[type].push(node_pos);
+      map[type].push(nodePos);
     },
     drawKeyNode() {
       var ctx = this.qjm.ctx;
@@ -429,34 +429,34 @@
       var ctx = this.qjm.ctx;
       ctx.save();
       if (this.isRoot) {
-        if (this.children_count_r) {
+        if (this.childrenCountRight) {
           ctx.beginPath();
           ctx.moveTo(this.x + (1 * this.width) / 2, this.y);
-          ctx.strokeStyle = this.line_color;
-          ctx.lineTo(this.hubPos_r[0], this.hubPos_r[1]);
+          ctx.strokeStyle = this.lineColor;
+          ctx.lineTo(this.hubPosRight[0], this.hubPosRight[1]);
           ctx.closePath();
           ctx.stroke();
           ctx.restore();
-          this.drawHub(this.hubPos_r, this.children_count_r);
+          this.drawHub(this.hubPosRight, this.childrenCountRight);
         }
-        if (this.children_count_l) {
+        if (this.childrenCountLeft) {
           ctx.beginPath();
           ctx.moveTo(this.x + (-1 * this.width) / 2, this.y);
-          ctx.strokeStyle = this.line_color;
-          ctx.lineTo(this.hubPos_l[0], this.hubPos_l[1]);
+          ctx.strokeStyle = this.lineColor;
+          ctx.lineTo(this.hubPosLeft[0], this.hubPosLeft[1]);
           ctx.closePath();
           ctx.stroke();
-          this.drawHub(this.hubPos_l, this.children_count_l);
+          this.drawHub(this.hubPosLeft, this.childrenCountLeft);
         }
       } else {
         ctx.beginPath();
         ctx.moveTo(this.x + (this.direction * this.width) / 2, this.y);
-        ctx.strokeStyle = this.line_color;
+        ctx.strokeStyle = this.lineColor;
         ctx.lineTo(this.hubPos[0], this.hubPos[1]);
         ctx.closePath();
         ctx.stroke();
         ctx.restore();
-        this.drawHub(this.hubPos, this.children_count);
+        this.drawHub(this.hubPos, this.childrenCount);
       }
     },
     drawLine_to_parent() {
@@ -466,21 +466,21 @@
       var moveToX = this.x - (this.direction * this.width) / 2;
       var moveToY = this.y;
       ctx.moveTo(moveToX, moveToY);
-      ctx.strokeStyle = this.line_color;
+      ctx.strokeStyle = this.lineColor;
       if (this.parent.isRoot) {
         this.direction === 1 &&
           ctx.quadraticCurveTo(
             moveToX - 50,
             moveToY,
-            this.parent.hubPos_r[0],
-            this.parent.hubPos_r[1]
+            this.parent.hubPosRight[0],
+            this.parent.hubPosRight[1]
           );
         this.direction === -1 &&
           ctx.quadraticCurveTo(
             moveToX + 50,
             moveToY,
-            this.parent.hubPos_l[0],
-            this.parent.hubPos_l[1]
+            this.parent.hubPosLeft[0],
+            this.parent.hubPosLeft[1]
           );
       } else {
         ctx.quadraticCurveTo(
@@ -493,49 +493,49 @@
       ctx.stroke();
       ctx.restore();
     },
-    drawHub(pos, child_len) {
+    drawHub(pos) {
       if (this.isRoot) {
-        if (this.children_count_r) {
-          this._drawHub(this.hubPos_r, this.children_count_r);
-          this.set_mind_pos_map("hubPos_r", this);
+        if (this.childrenCountRight) {
+          this._drawHub(this.hubPosRight, this.childrenCountRight);
+          this.set_mind_pos_map("hubPosRight", this);
         }
-        if (this.children_count_l) {
-          this._drawHub(this.hubPos_l, this.children_count_l);
-          this.set_mind_pos_map("hubPos_l", this);
+        if (this.childrenCountLeft) {
+          this._drawHub(this.hubPosLeft, this.childrenCountLeft);
+          this.set_mind_pos_map("hubPosLeft", this);
         }
       } else {
-        if (this.children_count) {
-          this._drawHub(this.hubPos, this.children_count);
+        if (this.childrenCount) {
+          this._drawHub(this.hubPos, this.childrenCount);
           this.set_mind_pos_map("hubPos", this);
         }
       }
     },
-    _drawHub(pos, child_len) {
+    _drawHub(pos, childLength) {
       var ctx = this.qjm.ctx;
       ctx.save();
       ctx.fillStyle = "#ffffff";
       ctx.shadowBlur = 6;
       ctx.shadowColor = "rgba(31,35,41,0.08)";
       ctx.beginPath();
-      ctx.arc(pos[0], pos[1], this.hub_radius, 0, Math.PI * 2);
+      ctx.arc(pos[0], pos[1], this.hubRadius, 0, Math.PI * 2);
       ctx.closePath();
       ctx.fill();
       ctx.restore();
 
-      if (child_len > 0) {
+      if (childLength > 0) {
         ctx.save();
         ctx.fillStyle = "#000000";
         ctx.font = "30px";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.fillText(child_len, pos[0], pos[1]);
+        ctx.fillText(childLength, pos[0], pos[1]);
         ctx.restore();
       }
     },
     getHubPos() {
       if (this.isRoot) {
-        this.hubPos_l = [this.x + -1 * (this.width / 2 + 40), this.y];
-        this.hubPos_r = [this.x + 1 * (this.width / 2 + 40), this.y];
+        this.hubPosLeft = [this.x + -1 * (this.width / 2 + 40), this.y];
+        this.hubPosRight = [this.x + 1 * (this.width / 2 + 40), this.y];
       } else {
         this.hubPos = [this.x + this.direction * (this.width / 2 + 40), this.y];
       }
@@ -546,56 +546,55 @@
   };
 
   // 树图构造函数
-  qjm.Mind = function (qjm, opts, node_json) {
+  qjm.Mind = function (qjm, opts, nodeJson) {
     this.qjm = qjm;
     this.opts = opts;
-    this.canvas_center = null;
-    this.node_json = [].concat(node_json);
+    this.canvasCenter = null;
+    this.nodeJson = [].concat(nodeJson);
     this.nodes = [];
-    this.nodes_flat_array = [];
-    this.expanded_node_group = [];
-    this.total_height = 0;
-    this.total_max_node_length = 0;
+    this.nodesFlatArray = [];
+    this.totalHeight = 0;
+    this.totalMaxNodeLength = 0;
 
     this.get_nodes();
     this.init();
   };
   qjm.Mind.prototype = {
     init() {
-      this.canvas_center = this.qjm.getCanvasCenterPos();
+      this.canvasCenter = this.qjm.getCanvasCenterPos();
       this.get_expanded_node_group();
       this.get_group_max_length();
       this.layout(); //给每个节点赋值xy坐标值
       this.show_view();
     },
     get_nodes() {
-      for (var i = 0; i < this.node_json.length; i++) {
-        this.nodes.push(this._parse(this.node_json[i]));
+      for (var i = 0; i < this.nodeJson.length; i++) {
+        this.nodes.push(this._parse(this.nodeJson[i]));
       }
     },
-    _parse(node_json, parent_node, parent_node_json) {
-      node_json.x = null;
-      node_json.y = null;
+    _parse(nodeJson, parentNode, parentNodeJson) {
+      nodeJson.x = null;
+      nodeJson.y = null;
 
-      let node = this.add_node(node_json);
-      node.parent = parent_node;
-      if (node_json.children) {
+      let node = this.add_node(nodeJson);
+      node.parent = parentNode;
+      if (nodeJson.children) {
         node.children = [];
-        for (let index = 0; index < node_json.children.length; index++) {
-          let child_node_json = node_json.children[index];
-          child_node_json.child_index = index;
+        for (let index = 0; index < nodeJson.children.length; index++) {
+          let childNodeJson = nodeJson.children[index];
+          childNodeJson.childIndex = index;
 
-          let child_node = this._parse(child_node_json, node, node_json);
+          let child_node = this._parse(childNodeJson, node, nodeJson);
           node.children.push(child_node);
         }
       }
       return node;
     },
 
-    add_node(node_json) {
-      let node = new qjm.KeyNode(this.qjm, node_json);
+    add_node(nodeJson) {
+      let node = new qjm.KeyNode(this.qjm, nodeJson);
       node.id = qjm.util.newid();
-      this.nodes_flat_array.push(node);
+      this.nodesFlatArray.push(node);
       return node;
     },
 
@@ -608,8 +607,8 @@
     },
     _draw_nodes(node) {
       if (node.parent && node.parent.isRoot) {
-        if (node.direction === -1 && !node.parent.expanded_l) return;
-        if (node.direction === 1 && !node.parent.expanded_r) return;
+        if (node.direction === -1 && !node.parent.expandedLeft) return;
+        if (node.direction === 1 && !node.parent.expandedRight) return;
       }
       if (node.parent && !node.parent.isRoot) {
         if (!node.parent.expanded) return;
@@ -624,8 +623,8 @@
     },
     _draw_lines(node) {
       if (node.parent && node.parent.isRoot) {
-        if (node.direction === -1 && !node.parent.expanded_l) return;
-        if (node.direction === 1 && !node.parent.expanded_r) return;
+        if (node.direction === -1 && !node.parent.expandedLeft) return;
+        if (node.direction === 1 && !node.parent.expandedRight) return;
       }
       if (node.parent && !node.parent.isRoot) {
         if (!node.parent.expanded) return;
@@ -634,8 +633,8 @@
         node.drawLine_to_parent();
       }
       if (
-        (node.isRoot && (node.children_count_l || node.children_count_r)) ||
-        (!node.isRoot && node.children_count)
+        (node.isRoot && (node.childrenCountLeft || node.childrenCountRight)) ||
+        (!node.isRoot && node.childrenCount)
       ) {
         node.drawLine_to_child();
         for (let index = 0; index < node.children.length; index++) {
@@ -650,37 +649,37 @@
       var t = this;
       var group = [];
       for (var i = 0; i < t.nodes.length; i++) {
-        var group_info = {
+        var groupInfo = {
           group_index: i,
-          expanded_rank_max_l: 0,
-          expanded_rank_max_r: 0,
-          expanded_nodes_l: [],
-          expanded_nodes_r: [],
+          expandedRankMaxLeft: 0,
+          expandedRankMaxRight: 0,
+          expandedNodesLeft: [],
+          expandedNodesRight: [],
         };
-        group_info.expanded_nodes_l[0] = t.nodes[i];
-        group_info.expanded_nodes_r[0] = t.nodes[i];
+        groupInfo.expandedNodesLeft[0] = t.nodes[i];
+        groupInfo.expandedNodesRight[0] = t.nodes[i];
 
         (function _rank(obj, rankid) {
-          obj.rank_index = rankid;
-          group_info.expanded_rank_max_r =
-            obj.direction === 1 && rankid > group_info.expanded_rank_max_r
+          obj.rankIndex = rankid;
+          groupInfo.expandedRankMaxRight =
+            obj.direction === 1 && rankid > groupInfo.expandedRankMaxRight
               ? rankid
-              : group_info.expanded_rank_max_r;
-          group_info.expanded_rank_max_l =
-            obj.direction === -1 && rankid > group_info.expanded_rank_max_l
+              : groupInfo.expandedRankMaxRight;
+          groupInfo.expandedRankMaxLeft =
+            obj.direction === -1 && rankid > groupInfo.expandedRankMaxLeft
               ? rankid
-              : group_info.expanded_rank_max_l;
+              : groupInfo.expandedRankMaxLeft;
 
           // 有展开的子元素，则给下一级push进去他的所有子元素数组
-          if (!group_info.expanded_nodes_l[rankid + 1])
-            group_info.expanded_nodes_l[rankid + 1] = [];
-          if (!group_info.expanded_nodes_r[rankid + 1])
-            group_info.expanded_nodes_r[rankid + 1] = [];
+          if (!groupInfo.expandedNodesLeft[rankid + 1])
+            groupInfo.expandedNodesLeft[rankid + 1] = [];
+          if (!groupInfo.expandedNodesRight[rankid + 1])
+            groupInfo.expandedNodesRight[rankid + 1] = [];
 
           if (
             obj.children &&
             obj.children.length &&
-            (obj.expanded || obj.expanded_l || obj.expanded_r)
+            (obj.expanded || obj.expandedLeft || obj.expandedRight)
           ) {
             var children_l = [],
               children_r = [];
@@ -689,9 +688,9 @@
               if (item.direction === 1) children_r.push(item);
             });
             children_l.length &&
-              group_info.expanded_nodes_l[rankid + 1].push(children_l);
+              groupInfo.expandedNodesLeft[rankid + 1].push(children_l);
             children_r.length &&
-              group_info.expanded_nodes_r[rankid + 1].push(children_r);
+              groupInfo.expandedNodesRight[rankid + 1].push(children_r);
 
             for (var j = 0; j < obj.children.length; j++) {
               _rank(obj.children[j], rankid + 1);
@@ -699,80 +698,80 @@
           } else {
             // 没有展开的子元素，则给下一级加一个空元素 用来占位
             if (obj.isRoot || (!obj.isRoot && obj.direction === -1))
-              group_info.expanded_nodes_l[rankid + 1].push({
+              groupInfo.expandedNodesLeft[rankid + 1].push({
                 isEmpty: true,
-                rank_index: rankid + 1,
+                rankIndex: rankid + 1,
               });
             if (obj.isRoot || (!obj.isRoot && obj.direction === 1))
-              group_info.expanded_nodes_r[rankid + 1].push({
+              groupInfo.expandedNodesRight[rankid + 1].push({
                 isEmpty: true,
-                rank_index: rankid + 1,
+                rankIndex: rankid + 1,
               });
           }
         })(t.nodes[i], 0);
 
-        group_info.expanded_nodes_l = group_info.expanded_nodes_l.slice(
+        groupInfo.expandedNodesLeft = groupInfo.expandedNodesLeft.slice(
           0,
-          group_info.expanded_rank_max_l + 1
+          groupInfo.expandedRankMaxLeft + 1
         );
-        group_info.expanded_nodes_r = group_info.expanded_nodes_r.slice(
+        groupInfo.expandedNodesRight = groupInfo.expandedNodesRight.slice(
           0,
-          group_info.expanded_rank_max_r + 1
+          groupInfo.expandedRankMaxRight + 1
         );
 
-        t.nodes[i].group_info = group_info;
+        t.nodes[i].groupInfo = groupInfo;
       }
     },
     // 组的最大末级节点数
     get_group_max_length() {
       var t = this;
       for (var i = 0; i < t.nodes.length; i++) {
-        var group_info = t.nodes[i].group_info;
+        var groupInfo = t.nodes[i].groupInfo;
         // 对比左右两边的末级节点的高度，将最大值赋值给节点组高度
-        var node_length_l = qjm.util.flatArray(
-          group_info.expanded_nodes_l[group_info.expanded_nodes_l.length - 1]
+        var nodeLengthLeft = qjm.util.flatArray(
+          groupInfo.expandedNodesLeft[groupInfo.expandedNodesLeft.length - 1]
         ).length;
-        var node_length_r = qjm.util.flatArray(
-          group_info.expanded_nodes_r[group_info.expanded_nodes_r.length - 1]
+        var nodeLengthRight = qjm.util.flatArray(
+          groupInfo.expandedNodesRight[groupInfo.expandedNodesRight.length - 1]
         ).length;
 
-        group_info.max_node_length = Math.max(node_length_l, node_length_r);
-        group_info.total_height =
-          group_info.max_node_length * t.opts.keyNode_h + (length - 1) * 20;
-        if (node_length_l >= node_length_r) {
-          group_info.max_side_direction = -1;
+        groupInfo.maxNodeLength = Math.max(nodeLengthLeft, nodeLengthRight);
+        groupInfo.totalHeight =
+          groupInfo.maxNodeLength * t.opts.keyNodeHeight + (length - 1) * 20;
+        if (nodeLengthLeft >= nodeLengthRight) {
+          groupInfo.maxSideDirection = -1;
         } else {
-          group_info.max_side_direction = 1;
+          groupInfo.maxSideDirection = 1;
         }
       }
     },
 
     _get_total_height() {
       var t = this;
-      t.total_height = 0;
+      t.totalHeight = 0;
       for (var i = 0; i < t.nodes.length; i++) {
-        t.total_max_node_length += t.nodes[i].group_info.max_node_length;
-        t.total_height += t.nodes[i].group_info.total_height;
+        t.totalMaxNodeLength += t.nodes[i].groupInfo.maxNodeLength;
+        t.totalHeight += t.nodes[i].groupInfo.totalHeight;
       }
-      var top = t.canvas_center.y - t.total_height / 2;
-      var bottom = t.canvas_center.y + t.total_height / 2;
+      var top = t.canvasCenter.y - t.totalHeight / 2;
+      var bottom = t.canvasCenter.y + t.totalHeight / 2;
       for (var i = 0; i < t.nodes.length; i++) {
-        var group_info = t.nodes[i].group_info;
+        var groupInfo = t.nodes[i].groupInfo;
 
-        if (i > 0 && t.nodes[i - 1].group_info.top_y) {
-          group_info.top_y =
-            t.nodes[i - 1].group_info.top_y +
-            t.nodes[i - 1].group_info.total_height +
+        if (i > 0 && t.nodes[i - 1].groupInfo.top_y) {
+          groupInfo.top_y =
+            t.nodes[i - 1].groupInfo.top_y +
+            t.nodes[i - 1].groupInfo.totalHeight +
             100;
-          group_info.center_pos = {
-            x: this.canvas_center.x,
-            y: group_info.top_y + group_info.total_height / 2,
+          groupInfo.centerPos = {
+            x: this.canvasCenter.x,
+            y: groupInfo.top_y + groupInfo.totalHeight / 2,
           };
         } else {
-          group_info.top_y = top;
-          group_info.center_pos = {
-            x: this.canvas_center.x,
-            y: group_info.top_y + group_info.total_height / 2,
+          groupInfo.top_y = top;
+          groupInfo.centerPos = {
+            x: this.canvasCenter.x,
+            y: groupInfo.top_y + groupInfo.totalHeight / 2,
           };
         }
       }
@@ -782,65 +781,65 @@
       t._get_total_height();
       for (var i = 0; i < t.nodes.length; i++) {
         var group = t.nodes[i];
-        var dir = group.group_info.max_side_direction;
-        var expanded_nodes_l = group.group_info.expanded_nodes_l;
-        var expanded_nodes_r = group.group_info.expanded_nodes_r;
+        var dir = group.groupInfo.maxSideDirection;
+        var expandedNodesLeft = group.groupInfo.expandedNodesLeft;
+        var expandedNodesRight = group.groupInfo.expandedNodesRight;
         // 比较左右两边的高度，值大则反向布局，值小的正向布局
         // 左边
         var rank_max_nodes_length_l = qjm.util.flatArray(
-          expanded_nodes_l[expanded_nodes_l.length - 1]
+          expandedNodesLeft[expandedNodesLeft.length - 1]
         );
         // 右边
         var rank_max_nodes_length_r = qjm.util.flatArray(
-          expanded_nodes_r[expanded_nodes_r.length - 1]
+          expandedNodesRight[expandedNodesRight.length - 1]
         );
         if (rank_max_nodes_length_l > rank_max_nodes_length_r) {
-          t._layout_backward(expanded_nodes_l, -1, group.group_info.center_pos);
-          t._layout_forward(expanded_nodes_r, 1, group.group_info.center_pos);
+          t._layout_backward(expandedNodesLeft, -1, group.groupInfo.centerPos);
+          t._layout_forward(expandedNodesRight, 1, group.groupInfo.centerPos);
         } else {
-          t._layout_backward(expanded_nodes_r, 1, group.group_info.center_pos);
-          t._layout_forward(expanded_nodes_l, -1, group.group_info.center_pos);
+          t._layout_backward(expandedNodesRight, 1, group.groupInfo.centerPos);
+          t._layout_forward(expandedNodesLeft, -1, group.groupInfo.centerPos);
         }
       }
     },
 
     // 反向推定位：从末级节点向根节点推定位
-    _layout_backward(expanded_nodes, dir, group_center_pos) {
+    _layout_backward(expandedNodes, dir, groupCenterPos) {
       // 末级
-      var expanded_rank_max = expanded_nodes.length - 1;
-      var rank_max_nodes = qjm.util.flatArray(
-        expanded_nodes[expanded_rank_max]
+      var expandedRankMax = expandedNodes.length - 1;
+      var rankMaxNodes = qjm.util.flatArray(
+        expandedNodes[expandedRankMax]
       );
-      let rank_max_nodes_total_height =
-        rank_max_nodes.length * this.opts.keyNode_h +
-        (rank_max_nodes.length - 1) * 20;
+      let rankMaxNodesTotalHeight =
+        rankMaxNodes.length * this.opts.keyNodeHeight +
+        (rankMaxNodes.length - 1) * 20;
 
       let top_h =
-        group_center_pos.y -
-        rank_max_nodes_total_height / 2 +
-        this.opts.keyNode_h / 2;
+        groupCenterPos.y -
+        rankMaxNodesTotalHeight / 2 +
+        this.opts.keyNodeHeight / 2;
 
-      for (var i = 0; i < rank_max_nodes.length; i++) {
-        rank_max_nodes[i].x =
-          group_center_pos.x +
-          dir * expanded_rank_max * (this.opts.keyNode_w + 110);
-        rank_max_nodes[i].y = top_h + i * (this.opts.keyNode_h + 20);
+      for (var i = 0; i < rankMaxNodes.length; i++) {
+        rankMaxNodes[i].x =
+          groupCenterPos.x +
+          dir * expandedRankMax * (this.opts.keyNodeWidth + 110);
+        rankMaxNodes[i].y = top_h + i * (this.opts.keyNodeHeight + 20);
       }
 
       // 前面级的节点
-      for (var i = expanded_nodes.length - 2; i >= 0; i--) {
-        var curr_rank_nodes = expanded_nodes[i]; //i为级数
-        var next_rank_nodes = expanded_nodes[i + 1]; //获取到后面那级的数据
-        var curr_rank_nodes_flat = qjm.util.flatArray(curr_rank_nodes);
-        for (var j = 0; j < curr_rank_nodes_flat.length; j++) {
-          var node = curr_rank_nodes_flat[j];
-          node.x = group_center_pos.x + dir * i * (this.opts.keyNode_w + 110);
+      for (var i = expandedNodes.length - 2; i >= 0; i--) {
+        var currRankNodes = expandedNodes[i]; //i为级数
+        var nextRankNodes = expandedNodes[i + 1]; //获取到后面那级的数据
+        var currRankNodesFlat = qjm.util.flatArray(currRankNodes);
+        for (var j = 0; j < currRankNodesFlat.length; j++) {
+          var node = currRankNodesFlat[j];
+          node.x = groupCenterPos.x + dir * i * (this.opts.keyNodeWidth + 110);
 
           if (
-            next_rank_nodes[j] instanceof Object &&
-            next_rank_nodes[j].isEmpty
+            nextRankNodes[j] instanceof Object &&
+            nextRankNodes[j].isEmpty
           ) {
-            node.y = next_rank_nodes[j].y;
+            node.y = nextRankNodes[j].y;
           } else {
             var children = node.children.filter(
               (item) => item.direction === dir
@@ -853,16 +852,16 @@
       }
     },
     // 正向推定位：从根级节点向末级推定位
-    _layout_forward(expanded_nodes, dir, group_center_pos) {
-      var y0 = expanded_nodes[0].y;
-      this._layout_backward(expanded_nodes, dir, group_center_pos);
-      var y1 = expanded_nodes[0].y;
+    _layout_forward(expandedNodes, dir, groupCenterPos) {
+      var y0 = expandedNodes[0].y;
+      this._layout_backward(expandedNodes, dir, groupCenterPos);
+      var y1 = expandedNodes[0].y;
       var diff = y1 - y0;
-      for (var i = 0; i < expanded_nodes.length; i++) {
-        var curr_rank_nodes = expanded_nodes[i]; //i为级数
-        var curr_rank_nodes_flat = qjm.util.flatArray(curr_rank_nodes);
-        for (var j = 0; j < curr_rank_nodes_flat.length; j++) {
-          var node = curr_rank_nodes_flat[j];
+      for (var i = 0; i < expandedNodes.length; i++) {
+        var currRankNodes = expandedNodes[i]; //i为级数
+        var currRankNodesFlat = qjm.util.flatArray(currRankNodes);
+        for (var j = 0; j < currRankNodesFlat.length; j++) {
+          var node = currRankNodesFlat[j];
           if (!node.isEmpty) node.y -= diff;
         }
       }

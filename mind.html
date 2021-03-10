@@ -33,10 +33,10 @@
       // 绘制节点
       var options = {
         container: "#canvas-container",
-        keyNode_w: 320,
-        keyNode_h: 100,
-        hub_radius: 10,
-        line_color: "#e3e4e5",
+        keyNodeWidth: 320,
+        keyNodeHeight: 100,
+        hubRadius: 10,
+        lineColor: "#e3e4e5",
       };
       var qjMind = new qjMind(options, {
         keyNodeClick: function (node) {
@@ -45,11 +45,11 @@
         },
         hubNodeClick:function(node){
           console.log("点击了hub节点", node);
-          //改变node_array
-          qjMind.render(node_array);
+          //改变nodeArray
+          qjMind.render(nodeArray);
         }
       });
-      qjMind.render(node_array);
+      qjMind.render(nodeArray);
     </script>
   </body>
 </html>

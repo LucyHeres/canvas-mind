@@ -205,7 +205,11 @@
               if (type == "hubPos_l") p.expanded_l = !p.expanded_l;
               if (type == "hubPos_r") p.expanded_r = !p.expanded_r;
               if (type == "hubPos") p.expanded = !p.expanded;
-              this.changeLayout();
+              if(!p.children || !p.children.length){
+                this.fn.hubNodeClick && this.fn.hubNodeClick(p);
+              }else{
+                this.changeLayout();
+              }
               return;
             }
           }
@@ -629,7 +633,10 @@
       if (node.parent) {
         node.drawLine_to_parent();
       }
-      if (node.children.length) {
+      if (
+        (node.isRoot && (node.children_count_l || node.children_count_r)) ||
+        (!node.isRoot && node.children_count)
+      ) {
         node.drawLine_to_child();
         for (let index = 0; index < node.children.length; index++) {
           let child_node = node.children[index];

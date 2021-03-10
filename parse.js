@@ -9,8 +9,7 @@ var array = [
     objectiveDesc:
       "这里是内容!这里是内容!这里是内容!这里是内容!这里是内容!这里是内容!这里是内容!这里是内容!这里是内容!这里是内容!这里是内容!",
     superCount: 1,
-    childCount: 1,
-
+    childCount: 2,
     superOkr: [
       {
         objectiveId: "1.1",
@@ -22,9 +21,9 @@ var array = [
         objectiveDesc: "这里是内容!",
         superCount: 2,
         childCount: 0,
-        superOkr: [
+        superOkr:[
           {
-            objectiveId: "2.1.1",
+            objectiveId: "1.1.1",
             employeeId: "uuid",
             employeeName: "张",
             departmentName: "策划部",
@@ -35,7 +34,7 @@ var array = [
             childCount: 0,
           },
           {
-            objectiveId: "2.1.2",
+            objectiveId: "1.1.2",
             employeeId: "uuid",
             employeeName: "张",
             departmentName: "策划部",
@@ -45,7 +44,7 @@ var array = [
             superCount: 0,
             childCount: 0,
           },
-        ],
+        ]
       },
     ],
     childOkr: [
@@ -59,30 +58,17 @@ var array = [
         objectiveDesc: "这里是内容!",
         superCount: 0,
         childCount: 2,
-        childOkr: [
-          {
-            objectiveId: "2.1.1",
-            employeeId: "uuid",
-            employeeName: "张",
-            departmentName: "策划部",
-            dangerDesc: "正常",
-            schedule: "30",
-            objectiveDesc: "这里是内容!",
-            superCount: 0,
-            childCount: 0,
-          },
-          {
-            objectiveId: "2.1.2",
-            employeeId: "uuid",
-            employeeName: "张",
-            departmentName: "策划部",
-            dangerDesc: "正常",
-            schedule: "30",
-            objectiveDesc: "这里是内容!",
-            superCount: 0,
-            childCount: 0,
-          },
-        ],
+      },
+      {
+        objectiveId: "2.2",
+        employeeId: "uuid",
+        employeeName: "张",
+        departmentName: "策划部",
+        dangerDesc: "正常",
+        schedule: "30",
+        objectiveDesc: "这里是内容!",
+        superCount: 0,
+        childCount: 2,
       },
     ],
   },
@@ -188,19 +174,19 @@ function parseJson(array, dir) {
       newObj.children_count_l = obj.superCount;
       newObj.children_count_r = obj.childCount;
       newObj.children = [];
-      newObj.children = newObj.children.concat(parseJson(obj.superOkr, -1));
-      newObj.children = newObj.children.concat(parseJson(obj.childOkr, 1));
+      if(obj.superOkr)newObj.children = newObj.children.concat(parseJson(obj.superOkr, -1));
+      if(obj.childOkr)newObj.children = newObj.children.concat(parseJson(obj.childOkr, 1));
     } else {
       newObj.expanded = false;
       newObj.direction = dir;
       newObj.children = [];
       if (dir === -1 && obj.superCount) {
         newObj.children_count = obj.superCount;
-        newObj.children = newObj.children.concat(parseJson(obj.superOkr, -1));
+        if(obj.superOkr)newObj.children = newObj.children.concat(parseJson(obj.superOkr, -1));
       }
       if (dir === 1 && obj.childCount) {
         newObj.children_count = obj.childCount;
-        newObj.children = newObj.children.concat(parseJson(obj.childOkr, 1));
+        if(obj.childOkr)newObj.children = newObj.children.concat(parseJson(obj.childOkr, 1));
       }
     }
     newArr.push(newObj);

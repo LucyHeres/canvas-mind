@@ -178,6 +178,7 @@
         var ey = newxy.y;
 
         var all_nodes = this.allNodePosMap;
+        console.log(all_nodes)
         // 点击内容节点
         for (var i = 0; i < all_nodes["keynode"].length; i++) {
           let p = all_nodes["keynode"][i];
@@ -201,13 +202,13 @@
               Math.pow(ex - p[type][0], 2) + Math.pow(ey - p[type][1], 2) <
               100
             ) {
-              // console.log(`点击了${p.content}的hub节点${type}`);
+              console.log(`点击了${p.content}的hub节点${type}`);
               if (type == "hubPosLeft") p.expandedLeft = !p.expandedLeft;
               if (type == "hubPosRight") p.expandedRight = !p.expandedRight;
               if (type == "hubPos") p.expanded = !p.expanded;
-              if(!p.children || !p.children.length){
+              if (!p.children || !p.children.length) {
                 this.fn.hubNodeClick && this.fn.hubNodeClick(p);
-              }else{
+              } else {
                 this.changeLayout();
               }
               return;
@@ -290,7 +291,6 @@
     this.hubRadius = qjm.opts.hubRadius || 10;
     this.lineColor = qjm.opts.lineColor || "#e3e4e5";
 
-    this.childIndex = nodeJson.childIndex;
     this.rankIndex = nodeJson.rankIndex;
     this.direction = nodeJson.direction;
     this.isRoot = nodeJson.isRoot;
@@ -568,27 +568,20 @@
       this.show_view();
     },
     get_nodes() {
-      for (var i = 0; i < this.nodeJson.length; i++) {
-        this.nodes.push(this._parse(this.nodeJson[i]));
-      }
+      this.nodes = this._parse(this.nodeJson,null,null)
     },
-    _parse(nodeJson, parentNode, parentNodeJson) {
-      nodeJson.x = null;
-      nodeJson.y = null;
-
-      let node = this.add_node(nodeJson);
-      node.parent = parentNode;
-      if (nodeJson.children) {
-        node.children = [];
-        for (let index = 0; index < nodeJson.children.length; index++) {
-          let childNodeJson = nodeJson.children[index];
-          childNodeJson.childIndex = index;
-
-          let child_node = this._parse(childNodeJson, node, nodeJson);
-          node.children.push(child_node);
+    _parse(nodeArray, parentNode, parentNodeJson) {
+      let newArr = [];
+      for (var i = 0; i < nodeArray.length; i++) {
+        let nodeJson = nodeArray[i];
+        let node = this.add_node(nodeJson);
+        node.parent = parentNode;
+        if (nodeJson.children) {
+          node.children = this._parse(nodeJson.children, node, nodeJson);
         }
+        newArr.push(node);
       }
-      return node;
+      return newArr;
     },
 
     add_node(nodeJson) {
@@ -807,9 +800,7 @@
     _layout_backward(expandedNodes, dir, groupCenterPos) {
       // 末级
       var expandedRankMax = expandedNodes.length - 1;
-      var rankMaxNodes = qjm.util.flatArray(
-        expandedNodes[expandedRankMax]
-      );
+      var rankMaxNodes = qjm.util.flatArray(expandedNodes[expandedRankMax]);
       let rankMaxNodesTotalHeight =
         rankMaxNodes.length * this.opts.keyNodeHeight +
         (rankMaxNodes.length - 1) * 20;
@@ -835,10 +826,7 @@
           var node = currRankNodesFlat[j];
           node.x = groupCenterPos.x + dir * i * (this.opts.keyNodeWidth + 110);
 
-          if (
-            nextRankNodes[j] instanceof Object &&
-            nextRankNodes[j].isEmpty
-          ) {
+          if (nextRankNodes[j] instanceof Object && nextRankNodes[j].isEmpty) {
             node.y = nextRankNodes[j].y;
           } else {
             var children = node.children.filter(

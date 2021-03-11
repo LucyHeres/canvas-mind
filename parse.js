@@ -6,8 +6,7 @@ var array = [
     departmentName: "策划部的技术部",
     dangerDesc: "有风险",
     schedule: "30",
-    objectiveDesc:
-      "这里是内容!这里是内容!这里是内容!这里是内容!这里是内容!这里是内容!这里是内容!这里是内容!这里是内容!这里是内容!这里是内容!",
+    objectiveDesc: "1",
     superCount: 1,
     childCount: 2,
     superOkr: [
@@ -18,10 +17,10 @@ var array = [
         departmentName: "策划部",
         dangerDesc: "正常",
         schedule: "30",
-        objectiveDesc: "这里是内容!",
+        objectiveDesc: "这里是内容!1.1",
         superCount: 2,
         childCount: 0,
-        superOkr:[
+        superOkr: [
           {
             objectiveId: "1.1.1",
             employeeId: "uuid",
@@ -29,7 +28,7 @@ var array = [
             departmentName: "策划部",
             dangerDesc: "正常",
             schedule: "30",
-            objectiveDesc: "这里是内容!",
+            objectiveDesc: "这里是内容!1.1.1",
             superCount: 0,
             childCount: 0,
           },
@@ -44,7 +43,7 @@ var array = [
             superCount: 0,
             childCount: 0,
           },
-        ]
+        ],
       },
     ],
     childOkr: [
@@ -55,9 +54,33 @@ var array = [
         departmentName: "策划部",
         dangerDesc: "正常",
         schedule: "30",
-        objectiveDesc: "这里是内容!",
+        objectiveDesc: "这里是内容!1.2",
         superCount: 0,
         childCount: 2,
+        childOkr: [
+          {
+            objectiveId: "1.2.1",
+            employeeId: "uuid",
+            employeeName: "张",
+            departmentName: "策划部",
+            dangerDesc: "正常",
+            schedule: "30",
+            objectiveDesc: "这里是内容!1.1.1",
+            superCount: 0,
+            childCount: 0,
+          },
+          {
+            objectiveId: "1.2.2",
+            employeeId: "uuid",
+            employeeName: "张",
+            departmentName: "策划部",
+            dangerDesc: "正常",
+            schedule: "30",
+            objectiveDesc: "这里是内容!",
+            superCount: 0,
+            childCount: 0,
+          },
+        ],
       },
       {
         objectiveId: "1.3",
@@ -66,9 +89,44 @@ var array = [
         departmentName: "策划部",
         dangerDesc: "正常",
         schedule: "30",
-        objectiveDesc: "这里是内容!",
+        objectiveDesc: "这里是内容!1.3",
         superCount: 0,
         childCount: 2,
+        childOkr: [
+          {
+            objectiveId: "1.3.1",
+            employeeId: "uuid",
+            employeeName: "张",
+            departmentName: "策划部",
+            dangerDesc: "正常",
+            schedule: "30",
+            objectiveDesc: "这里是内容!1.1.1",
+            superCount: 0,
+            childCount: 0,
+          },
+          {
+            objectiveId: "1.3.2",
+            employeeId: "uuid",
+            employeeName: "张",
+            departmentName: "策划部",
+            dangerDesc: "正常",
+            schedule: "30",
+            objectiveDesc: "这里是内容!",
+            superCount: 0,
+            childCount: 0,
+          },
+          {
+            objectiveId: "1.3.3",
+            employeeId: "uuid",
+            employeeName: "张",
+            departmentName: "策划部",
+            dangerDesc: "正常",
+            schedule: "30",
+            objectiveDesc: "这里是内容!",
+            superCount: 0,
+            childCount: 0,
+          },
+        ],
       },
     ],
   },
@@ -94,7 +152,7 @@ var array = [
         objectiveDesc: "这里是内容!",
         superCount: 2,
         childCount: 0,
-        superOkr:[
+        superOkr: [
           {
             objectiveId: "2.1.1",
             employeeId: "uuid",
@@ -117,7 +175,7 @@ var array = [
             superCount: 0,
             childCount: 0,
           },
-        ]
+        ],
       },
     ],
     childOkr: [
@@ -131,6 +189,30 @@ var array = [
         objectiveDesc: "这里是内容!",
         superCount: 0,
         childCount: 2,
+        childOkr: [
+          {
+            objectiveId: "2.2.1",
+            employeeId: "uuid",
+            employeeName: "张",
+            departmentName: "策划部",
+            dangerDesc: "正常",
+            schedule: "30",
+            objectiveDesc: "这里是内容!",
+            superCount: 0,
+            childCount: 0,
+          },
+          {
+            objectiveId: "2.2.2",
+            employeeId: "uuid",
+            employeeName: "张",
+            departmentName: "策划部",
+            dangerDesc: "正常",
+            schedule: "30",
+            objectiveDesc: "这里是内容!",
+            superCount: 0,
+            childCount: 0,
+          },
+        ],
       },
       {
         objectiveId: "2.3",
@@ -142,6 +224,140 @@ var array = [
         objectiveDesc: "这里是内容!",
         superCount: 0,
         childCount: 2,
+        childOkr: [
+          {
+            objectiveId: "2.3.1",
+            employeeId: "uuid",
+            employeeName: "张",
+            departmentName: "策划部",
+            dangerDesc: "正常",
+            schedule: "30",
+            objectiveDesc: "这里是内容!",
+            superCount: 0,
+            childCount: 0,
+          },
+          {
+            objectiveId: "2.3.2",
+            employeeId: "uuid",
+            employeeName: "张",
+            departmentName: "策划部",
+            dangerDesc: "正常",
+            schedule: "30",
+            objectiveDesc: "这里是内容!",
+            superCount: 0,
+            childCount: 0,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    objectiveId: "3",
+    employeeId: "uuid",
+    employeeName: "迪丽热aa",
+    departmentName: "策划部的技术部",
+    dangerDesc: "有风险",
+    schedule: "30",
+    objectiveDesc:
+      "这里是内容!这里是内容!这里是内容!这里是内容!这里是内容!这里是内容!这里是内容!这里是内容!这里是内容!这里是内容!这里是内容!",
+    superCount: 1,
+    childCount: 2,
+    superOkr: [
+      {
+        objectiveId: "3.1",
+        employeeId: "uuid",
+        employeeName: "张",
+        departmentName: "策划部",
+        dangerDesc: "正常",
+        schedule: "30",
+        objectiveDesc: "这里是内容!",
+        superCount: 2,
+        childCount: 0,
+        superOkr: [
+          {
+            objectiveId: "3.1.1",
+            employeeId: "uuid",
+            employeeName: "张",
+            departmentName: "策划部",
+            dangerDesc: "正常",
+            schedule: "30",
+            objectiveDesc: "这里是内容!",
+            superCount: 0,
+            childCount: 0,
+          },
+          {
+            objectiveId: "3.1.2",
+            employeeId: "uuid",
+            employeeName: "张",
+            departmentName: "策划部",
+            dangerDesc: "正常",
+            schedule: "30",
+            objectiveDesc: "这里是内容!",
+            superCount: 0,
+            childCount: 0,
+          },
+        ],
+      },
+    ],
+    childOkr: [
+      {
+        objectiveId: "3.2",
+        employeeId: "uuid",
+        employeeName: "张",
+        departmentName: "策划部",
+        dangerDesc: "正常",
+        schedule: "30",
+        objectiveDesc: "这里是内容!3.2",
+        superCount: 0,
+        childCount: 2,
+        childOkr: [
+          {
+            objectiveId: "3.2.1",
+            employeeId: "uuid",
+            employeeName: "张",
+            departmentName: "策划部",
+            dangerDesc: "正常",
+            schedule: "30",
+            objectiveDesc: "这里是内容!",
+            superCount: 0,
+            childCount: 0,
+          },
+          {
+            objectiveId: "3.2.2",
+            employeeId: "uuid",
+            employeeName: "张",
+            departmentName: "策划部",
+            dangerDesc: "正常",
+            schedule: "30",
+            objectiveDesc: "这里是内容!",
+            superCount: 0,
+            childCount: 0,
+          },
+        ],
+      },
+      {
+        objectiveId: "3.3",
+        employeeId: "uuid",
+        employeeName: "张",
+        departmentName: "策划部",
+        dangerDesc: "正常",
+        schedule: "30",
+        objectiveDesc: "这里是内容!3.3",
+        superCount: 0,
+        childCount: 1,
+        childOkr: [
+          {
+            objectiveId: "3.3.1",
+            employeeId: "uuid",
+            employeeName: "张",
+            departmentName: "策划部",
+            dangerDesc: "正常",
+            schedule: "30",
+            objectiveDesc: "这里是内容!",
+            superCount: 0,
+            childCount: 0,
+          },
+        ],
       },
     ],
   },
@@ -152,7 +368,7 @@ function getScheduleColor(dangerDesc) {
     {
       正常: "#16A0FF",
       有风险: "#FFAE11",
-      已延期: "#F73838"
+      已延期: "#F73838",
     }[dangerDesc] || "#333333"
   );
 }
@@ -244,15 +460,15 @@ function getShapeObj(obj) {
       left: 0,
       top: 0,
       width: 3,
-      height: 100
+      height: 100,
     },
     {
       type: "circle",
       background: "rgba(27,196,137,0.10)",
       left: 30,
       top: 30,
-      r: 15
-    }
+      r: 15,
+    },
   ];
 }
 /**
@@ -269,7 +485,7 @@ function getTextObj(obj) {
       height: 14,
       fontsize: 12,
       lineHeight: 12,
-      color: "#1BC489"
+      color: "#1BC489",
     },
     {
       value: obj.employeeName,
@@ -279,7 +495,7 @@ function getTextObj(obj) {
       height: 16,
       fontsize: 16,
       lineHeight: 16,
-      color: "#666666"
+      color: "#666666",
     },
     {
       value: obj.departmentName,
@@ -289,7 +505,7 @@ function getTextObj(obj) {
       height: 16,
       fontsize: 16,
       lineHeight: 16,
-      color: "#666666"
+      color: "#666666",
     },
     {
       value: obj.dangerDesc + obj.schedule + " %",
@@ -300,7 +516,7 @@ function getTextObj(obj) {
       fontsize: 14,
       lineHeight: 14,
       textAlign: "right",
-      color: getScheduleColor(obj.dangerDesc)
+      color: getScheduleColor(obj.dangerDesc),
     },
     {
       value: obj.objectiveDesc,
@@ -310,8 +526,8 @@ function getTextObj(obj) {
       height: 40,
       fontsize: 14,
       lineHeight: 20,
-      color: "#333333"
-    }
+      color: "#333333",
+    },
   ];
 }
 function getMindData(data) {

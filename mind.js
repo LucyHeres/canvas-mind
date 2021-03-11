@@ -2,6 +2,9 @@
   const isValueNull = function (val) {
     return val === "" || val === null || val === undefined;
   };
+  const GROUP_DISTANCE = 30;
+  const NODE_DISTANCE = 20;
+  const RANK_DISTANCE = 110;
 
   var qjm = function (opts, fn) {
     this.opts = opts;
@@ -98,7 +101,9 @@
             event.preventDefault();
           }
         },
-        { passive: false }
+        {
+          passive: false,
+        }
       );
       //firefox
       window.addEventListener(
@@ -108,7 +113,9 @@
             event.preventDefault();
           }
         },
-        { passive: false }
+        {
+          passive: false,
+        }
       );
       // canvas缩放
       this.canvas.addEventListener("wheel", (e) => {
@@ -118,7 +125,7 @@
         if (e.ctrlKey) {
           if (e.deltaY > 0) zoom = 0.95;
           if (e.deltaY < 0) zoom = 1.05;
-          if (this.scale * zoom > 1.1 || this.scale * zoom < 0.5) return;
+          if (this.scale * zoom > 1.1 || this.scale * zoom < 0.3) return;
           this.scale *= zoom;
 
           this.clearCanvas();
@@ -148,6 +155,7 @@
         y = e.clientY;
         return false;
       }
+
       function _mouseup(e) {
         //开关关闭
         canvas.style.cursor = "default";
@@ -188,7 +196,7 @@
             p.y - p.height / 2 <= ey &&
             ey <= p.y + p.height / 2
           ) {
-            // console.log("点击了keynode:" + p.content, p.x, p.y);
+            // console.log("点击了keynode:" , p.objectiveId,this.mind.nodes, p.x, p.y);
             this.fn.keyNodeClick && this.fn.keyNodeClick(p);
             return;
           }
@@ -199,10 +207,9 @@
           for (var i = 0; i < all_nodes[type].length; i++) {
             let p = all_nodes[type][i];
             if (
-              Math.pow(ex - p[type][0], 2) + Math.pow(ey - p[type][1], 2) <
-              100
+              Math.pow(ex - p[type][0], 2) + Math.pow(ey - p[type][1], 2) < 100
             ) {
-              // console.log(`点击了${p.content}的hub节点${type}`);
+              // console.log(`点击了${p.objectiveId}的hub节点${type}`);
               if (type == "hubPosLeft") {
                 this.fn.hubNodeClick && this.fn.hubNodeClick(p, -1);
               }
@@ -222,7 +229,10 @@
     _getXY(matrix, mouseX, mouseY) {
       var newX = (mouseX * this.ratio - matrix[4]) / matrix[0];
       var newY = (mouseY * this.ratio - matrix[5]) / matrix[3];
-      return { x: newX, y: newY };
+      return {
+        x: newX,
+        y: newY,
+      };
     },
   };
 
@@ -593,6 +603,7 @@
     },
 
     show_view() {
+      this.qjm.allNodePosMap={};
       for (var i = 0; i < this.nodes.length; i++) {
         this._draw_nodes(this.nodes[i]);
         this._draw_lines(this.nodes[i]);
@@ -731,7 +742,8 @@
 
         groupInfo.maxNodeLength = Math.max(nodeLengthLeft, nodeLengthRight);
         groupInfo.totalHeight =
-          groupInfo.maxNodeLength * t.opts.keyNodeHeight + (length - 1) * 20;
+          groupInfo.maxNodeLength * t.opts.keyNodeHeight +
+          (groupInfo.maxNodeLength - 1) * NODE_DISTANCE;
         if (nodeLengthLeft >= nodeLengthRight) {
           groupInfo.maxSideDirection = -1;
         } else {
@@ -745,10 +757,10 @@
       t.totalHeight = 0;
       for (var i = 0; i < t.nodes.length; i++) {
         t.totalMaxNodeLength += t.nodes[i].groupInfo.maxNodeLength;
-        t.totalHeight += t.nodes[i].groupInfo.totalHeight;
+        t.totalHeight += t.nodes[i].groupInfo.totalHeight + GROUP_DISTANCE;
       }
+      t.totalHeight -= GROUP_DISTANCE;
       var top = t.canvasCenter.y - t.totalHeight / 2;
-      var bottom = t.canvasCenter.y + t.totalHeight / 2;
       for (var i = 0; i < t.nodes.length; i++) {
         var groupInfo = t.nodes[i].groupInfo;
 
@@ -756,15 +768,15 @@
           groupInfo.top_y =
             t.nodes[i - 1].groupInfo.top_y +
             t.nodes[i - 1].groupInfo.totalHeight +
-            100;
+            GROUP_DISTANCE;
           groupInfo.centerPos = {
-            x: this.canvasCenter.x,
+            x: t.canvasCenter.x,
             y: groupInfo.top_y + groupInfo.totalHeight / 2,
           };
         } else {
           groupInfo.top_y = top;
           groupInfo.centerPos = {
-            x: this.canvasCenter.x,
+            x: t.canvasCenter.x,
             y: groupInfo.top_y + groupInfo.totalHeight / 2,
           };
         }
@@ -804,7 +816,7 @@
       var rankMaxNodes = qjm.util.flatArray(expandedNodes[expandedRankMax]);
       let rankMaxNodesTotalHeight =
         rankMaxNodes.length * this.opts.keyNodeHeight +
-        (rankMaxNodes.length - 1) * 20;
+        (rankMaxNodes.length - 1) * NODE_DISTANCE;
 
       let top_h =
         groupCenterPos.y -
@@ -814,8 +826,9 @@
       for (var i = 0; i < rankMaxNodes.length; i++) {
         rankMaxNodes[i].x =
           groupCenterPos.x +
-          dir * expandedRankMax * (this.opts.keyNodeWidth + 110);
-        rankMaxNodes[i].y = top_h + i * (this.opts.keyNodeHeight + 20);
+          dir * expandedRankMax * (this.opts.keyNodeWidth + RANK_DISTANCE);
+        rankMaxNodes[i].y =
+          top_h + i * (this.opts.keyNodeHeight + NODE_DISTANCE);
       }
 
       // 前面级的节点
@@ -825,7 +838,9 @@
         var currRankNodesFlat = qjm.util.flatArray(currRankNodes);
         for (var j = 0; j < currRankNodesFlat.length; j++) {
           var node = currRankNodesFlat[j];
-          node.x = groupCenterPos.x + dir * i * (this.opts.keyNodeWidth + 110);
+          node.x =
+            groupCenterPos.x +
+            dir * i * (this.opts.keyNodeWidth + RANK_DISTANCE);
 
           if (nextRankNodes[j] instanceof Object && nextRankNodes[j].isEmpty) {
             node.y = nextRankNodes[j].y;

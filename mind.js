@@ -196,7 +196,7 @@
             p.y - p.height / 2 <= ey &&
             ey <= p.y + p.height / 2
           ) {
-            // console.log("点击了keynode:" , p.objectiveId,this.mind.nodes, p.x, p.y);
+            // console.log("点击了keynode:" , p.objectiveId, p.x, p.y);
             this.fn.keyNodeClick && this.fn.keyNodeClick(p);
             return;
           }
@@ -207,7 +207,8 @@
           for (var i = 0; i < all_nodes[type].length; i++) {
             let p = all_nodes[type][i];
             if (
-              Math.pow(ex - p[type][0], 2) + Math.pow(ey - p[type][1], 2) < 100
+              Math.pow(ex - p[type][0], 2) + Math.pow(ey - p[type][1], 2) <
+              100
             ) {
               // console.log(`点击了${p.objectiveId}的hub节点${type}`);
               if (type == "hubPosLeft") {
@@ -302,7 +303,6 @@
     this.hubRadius = qjm.opts.hubRadius || 10;
     this.lineColor = qjm.opts.lineColor || "#e3e4e5";
 
-    this.rankIndex = nodeJson.rankIndex;
     this.direction = nodeJson.direction;
     this.isRoot = nodeJson.isRoot;
     this.parent = null;
@@ -565,6 +565,7 @@
     this.nodes = [];
     this.nodesFlatArray = [];
     this.totalHeight = 0;
+    this.totalWidth = 0;
     this.totalMaxNodeLength = 0;
 
     this.get_nodes();
@@ -603,11 +604,10 @@
     },
 
     show_view() {
-      this.qjm.allNodePosMap={};
+      this.qjm.allNodePosMap = {};
       for (var i = 0; i < this.nodes.length; i++) {
         this._draw_nodes(this.nodes[i]);
         this._draw_lines(this.nodes[i]);
-        //TODO:每组的间隔
       }
     },
     _draw_nodes(node) {
@@ -649,84 +649,64 @@
         node.drawHub();
       }
     },
-
+    _rank(array, expandedNodesArray, rankid) {
+      for (var i = 0; i < array.length; i++) {
+        var node = array[i];
+        if (!expandedNodesArray[rankid]) expandedNodesArray[rankid] = [];
+        if (node.expanded && node.children && node.children.length) {
+          expandedNodesArray[rankid].push(node.children);
+          this._rank(node.children, expandedNodesArray, rankid + 1);
+        } else {
+          expandedNodesArray[rankid].push({
+            isEmpty: true,
+          });
+        }
+      }
+    },
     get_expanded_node_group() {
-      var t = this;
-      var group = [];
-      for (var i = 0; i < t.nodes.length; i++) {
-        var groupInfo = {
+      let t = this;
+      for (let i = 0; i < t.nodes.length; i++) {
+        let rootNode = t.nodes[i];
+        let groupInfo = {
           group_index: i,
           expandedRankMaxLeft: 0,
           expandedRankMaxRight: 0,
-          expandedNodesLeft: [],
-          expandedNodesRight: [],
+          expandedNodesLeft: [rootNode],
+          expandedNodesRight: [rootNode],
         };
-        groupInfo.expandedNodesLeft[0] = t.nodes[i];
-        groupInfo.expandedNodesRight[0] = t.nodes[i];
 
-        (function _rank(obj, rankid) {
-          obj.rankIndex = rankid;
-          groupInfo.expandedRankMaxRight =
-            obj.direction === 1 && rankid > groupInfo.expandedRankMaxRight
-              ? rankid
-              : groupInfo.expandedRankMaxRight;
-          groupInfo.expandedRankMaxLeft =
-            obj.direction === -1 && rankid > groupInfo.expandedRankMaxLeft
-              ? rankid
-              : groupInfo.expandedRankMaxLeft;
+        let left = rootNode.children.filter((item) => item.direction === -1);
+        let right = rootNode.children.filter((item) => item.direction === 1);
 
-          // 有展开的子元素，则给下一级push进去他的所有子元素数组
-          if (!groupInfo.expandedNodesLeft[rankid + 1])
-            groupInfo.expandedNodesLeft[rankid + 1] = [];
-          if (!groupInfo.expandedNodesRight[rankid + 1])
-            groupInfo.expandedNodesRight[rankid + 1] = [];
+        if (!groupInfo.expandedNodesLeft[1]) {
+          groupInfo.expandedNodesLeft[1] = [];
+        }
+        if (!groupInfo.expandedNodesRight[1]) {
+          groupInfo.expandedNodesRight[1] = [];
+        }
 
-          if (
-            obj.children &&
-            obj.children.length &&
-            (obj.expanded || obj.expandedLeft || obj.expandedRight)
-          ) {
-            var children_l = [],
-              children_r = [];
-            obj.children.forEach((item) => {
-              if (item.direction === -1) children_l.push(item);
-              if (item.direction === 1) children_r.push(item);
-            });
-            children_l.length &&
-              groupInfo.expandedNodesLeft[rankid + 1].push(children_l);
-            children_r.length &&
-              groupInfo.expandedNodesRight[rankid + 1].push(children_r);
+        if (rootNode.expandedLeft && left.length) {
+          groupInfo.expandedNodesLeft[1].push(left);
+          this._rank(left, groupInfo.expandedNodesLeft, 2);
+        } else {
+          groupInfo.expandedNodesLeft[1].push({ isEmpty: true });
+        }
+        if (rootNode.expandedRight && right.length) {
+          groupInfo.expandedNodesRight[1].push(right);
+          this._rank(right, groupInfo.expandedNodesRight, 2);
+        } else {
+          groupInfo.expandedNodesRight[1].push({ isEmpty: true });
+        }
 
-            for (var j = 0; j < obj.children.length; j++) {
-              _rank(obj.children[j], rankid + 1);
-            }
-          } else {
-            // 没有展开的子元素，则给下一级加一个空元素 用来占位
-            if (obj.isRoot || (!obj.isRoot && obj.direction === -1))
-              groupInfo.expandedNodesLeft[rankid + 1].push({
-                isEmpty: true,
-                rankIndex: rankid + 1,
-              });
-            if (obj.isRoot || (!obj.isRoot && obj.direction === 1))
-              groupInfo.expandedNodesRight[rankid + 1].push({
-                isEmpty: true,
-                rankIndex: rankid + 1,
-              });
-          }
-        })(t.nodes[i], 0);
-
-        groupInfo.expandedNodesLeft = groupInfo.expandedNodesLeft.slice(
-          0,
-          groupInfo.expandedRankMaxLeft + 1
-        );
-        groupInfo.expandedNodesRight = groupInfo.expandedNodesRight.slice(
-          0,
-          groupInfo.expandedRankMaxRight + 1
-        );
-
-        t.nodes[i].groupInfo = groupInfo;
+        groupInfo.expandedNodesLeft.pop();
+        groupInfo.expandedNodesRight.pop();
+        groupInfo.expandedRankMaxLeft = groupInfo.expandedNodesLeft.length - 1;
+        groupInfo.expandedRankMaxRight =
+          groupInfo.expandedNodesRight.length - 1;
+        rootNode.groupInfo = groupInfo;
       }
     },
+
     // 组的最大末级节点数
     get_group_max_length() {
       var t = this;
@@ -750,6 +730,17 @@
           groupInfo.maxSideDirection = 1;
         }
       }
+    },
+    _get_total_width() {
+      let maxLeft = 0;
+      let maxRight = 0;
+      for (let i = 0; i < this.nodes.length; i++) {
+        let node = this.nodes[i];
+        maxLeft = Math.max(maxLeft, node.groupInfo.expandedRankMaxLeft);
+        maxRight = Math.max(maxRight, node.groupInfo.expandedRankMaxRight);
+      }
+      let wl = maxLeft + maxRight + 1;
+      this.totalWidth = wl * this.opts.keyNodeWidth + (wl - 1) * RANK_DISTANCE;
     },
 
     _get_total_height() {
@@ -785,6 +776,8 @@
     layout() {
       var t = this;
       t._get_total_height();
+      t._get_total_width();
+      console.log('宽度：'+t.totalWidth,'高度：'+t.totalHeight)
       for (var i = 0; i < t.nodes.length; i++) {
         var group = t.nodes[i];
         var dir = group.groupInfo.maxSideDirection;

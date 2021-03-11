@@ -146,6 +146,7 @@
       var x, y;
       function _mousemove(e) {
         if (!isDown) return;
+        if (!t.valid_move_boundary()) return;
         t.clearCanvas();
         t.ctx.translate((e.clientX - x) / t.scale, (e.clientY - y) / t.scale);
         requestAnimationFrame(() => {
@@ -226,10 +227,64 @@
         }
       });
     },
+    // 移动时边界限制
+    valid_move_boundary() {
+      var t = this;
+      var flag = true;
+      var cT = t.ctx.getTransform();
+      let matrix = [cT.a, cT.b, cT.c, cT.d, cT.e, cT.f];
+      let boundary = t.mind.get_mind_boundary();
+      let left = t._reverse_getXY(matrix, boundary.l, 0).x;
+      let right = t._reverse_getXY(matrix, boundary.r, 0).x;
+      let top = t._reverse_getXY(matrix, 0, boundary.t).y;
+      let bottom = t._reverse_getXY(matrix, 0, boundary.b).y;
+      if (left > parseFloat(t.canvas.style.width) - 400) {
+        t.clearCanvas();
+        t.ctx.translate(-50, 0);
+        requestAnimationFrame(() => {
+          t.mind.show_view();
+        });
+        flag = false;
+      }
+      if (right < 400) {
+        t.clearCanvas();
+        t.ctx.translate(50, 0);
+        requestAnimationFrame(() => {
+          t.mind.show_view();
+        });
+        flag = false;
+      }
+      if (top > parseFloat(t.canvas.style.height) - 200) {
+        t.clearCanvas();
+        t.ctx.translate(0, -50);
+        requestAnimationFrame(() => {
+          t.mind.show_view();
+        });
+        flag = false;
+      }
+      if (bottom < 200) {
+        t.clearCanvas();
+        t.ctx.translate(0, 50);
+        requestAnimationFrame(() => {
+          t.mind.show_view();
+        });
+        flag = false;
+      }
+      return flag;
+    },
     // 矩阵换算
     _getXY(matrix, mouseX, mouseY) {
       var newX = (mouseX * this.ratio - matrix[4]) / matrix[0];
       var newY = (mouseY * this.ratio - matrix[5]) / matrix[3];
+      return {
+        x: newX,
+        y: newY,
+      };
+    },
+    // 矩阵逆运算
+    _reverse_getXY(matrix, x, y) {
+      var newX = (x * matrix[0] + matrix[4]) / this.ratio;
+      var newY = (y * matrix[3] + matrix[5]) / this.ratio;
       return {
         x: newX,
         y: newY,
@@ -565,8 +620,13 @@
     this.nodes = [];
     this.nodesFlatArray = [];
     this.totalHeight = 0;
-    this.totalWidth = 0;
     this.totalMaxNodeLength = 0;
+    this.boundary = {
+      l: 0,
+      r: 0,
+      t: 0,
+      b: 0,
+    };
 
     this.get_nodes();
     this.init();
@@ -649,6 +709,7 @@
         node.drawHub();
       }
     },
+
     _rank(array, expandedNodesArray, rankid) {
       for (var i = 0; i < array.length; i++) {
         var node = array[i];
@@ -706,6 +767,37 @@
         rootNode.groupInfo = groupInfo;
       }
     },
+    // 获取上下左右四个边界值
+    get_mind_boundary() {
+      let lr = this._get_horizontal_boundary();
+      var boundary = {
+        l: lr.l,
+        r: lr.r,
+        t: this.nodes[0].groupInfo.top_y,
+        b: this.nodes[0].groupInfo.top_y + this.totalHeight,
+      };
+      this.boundary = boundary;
+      return boundary;
+    },
+    // 获取左右边界
+    _get_horizontal_boundary(dir) {
+      let maxLeft = 0;
+      let maxRight = 0;
+      for (let i = 0; i < this.nodes.length; i++) {
+        let node = this.nodes[i];
+        maxLeft = Math.max(maxLeft, node.groupInfo.expandedRankMaxLeft);
+        maxRight = Math.max(maxRight, node.groupInfo.expandedRankMaxRight);
+      }
+      let leftBoundary =
+        this.canvasCenter.x -
+        maxLeft * (RANK_DISTANCE + this.opts.keyNodeWidth) -
+        this.opts.keyNodeWidth / 2;
+      let rightBoundary =
+        this.canvasCenter.x +
+        maxLeft * (RANK_DISTANCE + this.opts.keyNodeWidth) +
+        this.opts.keyNodeWidth / 2;
+      return { l: leftBoundary, r: rightBoundary };
+    },
 
     // 组的最大末级节点数
     get_group_max_length() {
@@ -730,17 +822,6 @@
           groupInfo.maxSideDirection = 1;
         }
       }
-    },
-    _get_total_width() {
-      let maxLeft = 0;
-      let maxRight = 0;
-      for (let i = 0; i < this.nodes.length; i++) {
-        let node = this.nodes[i];
-        maxLeft = Math.max(maxLeft, node.groupInfo.expandedRankMaxLeft);
-        maxRight = Math.max(maxRight, node.groupInfo.expandedRankMaxRight);
-      }
-      let wl = maxLeft + maxRight + 1;
-      this.totalWidth = wl * this.opts.keyNodeWidth + (wl - 1) * RANK_DISTANCE;
     },
 
     _get_total_height() {
@@ -776,8 +857,6 @@
     layout() {
       var t = this;
       t._get_total_height();
-      t._get_total_width();
-      console.log('宽度：'+t.totalWidth,'高度：'+t.totalHeight)
       for (var i = 0; i < t.nodes.length; i++) {
         var group = t.nodes[i];
         var dir = group.groupInfo.maxSideDirection;

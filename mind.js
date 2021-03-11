@@ -16,12 +16,13 @@
     this.mind = null;
 
     this.init();
+    this.add_event();
   };
   qjm.prototype = {
     render(data) {
+      this.clearCanvas();
       this.nodeJson = data;
       this.create_mind();
-      this.add_event();
     },
     init() {
       this.canvasContainer = document.querySelector(this.opts.container);
@@ -178,7 +179,6 @@
         var ey = newxy.y;
 
         var all_nodes = this.allNodePosMap;
-        console.log(all_nodes)
         // 点击内容节点
         for (var i = 0; i < all_nodes["keynode"].length; i++) {
           let p = all_nodes["keynode"][i];
@@ -202,14 +202,15 @@
               Math.pow(ex - p[type][0], 2) + Math.pow(ey - p[type][1], 2) <
               100
             ) {
-              console.log(`点击了${p.content}的hub节点${type}`);
-              if (type == "hubPosLeft") p.expandedLeft = !p.expandedLeft;
-              if (type == "hubPosRight") p.expandedRight = !p.expandedRight;
-              if (type == "hubPos") p.expanded = !p.expanded;
-              if (!p.children || !p.children.length) {
-                this.fn.hubNodeClick && this.fn.hubNodeClick(p);
-              } else {
-                this.changeLayout();
+              // console.log(`点击了${p.content}的hub节点${type}`);
+              if (type == "hubPosLeft") {
+                this.fn.hubNodeClick && this.fn.hubNodeClick(p, -1);
+              }
+              if (type == "hubPosRight") {
+                this.fn.hubNodeClick && this.fn.hubNodeClick(p, 1);
+              }
+              if (type == "hubPos") {
+                this.fn.hubNodeClick && this.fn.hubNodeClick(p, p.direction);
               }
               return;
             }
@@ -568,7 +569,7 @@
       this.show_view();
     },
     get_nodes() {
-      this.nodes = this._parse(this.nodeJson,null,null)
+      this.nodes = this._parse(this.nodeJson, null, null);
     },
     _parse(nodeArray, parentNode, parentNodeJson) {
       let newArr = [];

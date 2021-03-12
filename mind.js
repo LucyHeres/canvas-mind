@@ -804,7 +804,7 @@
         this.opts.keyNodeWidth / 2;
       let rightBoundary =
         this.canvasCenter.x +
-        maxLeft * (RANK_DISTANCE + this.opts.keyNodeWidth) +
+        maxRight * (RANK_DISTANCE + this.opts.keyNodeWidth) +
         this.opts.keyNodeWidth / 2;
       return { l: leftBoundary, r: rightBoundary };
     },

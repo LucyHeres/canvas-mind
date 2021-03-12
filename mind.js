@@ -5,7 +5,7 @@
   const GROUP_DISTANCE = 30;
   const NODE_DISTANCE = 20;
   const RANK_DISTANCE = 110;
-
+  const SCALE_STEP = 0.05;
   var qjm = function (opts, fn) {
     this.opts = opts;
     this.fn = fn;
@@ -65,7 +65,6 @@
       this.mind = new qjm.Mind(this, this.opts, this.nodeJson);
     },
     clearCanvas() {
-      // 矩阵换算鼠标点击位置对应的新坐标
       var cT = this.ctx.getTransform();
       let matrix = [cT.a, cT.b, cT.c, cT.d, cT.e, cT.f];
       var lt = this._getXY(matrix, 0, 0);
@@ -74,7 +73,8 @@
         this.canvasContainer.offsetWidth,
         this.canvasContainer.offsetHeight
       );
-      this.ctx.clearRect(lt.x, lt.y, rb.x - lt.x, rb.y - lt.y);
+      this.ctx.fillStyle = "#f8f8f8";
+      this.ctx.fillRect(lt.x, lt.y, rb.x - lt.x, rb.y - lt.y);
     },
     changeLayout() {
       this.clearCanvas();
@@ -91,6 +91,23 @@
       this.add_event_zoom();
       this.add_event_dragmove();
       this.add_event_click();
+    },
+    _scale(zoom, cx, cy) {
+      var s = Math.round(this.scale * 100 + zoom * 100) / 100;
+      if (s > 1.1 || s < 0.3) {
+        return;
+      }
+      this.clearCanvas();
+      this.ctx.translate(cx, cy);
+      this.ctx.scale(
+        (this.scale + zoom) / this.scale,
+        (this.scale + zoom) / this.scale
+      );
+      this.ctx.translate(-cx, -cy);
+      this.scale += zoom;
+      requestAnimationFrame(() => {
+        this.mind.show_view();
+      });
     },
     add_event_zoom() {
       // 禁用原生页面缩放
@@ -123,19 +140,12 @@
         e.stopPropagation();
         e.preventDefault();
         if (e.ctrlKey) {
-          if (e.deltaY > 0) zoom = 0.95;
-          if (e.deltaY < 0) zoom = 1.05;
-          if (this.scale * zoom > 1.1 || this.scale * zoom < 0.3) return;
-          this.scale *= zoom;
-
-          this.clearCanvas();
-          this.ctx.translate(e.offsetX, e.offsetY);
-          this.ctx.scale(zoom, zoom);
-          this.ctx.translate(-e.offsetX, -e.offsetY);
-
-          requestAnimationFrame(() => {
-            this.mind.show_view();
-          });
+          if (e.deltaY > 0) {
+            this._scale(-SCALE_STEP, e.offsetX, e.offsetY);
+          }
+          if (e.deltaY < 0) {
+            this._scale(SCALE_STEP, e.offsetX, e.offsetY);
+          }
         }
       });
     },

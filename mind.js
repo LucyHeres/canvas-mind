@@ -27,6 +27,14 @@
       this.nodeJson = data;
       this.create_mind();
     },
+    // 缩放控件
+    scaleControl(dir) {
+      this._scale(
+        SCALE_STEP * dir,
+        this.canvasCenterPos.x,
+        this.canvasCenterPos.y
+      );
+    },
     init() {
       this.canvasContainer = document.querySelector(this.opts.container);
       this.canvas = document.createElement("canvas");
@@ -154,19 +162,38 @@
       var canvas = this.canvas;
       var isDown = false;
       var x, y;
+      var cw = parseFloat(t.canvas.style.width);
+      var ch = parseFloat(t.canvas.style.height);
       function _mousemove(e) {
         if (!isDown) return;
-        if (!t.valid_move_boundary()) return;
+        var limit = t.valid_move_boundary();
+        var dx = (e.clientX - x) / t.scale;
+        var dy = (e.clientY - y) / t.scale;
+
+        if (limit.left > cw - 400) {
+          //右边界
+          t.ctx.translate(e.clientX < x ? dx : 0, dy);
+        } else if (limit.right <= 400) {
+          //左边界
+          t.ctx.translate(e.clientX > x ? dx : 0, dy);
+        } else if (limit.top > ch - 200) {
+          //下边界
+          t.ctx.translate(dx, e.clientY < y ? dy : 0);
+        } else if (limit.bottom < 200) {
+          //上边界
+          t.ctx.translate(dx, e.clientY > y ? dy : 0);
+        } else {
+          t.ctx.translate(dx, dy);
+        }
+        x = e.clientX;
+        y = e.clientY;
+
         t.clearCanvas();
-        t.ctx.translate((e.clientX - x) / t.scale, (e.clientY - y) / t.scale);
         requestAnimationFrame(() => {
           t.mind.show_view();
         });
-        x = e.clientX;
-        y = e.clientY;
         return false;
       }
-
       function _mouseup(e) {
         //开关关闭
         canvas.style.cursor = "default";
@@ -240,47 +267,22 @@
     // 移动时边界限制
     valid_move_boundary() {
       var t = this;
-      var flag = true;
+      var limit = {
+        left: 0,
+        right: 0,
+        top: 0,
+        bottom: 0,
+      };
       var cT = t.ctx.getTransform();
       let matrix = [cT.a, cT.b, cT.c, cT.d, cT.e, cT.f];
       let boundary = t.mind.get_mind_boundary();
-      let left = t._reverse_getXY(matrix, boundary.l, 0).x;
-      let right = t._reverse_getXY(matrix, boundary.r, 0).x;
-      let top = t._reverse_getXY(matrix, 0, boundary.t).y;
-      let bottom = t._reverse_getXY(matrix, 0, boundary.b).y;
-      if (left > parseFloat(t.canvas.style.width) - 400) {
-        t.clearCanvas();
-        t.ctx.translate(-50, 0);
-        requestAnimationFrame(() => {
-          t.mind.show_view();
-        });
-        flag = false;
-      }
-      if (right < 400) {
-        t.clearCanvas();
-        t.ctx.translate(50, 0);
-        requestAnimationFrame(() => {
-          t.mind.show_view();
-        });
-        flag = false;
-      }
-      if (top > parseFloat(t.canvas.style.height) - 200) {
-        t.clearCanvas();
-        t.ctx.translate(0, -50);
-        requestAnimationFrame(() => {
-          t.mind.show_view();
-        });
-        flag = false;
-      }
-      if (bottom < 200) {
-        t.clearCanvas();
-        t.ctx.translate(0, 50);
-        requestAnimationFrame(() => {
-          t.mind.show_view();
-        });
-        flag = false;
-      }
-      return flag;
+
+      limit.left = t._reverse_getXY(matrix, boundary.l, 0).x;
+      limit.right = t._reverse_getXY(matrix, boundary.r, 0).x;
+      limit.top = t._reverse_getXY(matrix, 0, boundary.t).y;
+      limit.bottom = t._reverse_getXY(matrix, 0, boundary.b).y;
+
+      return limit;
     },
     // 矩阵换算
     _getXY(matrix, mouseX, mouseY) {
@@ -291,7 +293,7 @@
         y: newY,
       };
     },
-    // 矩阵逆运算
+    // 矩阵逆换算
     _reverse_getXY(matrix, x, y) {
       var newX = (x * matrix[0] + matrix[4]) / this.ratio;
       var newY = (y * matrix[3] + matrix[5]) / this.ratio;
@@ -964,4 +966,5 @@
   } else {
     window["qjMind"] = qjm;
   }
+  export default qjm;
 })(window);

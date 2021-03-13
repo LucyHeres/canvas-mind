@@ -22,7 +22,6 @@
     this.add_event();
   };
   qjm.prototype = {
-
     render(data) {
       this.clearCanvas();
       this.nodeJson = data;

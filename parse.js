@@ -17,7 +17,7 @@ var array = [
         departmentName: "策划部",
         dangerDesc: "正常",
         schedule: "30",
-        objectiveDesc: "这里是内容!1.1",
+        objectiveDesc: "1.1",
         superCount: 2,
         childCount: 0,
         superOkr: [
@@ -28,7 +28,7 @@ var array = [
             departmentName: "策划部",
             dangerDesc: "正常",
             schedule: "30",
-            objectiveDesc: "这里是内容!1.1.1",
+            objectiveDesc: "1.1.1",
             superCount: 0,
             childCount: 0,
           },
@@ -39,7 +39,7 @@ var array = [
             departmentName: "策划部",
             dangerDesc: "正常",
             schedule: "30",
-            objectiveDesc: "这里是内容!",
+            objectiveDesc: "1.1.2!",
             superCount: 0,
             childCount: 0,
           },
@@ -54,7 +54,7 @@ var array = [
         departmentName: "策划部",
         dangerDesc: "正常",
         schedule: "30",
-        objectiveDesc: "这里是内容!1.2",
+        objectiveDesc: "1.2",
         superCount: 0,
         childCount: 2,
         childOkr: [
@@ -65,7 +65,7 @@ var array = [
             departmentName: "策划部",
             dangerDesc: "正常",
             schedule: "30",
-            objectiveDesc: "这里是内容!1.2.1",
+            objectiveDesc: "1.2.1",
             superCount: 0,
             childCount: 1,
             childOkr: [
@@ -76,7 +76,7 @@ var array = [
                 departmentName: "策划部",
                 dangerDesc: "正常",
                 schedule: "30",
-                objectiveDesc: "这里是内容!1.2.1.1",
+                objectiveDesc: "1.2.1.1",
                 superCount: 0,
                 childCount: 0,
               },
@@ -89,7 +89,7 @@ var array = [
             departmentName: "策划部",
             dangerDesc: "正常",
             schedule: "30",
-            objectiveDesc: "这里是内容!",
+            objectiveDesc: "1.2.2!",
             superCount: 0,
             childCount: 0,
           },
@@ -104,7 +104,7 @@ var array = [
         schedule: "30",
         objectiveDesc: "这里是内容!1.3",
         superCount: 0,
-        childCount: 2,
+        childCount: 3,
         childOkr: [
           {
             objectiveId: "1.3.1",
@@ -113,7 +113,7 @@ var array = [
             departmentName: "策划部",
             dangerDesc: "正常",
             schedule: "30",
-            objectiveDesc: "这里是内容!1.1.1",
+            objectiveDesc: "1.3.1",
             superCount: 0,
             childCount: 0,
           },
@@ -124,7 +124,7 @@ var array = [
             departmentName: "策划部",
             dangerDesc: "正常",
             schedule: "30",
-            objectiveDesc: "这里是内容!",
+            objectiveDesc: "1.3.2!",
             superCount: 0,
             childCount: 0,
           },
@@ -135,7 +135,7 @@ var array = [
             departmentName: "策划部",
             dangerDesc: "正常",
             schedule: "30",
-            objectiveDesc: "这里是内容!",
+            objectiveDesc: "1.3.3!",
             superCount: 0,
             childCount: 0,
           },
@@ -150,8 +150,7 @@ var array = [
     departmentName: "策划部的技术部",
     dangerDesc: "有风险",
     schedule: "30",
-    objectiveDesc:
-      "这里是内容!这里是内容!这里是内容!这里是内容!这里是内容!这里是内容!这里是内容!这里是内容!这里是内容!这里是内容!这里是内容!",
+    objectiveDesc:"2",
     superCount: 1,
     childCount: 2,
     superOkr: [
@@ -162,7 +161,7 @@ var array = [
         departmentName: "策划部",
         dangerDesc: "正常",
         schedule: "30",
-        objectiveDesc: "这里是内容!",
+        objectiveDesc: "2.1!",
         superCount: 2,
         childCount: 0,
         superOkr: [
@@ -173,7 +172,7 @@ var array = [
             departmentName: "策划部",
             dangerDesc: "正常",
             schedule: "30",
-            objectiveDesc: "这里是内容!",
+            objectiveDesc: "2.1.1!",
             superCount: 0,
             childCount: 0,
           },
@@ -184,7 +183,7 @@ var array = [
             departmentName: "策划部",
             dangerDesc: "正常",
             schedule: "30",
-            objectiveDesc: "这里是内容!",
+            objectiveDesc: "2.1.2!",
             superCount: 0,
             childCount: 0,
           },
@@ -199,7 +198,7 @@ var array = [
         departmentName: "策划部",
         dangerDesc: "正常",
         schedule: "30",
-        objectiveDesc: "这里是内容!",
+        objectiveDesc: "2.2!",
         superCount: 0,
         childCount: 2,
         childOkr: [
@@ -210,7 +209,7 @@ var array = [
             departmentName: "策划部",
             dangerDesc: "正常",
             schedule: "30",
-            objectiveDesc: "这里是内容!",
+            objectiveDesc: "2.2.1!",
             superCount: 0,
             childCount: 0,
           },
@@ -221,7 +220,7 @@ var array = [
             departmentName: "策划部",
             dangerDesc: "正常",
             schedule: "30",
-            objectiveDesc: "这里是内容!",
+            objectiveDesc: "2.2.2!",
             superCount: 0,
             childCount: 0,
           },
@@ -234,7 +233,7 @@ var array = [
         departmentName: "策划部",
         dangerDesc: "正常",
         schedule: "30",
-        objectiveDesc: "这里是内容!",
+        objectiveDesc: "2.3!",
         superCount: 0,
         childCount: 2,
         childOkr: [
@@ -245,7 +244,7 @@ var array = [
             departmentName: "策划部",
             dangerDesc: "正常",
             schedule: "30",
-            objectiveDesc: "这里是内容!",
+            objectiveDesc: "2.3.1!",
             superCount: 0,
             childCount: 0,
           },
@@ -256,7 +255,7 @@ var array = [
             departmentName: "策划部",
             dangerDesc: "正常",
             schedule: "30",
-            objectiveDesc: "这里是内容!",
+            objectiveDesc: "2.3.2!",
             superCount: 0,
             childCount: 0,
           },
@@ -272,7 +271,7 @@ var array = [
     dangerDesc: "有风险",
     schedule: "30",
     objectiveDesc:
-      "这里是内容!这里是内容!这里是内容!这里是内容!这里是内容!这里是内容!这里是内容!这里是内容!这里是内容!这里是内容!这里是内容!",
+      "3",
     superCount: 1,
     childCount: 2,
     superOkr: [
@@ -283,7 +282,7 @@ var array = [
         departmentName: "策划部",
         dangerDesc: "正常",
         schedule: "30",
-        objectiveDesc: "这里是内容!",
+        objectiveDesc: "3.1!",
         superCount: 2,
         childCount: 0,
         superOkr: [
@@ -294,7 +293,7 @@ var array = [
             departmentName: "策划部",
             dangerDesc: "正常",
             schedule: "30",
-            objectiveDesc: "这里是内容!",
+            objectiveDesc: "3.1.1!",
             superCount: 0,
             childCount: 0,
           },
@@ -305,7 +304,7 @@ var array = [
             departmentName: "策划部",
             dangerDesc: "正常",
             schedule: "30",
-            objectiveDesc: "这里是内容!",
+            objectiveDesc: "3.1.2!",
             superCount: 0,
             childCount: 0,
           },
@@ -320,7 +319,7 @@ var array = [
         departmentName: "策划部",
         dangerDesc: "正常",
         schedule: "30",
-        objectiveDesc: "这里是内容!3.2",
+        objectiveDesc: "!3.2",
         superCount: 0,
         childCount: 2,
         childOkr: [
@@ -331,7 +330,7 @@ var array = [
             departmentName: "策划部",
             dangerDesc: "正常",
             schedule: "30",
-            objectiveDesc: "这里是内容!",
+            objectiveDesc: "3.2.1!",
             superCount: 0,
             childCount: 0,
           },
@@ -342,7 +341,7 @@ var array = [
             departmentName: "策划部",
             dangerDesc: "正常",
             schedule: "30",
-            objectiveDesc: "这里是内容!",
+            objectiveDesc: "3.2.2!",
             superCount: 0,
             childCount: 0,
           },
@@ -355,7 +354,7 @@ var array = [
         departmentName: "策划部",
         dangerDesc: "正常",
         schedule: "30",
-        objectiveDesc: "这里是内容!3.3",
+        objectiveDesc: "!3.3",
         superCount: 0,
         childCount: 1,
         childOkr: [
@@ -366,7 +365,7 @@ var array = [
             departmentName: "策划部",
             dangerDesc: "正常",
             schedule: "30",
-            objectiveDesc: "这里是内容!",
+            objectiveDesc: "3.3.1!",
             superCount: 0,
             childCount: 0,
           },
@@ -406,8 +405,8 @@ function parseOkrJSON(array, dir) {
     newObj.text = getTextObj(obj);
     newObj.shape = getShapeObj(obj);
     if (obj.isRoot) {
-      newObj.expandedLeft = false;
-      newObj.expandedRight = false;
+      newObj.expandedLeft = true;
+      newObj.expandedRight = true;
       newObj.childrenCountLeft = obj.superCount;
       newObj.childrenCountRight = obj.childCount;
       newObj.children = [];
@@ -418,7 +417,7 @@ function parseOkrJSON(array, dir) {
       if (obj.childOkr)
         newObj.children = newObj.children.concat(parseOkrJSON(obj.childOkr, 1));
     } else {
-      newObj.expanded = false;
+      newObj.expanded = true;
       newObj.direction = dir;
       newObj.children = [];
       if (dir === -1 && obj.superCount) {

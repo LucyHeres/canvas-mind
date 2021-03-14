@@ -22,13 +22,19 @@
     this.add_event();
   };
   qjm.prototype = {
-
+    /**
+     * 对外暴露函数:渲染树图数据
+     * @param data
+     */
     render(data) {
       this.clearCanvas();
       this.nodeJson = data;
       this.create_mind();
     },
-    // 缩放控件
+    /**
+     * 对外暴露函数:通过外部控件缩放
+     * @param dir
+     */
     scaleControl(dir) {
       this._scale(
         SCALE_STEP * dir,
@@ -36,6 +42,7 @@
         this.canvasCenterPos.y
       );
     },
+    // 初始化画布
     init() {
       this.canvasContainer = document.querySelector(this.opts.container);
       this.canvas = document.createElement("canvas");
@@ -70,9 +77,17 @@
       this.ctx.scale(this.scale, this.scale);
       this.ctx.translate(-this.canvasCenterPos.x, -this.canvasCenterPos.y);
     },
+    // 初始化画布事件
+    add_event() {
+      this.add_event_zoom();
+      this.add_event_dragmove();
+      this.add_event_click();
+    },
+    // 初始化树图，每次数据改变会重新初始化视图
     create_mind() {
       this.mind = new qjm.Mind(this, this.opts, this.nodeJson);
     },
+    // 清空画布
     clearCanvas() {
       var cT = this.ctx.getTransform();
       let matrix = [cT.a, cT.b, cT.c, cT.d, cT.e, cT.f];
@@ -82,12 +97,7 @@
         this.canvasContainer.offsetWidth,
         this.canvasContainer.offsetHeight
       );
-      this.ctx.fillStyle = "#f8f8f8";
-      this.ctx.fillRect(lt.x, lt.y, rb.x - lt.x, rb.y - lt.y);
-    },
-    changeLayout() {
-      this.clearCanvas();
-      this.mind.init();
+      this.ctx.clearRect(lt.x, lt.y, rb.x - lt.x, rb.y - lt.y);
     },
     // 计算画布中心
     getCanvasCenterPos() {
@@ -96,11 +106,7 @@
         y: this.canvas.height / this.ratio / 2,
       };
     },
-    add_event() {
-      this.add_event_zoom();
-      this.add_event_dragmove();
-      this.add_event_click();
-    },
+    // 缩放计算
     _scale(zoom, cx, cy) {
       var s = Math.round(this.scale * 100 + zoom * 100) / 100;
       if (s > 1.1 || s < 0.3) {
@@ -118,6 +124,7 @@
         this.mind.show_view();
       });
     },
+    // 画布事件：缩放
     add_event_zoom() {
       // 禁用原生页面缩放
       window.addEventListener(
@@ -158,6 +165,10 @@
         }
       });
     },
+    /**
+     * 画布事件：拖动 位移
+     * @todo mousedown事件与click事件冲突
+     */
     add_event_dragmove() {
       var t = this;
       var canvas = this.canvas;
@@ -214,6 +225,7 @@
         return false;
       });
     },
+    // 画布事件：点击 内容节点、分支枢纽节点
     add_event_click() {
       var canvas = this.canvas;
       var ctx = this.ctx;
@@ -240,7 +252,7 @@
             return;
           }
         }
-        // 点击分支桥接节点
+        // 点击分支枢纽节点
         for (var type in all_nodes) {
           if (type == "keynode") continue;
           for (var i = 0; i < all_nodes[type].length; i++) {
@@ -395,31 +407,37 @@
       this.drawKeyNode();
       this.drawContent();
     },
+    // 获取枢纽节点坐标
+    getHubPos() {
+      if (this.isRoot) {
+        this.hubPosLeft = [this.x + -1 * (this.width / 2 + 40), this.y];
+        this.hubPosRight = [this.x + 1 * (this.width / 2 + 40), this.y];
+      } else {
+        this.hubPos = [this.x + this.direction * (this.width / 2 + 40), this.y];
+      }
+    },
     set_mind_pos_map(type, nodePos) {
       var map = this.qjm.allNodePosMap;
       if (!map[type]) map[type] = [];
       map[type].push(nodePos);
     },
+    // 画内容节点
     drawKeyNode() {
       var ctx = this.qjm.ctx;
       if (isValueNull(this.x) || isValueNull(this.y)) {
         return;
       }
       ctx.save();
-      ctx.beginPath();
       ctx.fillStyle = "#ffffff";
       ctx.shadowBlur = 10;
       ctx.shadowColor = "rgba(31,35,41,0.08)";
-
       ctx.fillRect(
         this.x - this.width / 2,
         this.y - this.height / 2,
         this.width,
         this.height
       );
-      ctx.fill();
       ctx.restore();
-
       this.set_mind_pos_map("keynode", this);
     },
     _drawText(str, x, y, w, h, fontsize, lineHeight, textAlign) {
@@ -459,6 +477,7 @@
       ctx.fillRect(left, top, w, h);
       ctx.restore();
     },
+    // 画节点内的内容 文字、形状 …
     drawContent() {
       var ctx = this.qjm.ctx;
       var x0 = this.x - this.width / 2;
@@ -504,46 +523,38 @@
         ctx.restore();
       }
     },
+    // 画父节点向子节点的连线
     drawLine_to_child() {
       var ctx = this.qjm.ctx;
       ctx.save();
+      ctx.strokeStyle = this.lineColor;
       if (this.isRoot) {
         if (this.childrenCountRight) {
-          ctx.beginPath();
           ctx.moveTo(this.x + (1 * this.width) / 2, this.y);
-          ctx.strokeStyle = this.lineColor;
           ctx.lineTo(this.hubPosRight[0], this.hubPosRight[1]);
-          ctx.closePath();
           ctx.stroke();
-          ctx.restore();
           this.drawHub(this.hubPosRight, this.childrenCountRight);
         }
         if (this.childrenCountLeft) {
-          ctx.beginPath();
           ctx.moveTo(this.x + (-1 * this.width) / 2, this.y);
-          ctx.strokeStyle = this.lineColor;
           ctx.lineTo(this.hubPosLeft[0], this.hubPosLeft[1]);
-          ctx.closePath();
           ctx.stroke();
           this.drawHub(this.hubPosLeft, this.childrenCountLeft);
         }
       } else {
-        ctx.beginPath();
         ctx.moveTo(this.x + (this.direction * this.width) / 2, this.y);
-        ctx.strokeStyle = this.lineColor;
         ctx.lineTo(this.hubPos[0], this.hubPos[1]);
-        ctx.closePath();
         ctx.stroke();
-        ctx.restore();
         this.drawHub(this.hubPos, this.childrenCount);
       }
+      ctx.restore();
     },
+    // 画子节点向父节点的连线 贝塞尔曲线
     drawLine_to_parent() {
       var ctx = this.qjm.ctx;
-      ctx.save();
-      ctx.beginPath();
       var moveToX = this.x - (this.direction * this.width) / 2;
       var moveToY = this.y;
+      ctx.save();
       ctx.moveTo(moveToX, moveToY);
       ctx.strokeStyle = this.lineColor;
       if (this.parent.isRoot) {
@@ -572,6 +583,7 @@
       ctx.stroke();
       ctx.restore();
     },
+    // 画枢纽节点
     drawHub(pos) {
       if (this.isRoot) {
         if (this.childrenCountRight) {
@@ -592,6 +604,7 @@
     _drawHub(pos, childLength) {
       var ctx = this.qjm.ctx;
       ctx.save();
+      // 圆
       ctx.fillStyle = "#ffffff";
       ctx.shadowBlur = 6;
       ctx.shadowColor = "rgba(31,35,41,0.08)";
@@ -599,28 +612,13 @@
       ctx.arc(pos[0], pos[1], this.hubRadius, 0, Math.PI * 2);
       ctx.closePath();
       ctx.fill();
+      // 子节点个数
+      ctx.fillStyle = "#000000";
+      ctx.font = "30px";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(childLength, pos[0], pos[1]);
       ctx.restore();
-
-      if (childLength > 0) {
-        ctx.save();
-        ctx.fillStyle = "#000000";
-        ctx.font = "30px";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText(childLength, pos[0], pos[1]);
-        ctx.restore();
-      }
-    },
-    getHubPos() {
-      if (this.isRoot) {
-        this.hubPosLeft = [this.x + -1 * (this.width / 2 + 40), this.y];
-        this.hubPosRight = [this.x + 1 * (this.width / 2 + 40), this.y];
-      } else {
-        this.hubPos = [this.x + this.direction * (this.width / 2 + 40), this.y];
-      }
-    },
-    get_children_nodes(dir) {
-      return this.children.filter((item) => item.direction === dir);
     },
   };
 
@@ -634,6 +632,7 @@
     this.nodesFlatArray = [];
     this.totalHeight = 0;
     this.totalMaxNodeLength = 0;
+    // 树图边界
     this.boundary = {
       l: 0,
       r: 0,
@@ -645,13 +644,16 @@
     this.init();
   };
   qjm.Mind.prototype = {
+    // 初始化布局，每次操作都会重新出发该函数
     init() {
       this.canvasCenter = this.qjm.getCanvasCenterPos();
       this.get_expanded_node_group();
       this.get_group_max_length();
       this.layout(); //给每个节点赋值xy坐标值
       this.show_view();
+      console.log(this.nodes);
     },
+    // 初始化所有节点数据
     get_nodes() {
       this.nodes = this._parse(this.nodeJson, null, null);
     },
@@ -668,7 +670,6 @@
       }
       return newArr;
     },
-
     add_node(nodeJson) {
       let node = new qjm.KeyNode(this.qjm, nodeJson);
       node.id = qjm.util.newid();
@@ -678,48 +679,20 @@
 
     show_view() {
       this.qjm.allNodePosMap = {};
-      for (var i = 0; i < this.nodes.length; i++) {
-        this._draw_nodes(this.nodes[i]);
-        this._draw_lines(this.nodes[i]);
-      }
+      this._draw_mind_elements(this.nodes);
     },
-    _draw_nodes(node) {
-      if (node.parent && node.parent.isRoot) {
-        if (node.direction === -1 && !node.parent.expandedLeft) return;
-        if (node.direction === 1 && !node.parent.expandedRight) return;
-      }
-      if (node.parent && !node.parent.isRoot) {
-        if (!node.parent.expanded) return;
-      }
-      node.show();
-      if (node.children) {
-        for (let index = 0; index < node.children.length; index++) {
-          let child_node = node.children[index];
-          this._draw_nodes(child_node);
+    _draw_mind_elements(nodeArray){
+      for (var i = 0; i < nodeArray.length; i++) {
+        let node = nodeArray[i];
+        node.show();
+        if(node.parent){
+          node.drawLine_to_parent();
         }
-      }
-    },
-    _draw_lines(node) {
-      if (node.parent && node.parent.isRoot) {
-        if (node.direction === -1 && !node.parent.expandedLeft) return;
-        if (node.direction === 1 && !node.parent.expandedRight) return;
-      }
-      if (node.parent && !node.parent.isRoot) {
-        if (!node.parent.expanded) return;
-      }
-      if (node.parent) {
-        node.drawLine_to_parent();
-      }
-      if (
-        (node.isRoot && (node.childrenCountLeft || node.childrenCountRight)) ||
-        (!node.isRoot && node.childrenCount)
-      ) {
-        node.drawLine_to_child();
-        for (let index = 0; index < node.children.length; index++) {
-          let child_node = node.children[index];
-          this._draw_lines(child_node);
+        if(node.children && node.children.length){
+          node.drawLine_to_child();
+          this._draw_mind_elements(node.children)
+          node.drawHub();
         }
-        node.drawHub();
       }
     },
 
@@ -870,24 +843,18 @@
     layout() {
       var t = this;
       t._get_total_height();
-      for (var i = 0; i < t.nodes.length; i++) {
+      for (var i = 0, len = t.nodes.length; i < len; i++) {
         var group = t.nodes[i];
-        var dir = group.groupInfo.maxSideDirection;
         var expandedNodesLeft = group.groupInfo.expandedNodesLeft;
         var expandedNodesRight = group.groupInfo.expandedNodesRight;
         // 比较左右两边的高度，值大则反向布局，值小的正向布局
-        // 左边
-        var rank_max_nodes_length_l = qjm.util.flatArray(
-          expandedNodesLeft[expandedNodesLeft.length - 1]
-        );
-        // 右边
-        var rank_max_nodes_length_r = qjm.util.flatArray(
-          expandedNodesRight[expandedNodesRight.length - 1]
-        );
-        if (rank_max_nodes_length_l > rank_max_nodes_length_r) {
+        if (group.groupInfo.maxSideDirection === -1) {
+          //左边高度较大
           t._layout_backward(expandedNodesLeft, -1, group.groupInfo.centerPos);
           t._layout_forward(expandedNodesRight, 1, group.groupInfo.centerPos);
-        } else {
+        }
+        if (group.groupInfo.maxSideDirection === 1) {
+          //右边高度较大
           t._layout_backward(expandedNodesRight, 1, group.groupInfo.centerPos);
           t._layout_forward(expandedNodesLeft, -1, group.groupInfo.centerPos);
         }

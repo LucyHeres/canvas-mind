@@ -223,7 +223,6 @@
         isDown = false;
       }
       canvas.addEventListener("mousedown", (e) => {
-        console.log("mousedown", x, y);
         //获取x坐标和y坐标
         startX = x = e.clientX;
         startY = y = e.clientY;
@@ -256,7 +255,7 @@
           p.y - p.height / 2 <= ey &&
           ey <= p.y + p.height / 2
         ) {
-          console.log("点击了keynode:", p.objectiveId, p.x, p.y);
+          // console.log("点击了keynode:", p.objectiveId, p.x, p.y);
           this.fn.keyNodeClick && this.fn.keyNodeClick(p);
           return;
         }
@@ -297,7 +296,6 @@
       var cT = t.ctx.getTransform();
       let matrix = [cT.a, cT.b, cT.c, cT.d, cT.e, cT.f];
       let boundary = t.mind.get_mind_boundary();
-      console.log(boundary);
 
       limit.left = t._reverse_getXY(matrix, boundary.l, 0).x;
       limit.right = t._reverse_getXY(matrix, boundary.r, 0).x;
@@ -852,7 +850,6 @@
     },
     _layout_small_side(lastLevelNodes, groupIndex) {
       let y0 = this.nodes[groupIndex].y;
-      console.log(this.nodes[groupIndex]);
       this._layout_large_side(lastLevelNodes, groupIndex);
       let y1 = this.nodes[groupIndex].y;
       let diffY = y1 - y0;

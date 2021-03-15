@@ -77,8 +77,7 @@
     // 初始化画布事件
     add_event() {
       this.add_event_zoom();
-      this.add_event_dragmove();
-      this.add_event_click();
+      this.add_event_mouse();
     },
     // 初始化树图，每次数据改变会重新初始化视图
     create_mind() {
@@ -164,17 +163,23 @@
     },
     /**
      * 画布事件：拖动 位移
-     * @todo mousedown事件与click事件冲突
      */
-    add_event_dragmove() {
+    add_event_mouse() {
       var t = this;
       var canvas = this.canvas;
       var isDown = false;
-      var x, y;
+      var x, y, startX, startY;
       var cw = parseFloat(t.canvas.style.width);
       var ch = parseFloat(t.canvas.style.height);
       function _mousemove(e) {
         if (!isDown) return;
+        // 触发点击事件
+        if (
+          Math.abs(e.clientX - startX) < 2 &&
+          Math.abs(e.clientY - startY) < 2
+        ) {
+          return;
+        }
         var limit = t.valid_move_boundary();
         var dx = (e.clientX - x) / t.scale;
         var dy = (e.clientY - y) / t.scale;
@@ -204,6 +209,13 @@
         return false;
       }
       function _mouseup(e) {
+        // 触发点击事件
+        if (
+          Math.abs(e.clientX - startX) < 2 &&
+          Math.abs(e.clientY - startY) < 2
+        ) {
+          t.click_node(e);
+        }
         //开关关闭
         canvas.style.cursor = "default";
         canvas.removeEventListener("mousemove", _mousemove);
@@ -211,9 +223,10 @@
         isDown = false;
       }
       canvas.addEventListener("mousedown", (e) => {
+        console.log("mousedown", x, y);
         //获取x坐标和y坐标
-        x = e.clientX;
-        y = e.clientY;
+        startX = x = e.clientX;
+        startY = y = e.clientY;
         //开关打开
         isDown = true;
         canvas.style.cursor = "grabbing";
@@ -223,56 +236,54 @@
       });
     },
     // 画布事件：点击 内容节点、分支枢纽节点
-    add_event_click() {
+    click_node(e) {
       var canvas = this.canvas;
       var ctx = this.ctx;
-      canvas.addEventListener("click", (e) => {
-        // 矩阵换算鼠标点击位置对应的新坐标
-        var cT = ctx.getTransform();
-        let matrix = [cT.a, cT.b, cT.c, cT.d, cT.e, cT.f];
-        var newxy = this._getXY(matrix, e.offsetX, e.offsetY);
-        var ex = newxy.x;
-        var ey = newxy.y;
+      // 矩阵换算鼠标点击位置对应的新坐标
+      var cT = ctx.getTransform();
+      let matrix = [cT.a, cT.b, cT.c, cT.d, cT.e, cT.f];
+      var newxy = this._getXY(matrix, e.offsetX, e.offsetY);
+      var ex = newxy.x;
+      var ey = newxy.y;
 
-        var all_nodes = this.allNodePosMap;
-        // 点击内容节点
-        for (var i = 0; i < all_nodes["keynode"].length; i++) {
-          let p = all_nodes["keynode"][i];
+      var all_nodes = this.allNodePosMap;
+      // 点击内容节点
+      for (var i = 0; i < all_nodes["keynode"].length; i++) {
+        let p = all_nodes["keynode"][i];
+        if (
+          p.x - p.width / 2 <= ex &&
+          ex <= p.x + p.width / 2 &&
+          p.y - p.height / 2 <= ey &&
+          ey <= p.y + p.height / 2
+        ) {
+          console.log("点击了keynode:", p.objectiveId, p.x, p.y);
+          this.fn.keyNodeClick && this.fn.keyNodeClick(p);
+          return;
+        }
+      }
+      // 点击分支枢纽节点
+      for (var type in all_nodes) {
+        if (type == "keynode") continue;
+        for (var i = 0; i < all_nodes[type].length; i++) {
+          let p = all_nodes[type][i];
           if (
-            p.x - p.width / 2 <= ex &&
-            ex <= p.x + p.width / 2 &&
-            p.y - p.height / 2 <= ey &&
-            ey <= p.y + p.height / 2
+            Math.pow(ex - p[type][0], 2) + Math.pow(ey - p[type][1], 2) <
+            100
           ) {
-            // console.log("点击了keynode:" , p.objectiveId, p.x, p.y);
-            this.fn.keyNodeClick && this.fn.keyNodeClick(p);
+            // console.log(`点击了${p.objectiveId}的hub节点${type}`);
+            if (type == "hubPosLeft") {
+              this.fn.hubNodeClick && this.fn.hubNodeClick(p, -1);
+            }
+            if (type == "hubPosRight") {
+              this.fn.hubNodeClick && this.fn.hubNodeClick(p, 1);
+            }
+            if (type == "hubPos") {
+              this.fn.hubNodeClick && this.fn.hubNodeClick(p, p.direction);
+            }
             return;
           }
         }
-        // 点击分支枢纽节点
-        for (var type in all_nodes) {
-          if (type == "keynode") continue;
-          for (var i = 0; i < all_nodes[type].length; i++) {
-            let p = all_nodes[type][i];
-            if (
-              Math.pow(ex - p[type][0], 2) + Math.pow(ey - p[type][1], 2) <
-              100
-            ) {
-              // console.log(`点击了${p.objectiveId}的hub节点${type}`);
-              if (type == "hubPosLeft") {
-                this.fn.hubNodeClick && this.fn.hubNodeClick(p, -1);
-              }
-              if (type == "hubPosRight") {
-                this.fn.hubNodeClick && this.fn.hubNodeClick(p, 1);
-              }
-              if (type == "hubPos") {
-                this.fn.hubNodeClick && this.fn.hubNodeClick(p, p.direction);
-              }
-              return;
-            }
-          }
-        }
-      });
+      }
     },
     // 移动时边界限制
     valid_move_boundary() {
@@ -286,6 +297,7 @@
       var cT = t.ctx.getTransform();
       let matrix = [cT.a, cT.b, cT.c, cT.d, cT.e, cT.f];
       let boundary = t.mind.get_mind_boundary();
+      console.log(boundary);
 
       limit.left = t._reverse_getXY(matrix, boundary.l, 0).x;
       limit.right = t._reverse_getXY(matrix, boundary.r, 0).x;
@@ -629,8 +641,8 @@
     this.canvasCenter = null;
     this.nodeJson = [].concat(nodeJson);
     this.nodes = [];
-    // 树图总高度
-    this.totalHeight = 0;
+    this.leftLevelMax = 0;
+    this.rightLevelMax = 0;
     // 树图边界
     this.boundary = {
       l: 0,
@@ -638,25 +650,23 @@
       t: 0,
       b: 0,
     };
-    this.leftLastLevelNodes = [];
-    this.rightLastLevelNodes = [];
-    this.leftLastLevel = 0;
-    this.rightLastLevel = 0;
-
+    this.nodeGroupInfo = [];
+    // 树图总高度
+    this.totalHeight = 0;
     this.init();
   };
   qjm.Mind.prototype = {
     init() {
       this.canvasCenter = this.qjm.getCanvasCenterPos();
       this.get_nodes();
+      this.get_group_height();
+      this.get_mind_boundary();
       this.layout(); //给每个节点赋值xy坐标值
       this.show_view();
     },
     // 初始化所有节点数据
     get_nodes() {
-      console.log(this.nodeJson);
       this.nodes = this._parse(this.nodeJson, null, null, 0);
-      console.log(this.nodes);
     },
     _parse(nodeArray, parentNode, parentNodeJson, level, groupIndex) {
       let newArr = [];
@@ -677,11 +687,13 @@
           let rightNodesExpanded = [];
           let leftNodesAll = [];
           let rightNodesAll = [];
+
           for (let n = 0, len = nodeJson.children.length; n < len; n++) {
             let item = nodeJson.children[n];
             item.direction === -1 && leftNodesAll.push(item);
             item.direction === 1 && rightNodesAll.push(item);
           }
+
           if (nodeJson.expandedLeft && leftNodesAll.length) {
             leftNodesExpanded = this._parse(
               leftNodesAll,
@@ -691,9 +703,9 @@
             );
           } else {
             leftNodesExpanded = [];
-            this.leftLastLevelNodes.push(node);
-            this.leftLastLevel = Math.max(this.leftLastLevel, node.level);
+            this._set_last_Level_nodes(-1, node);
           }
+
           if (nodeJson.expandedRight && rightNodesAll.length) {
             rightNodesExpanded = this._parse(
               rightNodesAll,
@@ -703,9 +715,9 @@
             );
           } else {
             rightNodesExpanded = [];
-            this.rightLastLevelNodes.push(node);
-            this.rightLastLevel = Math.max(this.rightLastLevel, node.level);
+            this._set_last_Level_nodes(1, node);
           }
+
           node.children = [].concat(leftNodesExpanded, rightNodesExpanded);
         } else {
           if (
@@ -721,19 +733,41 @@
             );
           } else {
             node.children = [];
-            if (node.direction === -1) {
-              this.leftLastLevelNodes.push(node);
-              this.leftLastLevel = Math.max(this.leftLastLevel, node.level);
-            } else {
-              this.rightLastLevelNodes.push(node);
-              this.rightLastLevel = Math.max(this.rightLastLevel, node.level);
-            }
+            this._set_last_Level_nodes(node.direction, node);
           }
         }
 
         newArr.push(node);
       }
       return newArr;
+    },
+    _set_last_Level_nodes(dir, node) {
+      if (!this.nodeGroupInfo[node.groupIndex]) {
+        this.nodeGroupInfo[node.groupIndex] = {
+          leftLastLevelNodes: [],
+          rightLastLevelNodes: [],
+          leftLevelMax: 0,
+          rightLevelMax: 0,
+          maxSide: -1,
+          maxSideLength: 0,
+          height: 0,
+          topY: 0,
+        };
+      }
+      if (dir === -1) {
+        this.nodeGroupInfo[node.groupIndex].leftLastLevelNodes.push(node);
+        this.nodeGroupInfo[node.groupIndex].leftLevelMax = Math.max(
+          this.nodeGroupInfo[node.groupIndex].leftLevelMax,
+          node.level
+        );
+      }
+      if (dir === 1) {
+        this.nodeGroupInfo[node.groupIndex].rightLastLevelNodes.push(node);
+        this.nodeGroupInfo[node.groupIndex].rightLevelMax = Math.max(
+          this.nodeGroupInfo[node.groupIndex].rightLevelMax,
+          node.level
+        );
+      }
     },
     add_node(nodeJson) {
       let node = new qjm.KeyNode(this.qjm, nodeJson);
@@ -752,7 +786,11 @@
         if (node.parent) {
           node.drawLine_to_parent();
         }
-        if (node.children && node.children.length) {
+        if (
+          node.childrenCountLeft ||
+          node.childrenCountRight ||
+          node.childrenCount
+        ) {
           node.drawLine_to_child();
           this._draw_mind_elements(node.children);
           node.drawHub();
@@ -761,13 +799,17 @@
     },
 
     layout() {
-      // 获取末级节点数更多的一边
-      if (this.leftLastLevelNodes > this.rightLastLevelNodes) {
-        this._layout_large_side(this.leftLastLevelNodes);
-        this._layout_small_side(this.rightLastLevelNodes);
-      } else {
-        this._layout_large_side(this.rightLastLevelNodes);
-        this._layout_small_side(this.leftLastLevelNodes);
+      for (let i = 0, len = this.nodes.length; i < len; i++) {
+        let left = this.nodeGroupInfo[i].leftLastLevelNodes;
+        let right = this.nodeGroupInfo[i].rightLastLevelNodes;
+        // 获取末级节点数更多的一边
+        if (left.length > right.length) {
+          this._layout_large_side(left, i);
+          this._layout_small_side(right, i);
+        } else {
+          this._layout_large_side(right, i);
+          this._layout_small_side(left, i);
+        }
       }
     },
     _layout(node) {
@@ -781,66 +823,99 @@
         } else {
           children = node.parent.children;
         }
-        node.parent.y = (children[0].y + children[children.length - 1].y) / 2;
         let dir = node.parent.isRoot ? 0 : node.parent.direction;
         node.parent.x =
           this.canvasCenter.x +
           dir * (LEVEL_DISTANCE + this.opts.keyNodeWidth) * node.parent.level;
+        node.parent.y = (children[0].y + children[children.length - 1].y) / 2;
+
         this._layout(node.parent);
       }
     },
-    _layout_large_side(lastLevelNodes) {
+    _layout_large_side(lastLevelNodes, groupIndex, diffY) {
+      diffY = diffY || 0;
       // 计算出末级节点的坐标
-      let lastLevelNodesCount = lastLevelNodes.length;
-      this.boundary.t =
-        this.canvasCenter.y -
-        (lastLevelNodesCount * this.opts.keyNodeHeight +
-          (lastLevelNodesCount - 1) * NODE_DISTANCE +
-          lastLevelNodes[lastLevelNodesCount - 1].groupIndex * GROUP_DISTANCE) /
-          2;
-      for (let i = 0; i < lastLevelNodesCount; i++) {
+      for (let i = 0; i < lastLevelNodes.length; i++) {
         let node = lastLevelNodes[i];
-        node.y =
-          this.boundary.t +
-          this.opts.keyNodeHeight / 2 +
-          this.opts.keyNodeHeight * i +
-          NODE_DISTANCE * i +
-          GROUP_DISTANCE * node.groupIndex;
-
         let dir = node.isRoot ? 0 : node.direction;
         node.x =
           this.canvasCenter.x +
           dir * (LEVEL_DISTANCE + this.opts.keyNodeWidth) * node.level;
+        node.y =
+          this.nodeGroupInfo[groupIndex].topY +
+          this.opts.keyNodeHeight / 2 +
+          this.opts.keyNodeHeight * i +
+          NODE_DISTANCE * i -
+          diffY;
         this._layout(node);
       }
-      this.totalHeight =
-        lastLevelNodes[lastLevelNodes.length - 1].y -
-        this.boundary.t +
-        this.opts.keyNodeHeight / 2;
     },
-    _layout_small_side() {},
+    _layout_small_side(lastLevelNodes, groupIndex) {
+      let y0 = this.nodes[groupIndex].y;
+      console.log(this.nodes[groupIndex]);
+      this._layout_large_side(lastLevelNodes, groupIndex);
+      let y1 = this.nodes[groupIndex].y;
+      let diffY = y1 - y0;
+      this._layout_large_side(lastLevelNodes, groupIndex, diffY);
+    },
+
+    get_group_height() {
+      for (let i = 0, len = this.nodeGroupInfo.length; i < len; i++) {
+        let group = this.nodeGroupInfo[i];
+        // 高度
+        if (
+          group.leftLastLevelNodes.length > group.rightLastLevelNodes.length
+        ) {
+          group.maxSide = -1;
+          group.maxSideLength = group.leftLastLevelNodes.length;
+        } else {
+          group.maxSide = 1;
+          group.maxSideLength = group.rightLastLevelNodes.length;
+        }
+
+        group.height =
+          group.maxSideLength * this.opts.keyNodeHeight +
+          (group.maxSideLength - 1) * NODE_DISTANCE;
+
+        this.totalHeight += group.height;
+        // 宽度
+        this.leftLevelMax = Math.max(this.leftLevelMax, group.leftLevelMax);
+        this.rightLevelMax = Math.max(this.rightLevelMax, group.rightLevelMax);
+      }
+      for (let i = 0, len = this.nodeGroupInfo.length; i < len; i++) {
+        let group = this.nodeGroupInfo[i];
+        let preGroupTop = this.nodeGroupInfo[i - 1]
+          ? this.nodeGroupInfo[i - 1].topY
+          : this.canvasCenter.y - this.totalHeight / 2;
+        let preGroupHeight = this.nodeGroupInfo[i - 1]
+          ? this.nodeGroupInfo[i - 1].height
+          : 0;
+        group.topY = preGroupTop + preGroupHeight + GROUP_DISTANCE;
+      }
+
+      // 总高度
+      this.totalHeight += (this.nodeGroupInfo.length - 1) * GROUP_DISTANCE;
+    },
 
     // 获取上下左右四个边界值
     get_mind_boundary() {
-      let lr = this._get_horizontal_boundary();
-      this.boundary.l = lr.l;
-      this.boundary.r = lr.r;
-      this.boundary.b = this.boundary.t + this.totalHeight;
-      console.log(this.boundary);
-      return this.boundary;
-    },
-    // 获取左右边界
-    _get_horizontal_boundary() {
-      console.log(this.leftLastLevel, this.rightLastLevel);
+      // 边界
       let leftBoundary =
         this.canvasCenter.x -
-        this.leftLastLevel * (LEVEL_DISTANCE + this.opts.keyNodeWidth) -
+        this.leftLevelMax * (LEVEL_DISTANCE + this.opts.keyNodeWidth) -
         this.opts.keyNodeWidth / 2;
       let rightBoundary =
         this.canvasCenter.x +
-        this.rightLastLevel * (LEVEL_DISTANCE + this.opts.keyNodeWidth) +
+        this.rightLevelMax * (LEVEL_DISTANCE + this.opts.keyNodeWidth) +
         this.opts.keyNodeWidth / 2;
-      return { l: leftBoundary, r: rightBoundary };
+
+      this.boundary = {
+        l: leftBoundary,
+        r: rightBoundary,
+        t: this.canvasCenter.y - this.totalHeight / 2,
+        b: this.boundary.t + this.totalHeight,
+      };
+      return this.boundary;
     },
   };
 

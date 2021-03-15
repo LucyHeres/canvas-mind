@@ -405,8 +405,8 @@ function parseOkrJSON(array, dir) {
     newObj.text = getTextObj(obj);
     newObj.shape = getShapeObj(obj);
     if (obj.isRoot) {
-      newObj.expandedLeft = true;
-      newObj.expandedRight = true;
+      newObj.expandedLeft = false;
+      newObj.expandedRight = false;
       newObj.childrenCountLeft = obj.superCount;
       newObj.childrenCountRight = obj.childCount;
       newObj.children = [];
@@ -417,7 +417,7 @@ function parseOkrJSON(array, dir) {
       if (obj.childOkr)
         newObj.children = newObj.children.concat(parseOkrJSON(obj.childOkr, 1));
     } else {
-      newObj.expanded = true;
+      newObj.expanded = false;
       newObj.direction = dir;
       newObj.children = [];
       if (dir === -1 && obj.superCount) {

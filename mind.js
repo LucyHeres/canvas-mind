@@ -622,7 +622,10 @@
       ctx.arc(pos[0], pos[1], this.hubRadius, 0, Math.PI * 2);
       ctx.closePath();
       ctx.fill();
+      ctx.restore();
+
       // 子节点个数
+      ctx.save();
       ctx.fillStyle = "#000000";
       ctx.font = "30px";
       ctx.textAlign = "center";

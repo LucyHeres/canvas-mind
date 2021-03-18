@@ -1,6 +1,6 @@
 var array = [
   {
-    objectiveId: "1",
+    id: "1",
     employeeId: "uuid",
     employeeName: "迪丽热aa",
     departmentName: "策划部的技术部",
@@ -11,7 +11,7 @@ var array = [
     childCount: 2,
     superOkr: [
       {
-        objectiveId: "1.1",
+        id: "1.1",
         employeeId: "uuid",
         employeeName: "张",
         departmentName: "策划部",
@@ -22,7 +22,7 @@ var array = [
         childCount: 0,
         superOkr: [
           {
-            objectiveId: "1.1.1",
+            id: "1.1.1",
             employeeId: "uuid",
             employeeName: "张",
             departmentName: "策划部",
@@ -33,7 +33,7 @@ var array = [
             childCount: 0,
           },
           {
-            objectiveId: "1.1.2",
+            id: "1.1.2",
             employeeId: "uuid",
             employeeName: "张",
             departmentName: "策划部",
@@ -48,7 +48,7 @@ var array = [
     ],
     childOkr: [
       {
-        objectiveId: "1.2",
+        id: "1.2",
         employeeId: "uuid",
         employeeName: "张",
         departmentName: "策划部",
@@ -59,7 +59,7 @@ var array = [
         childCount: 2,
         childOkr: [
           {
-            objectiveId: "1.2.1",
+            id: "1.2.1",
             employeeId: "uuid",
             employeeName: "张",
             departmentName: "策划部",
@@ -70,7 +70,7 @@ var array = [
             childCount: 1,
             childOkr: [
               {
-                objectiveId: "1.2.1.1",
+                id: "1.2.1.1",
                 employeeId: "uuid",
                 employeeName: "张",
                 departmentName: "策划部",
@@ -83,7 +83,7 @@ var array = [
             ],
           },
           {
-            objectiveId: "1.2.2",
+            id: "1.2.2",
             employeeId: "uuid",
             employeeName: "张",
             departmentName: "策划部",
@@ -96,7 +96,7 @@ var array = [
         ],
       },
       {
-        objectiveId: "1.3",
+        id: "1.3",
         employeeId: "uuid",
         employeeName: "张",
         departmentName: "策划部",
@@ -107,7 +107,7 @@ var array = [
         childCount: 3,
         childOkr: [
           {
-            objectiveId: "1.3.1",
+            id: "1.3.1",
             employeeId: "uuid",
             employeeName: "张",
             departmentName: "策划部",
@@ -118,7 +118,7 @@ var array = [
             childCount: 0,
           },
           {
-            objectiveId: "1.3.2",
+            id: "1.3.2",
             employeeId: "uuid",
             employeeName: "张",
             departmentName: "策划部",
@@ -129,7 +129,7 @@ var array = [
             childCount: 0,
           },
           {
-            objectiveId: "1.3.3",
+            id: "1.3.3",
             employeeId: "uuid",
             employeeName: "张",
             departmentName: "策划部",
@@ -144,7 +144,7 @@ var array = [
     ],
   },
   {
-    objectiveId: "2",
+    id: "2",
     employeeId: "uuid",
     employeeName: "迪丽热aa",
     departmentName: "策划部的技术部",
@@ -155,7 +155,7 @@ var array = [
     childCount: 2,
     superOkr: [
       {
-        objectiveId: "2.1",
+        id: "2.1",
         employeeId: "uuid",
         employeeName: "张",
         departmentName: "策划部",
@@ -166,7 +166,7 @@ var array = [
         childCount: 0,
         superOkr: [
           {
-            objectiveId: "2.1.1",
+            id: "2.1.1",
             employeeId: "uuid",
             employeeName: "张",
             departmentName: "策划部",
@@ -177,7 +177,7 @@ var array = [
             childCount: 0,
           },
           {
-            objectiveId: "2.1.2",
+            id: "2.1.2",
             employeeId: "uuid",
             employeeName: "张",
             departmentName: "策划部",
@@ -192,7 +192,7 @@ var array = [
     ],
     childOkr: [
       {
-        objectiveId: "2.2",
+        id: "2.2",
         employeeId: "uuid",
         employeeName: "张",
         departmentName: "策划部",
@@ -203,7 +203,7 @@ var array = [
         childCount: 2,
         childOkr: [
           {
-            objectiveId: "2.2.1",
+            id: "2.2.1",
             employeeId: "uuid",
             employeeName: "张",
             departmentName: "策划部",
@@ -214,7 +214,7 @@ var array = [
             childCount: 0,
           },
           {
-            objectiveId: "2.2.2",
+            id: "2.2.2",
             employeeId: "uuid",
             employeeName: "张",
             departmentName: "策划部",
@@ -227,7 +227,7 @@ var array = [
         ],
       },
       {
-        objectiveId: "2.3",
+        id: "2.3",
         employeeId: "uuid",
         employeeName: "张",
         departmentName: "策划部",
@@ -238,7 +238,7 @@ var array = [
         childCount: 2,
         childOkr: [
           {
-            objectiveId: "2.3.1",
+            id: "2.3.1",
             employeeId: "uuid",
             employeeName: "张",
             departmentName: "策划部",
@@ -249,7 +249,7 @@ var array = [
             childCount: 0,
           },
           {
-            objectiveId: "2.3.2",
+            id: "2.3.2",
             employeeId: "uuid",
             employeeName: "张",
             departmentName: "策划部",
@@ -264,7 +264,7 @@ var array = [
     ],
   },
   {
-    objectiveId: "3",
+    id: "3",
     employeeId: "uuid",
     employeeName: "迪丽热aa",
     departmentName: "策划部的技术部",
@@ -276,7 +276,7 @@ var array = [
     childCount: 2,
     superOkr: [
       {
-        objectiveId: "3.1",
+        id: "3.1",
         employeeId: "uuid",
         employeeName: "张",
         departmentName: "策划部",
@@ -287,7 +287,7 @@ var array = [
         childCount: 0,
         superOkr: [
           {
-            objectiveId: "3.1.1",
+            id: "3.1.1",
             employeeId: "uuid",
             employeeName: "张",
             departmentName: "策划部",
@@ -298,7 +298,7 @@ var array = [
             childCount: 0,
           },
           {
-            objectiveId: "3.1.2",
+            id: "3.1.2",
             employeeId: "uuid",
             employeeName: "张",
             departmentName: "策划部",
@@ -313,7 +313,7 @@ var array = [
     ],
     childOkr: [
       {
-        objectiveId: "3.2",
+        id: "3.2",
         employeeId: "uuid",
         employeeName: "张",
         departmentName: "策划部",
@@ -324,7 +324,7 @@ var array = [
         childCount: 2,
         childOkr: [
           {
-            objectiveId: "3.2.1",
+            id: "3.2.1",
             employeeId: "uuid",
             employeeName: "张",
             departmentName: "策划部",
@@ -335,7 +335,7 @@ var array = [
             childCount: 0,
           },
           {
-            objectiveId: "3.2.2",
+            id: "3.2.2",
             employeeId: "uuid",
             employeeName: "张",
             departmentName: "策划部",
@@ -348,7 +348,7 @@ var array = [
         ],
       },
       {
-        objectiveId: "3.3",
+        id: "3.3",
         employeeId: "uuid",
         employeeName: "张",
         departmentName: "策划部",
@@ -359,7 +359,7 @@ var array = [
         childCount: 1,
         childOkr: [
           {
-            objectiveId: "3.3.1",
+            id: "3.3.1",
             employeeId: "uuid",
             employeeName: "张",
             departmentName: "策划部",
@@ -400,7 +400,7 @@ function parseOkrJSON(array, dir) {
   for (let i = 0; i < array.length; i++) {
     let obj = array[i];
     let newObj = {};
-    newObj.objectiveId = obj.objectiveId;
+    newObj.id = obj.id;
     if (obj.isRoot) newObj.isRoot = obj.isRoot;
     newObj.text = getTextObj(obj);
     newObj.shape = getShapeObj(obj);
@@ -449,7 +449,7 @@ function parseSingleOkrJSON(array, dir) {
   for (let i = 0; i < array.length; i++) {
     let newObj = {};
     let obj = array[i];
-    newObj.objectiveId = obj.objectiveId;
+    newObj.id = obj.id;
     newObj.text = getTextObj(obj);
     newObj.shape = getShapeObj(obj);
     newObj.expanded = false;

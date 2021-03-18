@@ -255,7 +255,6 @@
           p.y - p.height / 2 <= ey &&
           ey <= p.y + p.height / 2
         ) {
-          // console.log("点击了keynode:", p.objectiveId, p.x, p.y);
           this.fn.keyNodeClick && this.fn.keyNodeClick(p);
           return;
         }
@@ -269,7 +268,6 @@
             Math.pow(ex - p[type][0], 2) + Math.pow(ey - p[type][1], 2) <
             100
           ) {
-            // console.log(`点击了${p.objectiveId}的hub节点${type}`);
             if (type == "hubPosLeft") {
               this.fn.hubNodeClick && this.fn.hubNodeClick(p, -1);
             }
@@ -325,43 +323,10 @@
   };
 
   qjm.util = {
-    throttle(fn, wait) {
-      let timer;
-      return function () {
-        if (!timer) {
-          timer = setTimeout(() => {
-            fn.apply(this, arguments);
-            clearTimeout(timer);
-            timer = null;
-          }, wait);
-        }
-      };
-    },
     newid() {
       return (
         new Date().getTime().toString(16) + Math.random().toString(16).substr(2)
       ).substr(2, 16);
-    },
-    deepClone(obj) {
-      let objClone = Array.isArray(obj) ? [] : obj instanceof Object ? {} : obj;
-      if (obj && obj instanceof Array) {
-        for (let i = 0; i < obj.length; i++) {
-          if (obj[i]) {
-            objClone[i] = qjm.util.deepClone(obj[i]);
-          }
-        }
-      } else if (obj && obj instanceof Object) {
-        for (let key in obj) {
-          if (obj.hasOwnProperty(key)) {
-            if (obj[key] && typeof obj[key] === "object") {
-              objClone[key] = qjm.util.deepClone(obj[key]);
-            } else {
-              objClone[key] = obj[key];
-            }
-          }
-        }
-      }
-      return objClone;
     },
     flatArray(arr) {
       arr = [].concat(arr);
@@ -383,9 +348,9 @@
   // 节点构造函数
   qjm.KeyNode = function (qjm, nodeJson) {
     this.qjm = qjm;
-    this.objectiveId = nodeJson.objectiveId || 0;
-    this.text = nodeJson.text;
-    this.shape = nodeJson.shape;
+    this.id = nodeJson.id || qjm.util.newid();
+    this.text = nodeJson.text || [];
+    this.shape = nodeJson.shape || [];
     this.x = nodeJson.x;
     this.y = nodeJson.y;
     this.width = qjm.opts.keyNodeWidth || 320;
@@ -772,7 +737,6 @@
     },
     add_node(nodeJson) {
       let node = new qjm.KeyNode(this.qjm, nodeJson);
-      node.id = qjm.util.newid();
       return node;
     },
 

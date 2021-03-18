@@ -40,11 +40,11 @@
       };
       var qjMind = new qjMind(options, {
         keyNodeClick: function (node) {
-          // console.log("点击了okr节点", node.objectiveId, node.x, node.y);
+          console.log("点击了okr节点", node.id, node.x, node.y);
           //
         },
         hubNodeClick: function (node, dir) {
-          // console.log("点击了hub节点", node);
+          console.log("点击了hub节点", node);
           toggleHubNodeExpand(node, dir);
           //改变nodeArray
           qjMind.render(nodeArray);
@@ -54,8 +54,8 @@
 
       // 点击hubNode事件
       function toggleHubNodeExpand(node, dir) {
-        let objectiveId = node.objectiveId;
-        let currObj = findObjective(objectiveId, nodeArray);
+        let id = node.id;
+        let currObj = findObjective(id, nodeArray);
         if (dir === -1) {
           if (node.isRoot) {
             currObj.expandedLeft = !currObj.expandedLeft;
@@ -71,14 +71,14 @@
           }
         }
       }
-      // 根据objectiveId递归查找对应的objective
-      function findObjective(objectiveId, objectArray) {
+      // 根据id递归查找对应的objective
+      function findObjective(id, objectArray) {
         for (let i = 0; i < objectArray.length; i++) {
-          if (objectArray[i].objectiveId === objectiveId) {
+          if (objectArray[i].id === id) {
             return objectArray[i];
           }
           if (objectArray[i].children) {
-            let obj = this.findObjective(objectiveId, objectArray[i].children);
+            let obj = this.findObjective(id, objectArray[i].children);
             if (obj) return obj;
           }
         }

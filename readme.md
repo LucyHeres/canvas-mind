@@ -5,7 +5,7 @@
 #### 1.节点可展开收起
 #### 2.图可以拖动平移、鼠标缩放
 
-![avatar](/canvas-思维导图.jpg)
+![image](https://github.com/LucyHeres/canvas-mind/blob/master/canva-%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE.jpg)
 #### 实现方法：
 ```js
 // 树图属性数据：

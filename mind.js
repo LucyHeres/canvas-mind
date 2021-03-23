@@ -846,15 +846,14 @@
         this.leftLevelMax = Math.max(this.leftLevelMax, group.leftLevelMax);
         this.rightLevelMax = Math.max(this.rightLevelMax, group.rightLevelMax);
       }
+      this.totalHeight += (this.nodeGroupInfo.length - 1) * GROUP_DISTANCE;
       for (let i = 0, len = this.nodeGroupInfo.length; i < len; i++) {
         let group = this.nodeGroupInfo[i];
-        let preGroupTop = this.nodeGroupInfo[i - 1]
-          ? this.nodeGroupInfo[i - 1].topY
-          : this.canvasCenter.y - this.totalHeight / 2;
-        let preGroupHeight = this.nodeGroupInfo[i - 1]
-          ? this.nodeGroupInfo[i - 1].height
-          : 0;
-        group.topY = preGroupTop + preGroupHeight + GROUP_DISTANCE;
+        if (this.nodeGroupInfo[i - 1]) {
+          group.topY = this.nodeGroupInfo[i - 1].topY + this.nodeGroupInfo[i - 1].height + GROUP_DISTANCE;
+        } else {
+          group.topY = this.canvasCenter.y - this.totalHeight / 2;
+        }
       }
 
       // 总高度

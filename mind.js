@@ -502,6 +502,7 @@
     drawLine_to_child() {
       var ctx = this.qjm.ctx;
       ctx.save();
+      ctx.beginPath();
       ctx.strokeStyle = this.lineColor;
       if (this.isRoot) {
         if (this.childrenCountRight) {
@@ -530,8 +531,9 @@
       var moveToX = this.x - (this.direction * this.width) / 2;
       var moveToY = this.y;
       ctx.save();
-      ctx.moveTo(moveToX, moveToY);
+      ctx.beginPath();
       ctx.strokeStyle = this.lineColor;
+      ctx.moveTo(moveToX, moveToY);
       if (this.parent.isRoot) {
         this.direction === 1 &&
           ctx.quadraticCurveTo(

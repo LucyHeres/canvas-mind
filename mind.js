@@ -122,6 +122,7 @@
     },
     // 画布事件：缩放
     add_event_zoom() {
+      var t = this;
       // 禁用原生页面缩放
       window.addEventListener(
         "mousewheel",
@@ -146,20 +147,22 @@
           passive: false,
         }
       );
+
       // canvas缩放
-      this.canvas.addEventListener("wheel", (e) => {
+      t.canvas.addEventListener("wheel",_wheel);
+      t.canvas.addEventListener("DOMMouseScroll",_wheel);
+
+      function _wheel(e){
         let zoom = 1;
         e.stopPropagation();
         e.preventDefault();
-        if (e.ctrlKey) {
-          if (e.deltaY > 0) {
-            this._scale(-SCALE_STEP, e.offsetX, e.offsetY);
-          }
-          if (e.deltaY < 0) {
-            this._scale(SCALE_STEP, e.offsetX, e.offsetY);
-          }
+        if (e.deltaY > 0) {
+          t._scale(-SCALE_STEP, e.offsetX, e.offsetY);
         }
-      });
+        if (e.deltaY < 0) {
+          t._scale(SCALE_STEP, e.offsetX, e.offsetY);
+        }
+      }
     },
     /**
      * 画布事件：拖动 位移
@@ -184,19 +187,36 @@
         var dx = (e.clientX - x) / t.scale;
         var dy = (e.clientY - y) / t.scale;
 
-        if (limit.left > cw - 400) {
-          //右边界
-          t.ctx.translate(e.clientX < x ? dx : 0, dy);
-        } else if (limit.right <= 400) {
-          //左边界
-          t.ctx.translate(e.clientX > x ? dx : 0, dy);
-        } else if (limit.top > ch - 200) {
-          //下边界
-          t.ctx.translate(dx, e.clientY < y ? dy : 0);
-        } else if (limit.bottom < 200) {
-          //上边界
-          t.ctx.translate(dx, e.clientY > y ? dy : 0);
-        } else {
+        if(limit.left > cw - 400 || limit.right <= 400 || limit.top > ch - 200 || limit.bottom < 200){
+          if (limit.left > cw - 400) {
+            //右边界
+            t.ctx.translate(
+              dx > 0 ? 0 : dx,
+              limit.bottom < 200 || limit.top > ch - 200 ? 0 : dy
+            );
+          }
+          if (limit.right <= 400) {
+            //左边界
+            t.ctx.translate(
+              dx > 0 ? dx : 0,
+              limit.bottom < 200 || limit.top > ch - 200 ? 0 : dy
+            );
+          }
+          if (limit.top > ch - 200) {
+            //下边界
+            t.ctx.translate(
+              limit.left > cw - 400 || limit.right <= 400 ? 0 : dx,
+              dy > 0 ? 0 : dy
+            );
+          }
+          if (limit.bottom < 200) {
+            //上边界
+            t.ctx.translate(
+              limit.left > cw - 400 || limit.right <= 400 ? 0 : dx,
+              dy > 0 ? dy : 0
+            );
+          }
+        }else{
           t.ctx.translate(dx, dy);
         }
         x = e.clientX;
@@ -233,6 +253,7 @@
         canvas.addEventListener("mouseup", _mouseup);
         return false;
       });
+      canvas.addEventListener("mouseout",_mouseup)
     },
     // 画布事件：点击 内容节点、分支枢纽节点
     click_node(e) {

@@ -174,6 +174,19 @@
       var x, y, startX, startY;
       var cw = parseFloat(t.canvas.style.width);
       var ch = parseFloat(t.canvas.style.height);
+
+      function _mousedown(e){
+        //获取x坐标和y坐标
+        startX = x = e.clientX;
+        startY = y = e.clientY;
+        //开关打开
+        isDown = true;
+        canvas.style.cursor = "grabbing";
+        canvas.addEventListener("mousemove", _mousemove);
+        canvas.addEventListener("mouseup", _mouseup);
+        canvas.removeEventListener("mousemove",_mouse_over_move);
+        return false;
+      }
       function _mousemove(e) {
         if (!isDown) return;
         // 触发点击事件
@@ -240,20 +253,64 @@
         canvas.style.cursor = "default";
         canvas.removeEventListener("mousemove", _mousemove);
         canvas.removeEventListener("mouseup", _mouseup);
+        canvas.addEventListener("mousemove",_mouse_over_move);
         isDown = false;
       }
-      canvas.addEventListener("mousedown", (e) => {
-        //获取x坐标和y坐标
-        startX = x = e.clientX;
-        startY = y = e.clientY;
-        //开关打开
-        isDown = true;
-        canvas.style.cursor = "grabbing";
-        canvas.addEventListener("mousemove", _mousemove);
-        canvas.addEventListener("mouseup", _mouseup);
-        return false;
-      });
-      canvas.addEventListener("mouseout",_mouseup)
+      function _mouseover(e){
+        canvas.addEventListener("mousemove",_mouse_over_move);
+      }
+      function _mouseout(e){
+        _mouseup(e);
+        canvas.removeEventListener("mousemove",_mouse_over_move);
+      }
+      function _mouse_over_move(e){
+        t.hover_node(e);
+      }
+      
+      canvas.addEventListener("mousedown", _mousedown);
+      canvas.addEventListener("mouseover",_mouseover);
+      canvas.addEventListener("mouseout", _mouseout);
+    },
+    // 画布事件：鼠标悬浮在 内容节点、分支枢纽节点上
+    hover_node(e){
+      var canvas = this.canvas;
+      var ctx = this.ctx;
+      // 矩阵换算鼠标点击位置对应的新坐标
+      var cT = ctx.getTransform();
+      let matrix = [cT.a, cT.b, cT.c, cT.d, cT.e, cT.f];
+      var newxy = this._getXY(matrix, e.offsetX, e.offsetY);
+      var ex = newxy.x;
+      var ey = newxy.y;
+
+      var all_nodes = this.allNodePosMap;
+      // 点击内容节点
+      for (var i = 0; i < all_nodes["keynode"].length; i++) {
+        let p = all_nodes["keynode"][i];
+        if (
+          p.x - p.width / 2 <= ex &&
+          ex <= p.x + p.width / 2 &&
+          p.y - p.height / 2 <= ey &&
+          ey <= p.y + p.height / 2
+        ) {
+          canvas.style.cursor = "pointer";
+          return;
+        }
+      }
+      // 点击分支枢纽节点
+      for (var type in all_nodes) {
+        if (type == "keynode") continue;
+        for (var i = 0; i < all_nodes[type].length; i++) {
+          let p = all_nodes[type][i];
+          if (
+            Math.pow(ex - p[type][0], 2) + Math.pow(ey - p[type][1], 2) <
+            100
+          ) {
+            canvas.style.cursor = "pointer";
+            return;
+          }
+        }
+      }
+      canvas.style.cursor = "default";
     },
     // 画布事件：点击 内容节点、分支枢纽节点
     click_node(e) {

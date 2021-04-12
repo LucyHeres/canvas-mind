@@ -42,12 +42,12 @@
     // 初始化画布
     init() {
       this.canvasContainer = document.querySelector(this.opts.container);
+      var w = this.canvasContainer.offsetWidth;
+      var h = this.canvasContainer.offsetHeight;
+
       this.canvas = document.createElement("canvas");
       this.canvasContainer.appendChild(this.canvas);
       this.ctx = this.canvas.getContext("2d");
-
-      var w = this.canvasContainer.offsetWidth;
-      var h = this.canvasContainer.offsetHeight;
       this.canvas.width = w;
       this.canvas.height = h;
       this.canvas.style.width = w + "px";
@@ -259,11 +259,12 @@
       function _mouseover(e){
         canvas.addEventListener("mousemove",_mouse_over_move);
       }
-      function _mouseout(e){
-        _mouseup(e);
-        canvas.removeEventListener("mousemove",_mouse_over_move);
+      function _mouseout(e) {
+        canvas.removeEventListener("mousemove", _mouse_over_move);
+        canvas.removeEventListener("mousemove", _mousemove);
+        canvas.removeEventListener("mouseup", _mouseup);
       }
-      function _mouse_over_move(e){
+      function _mouse_over_move(e) {      
         t.hover_node(e);
       }
       

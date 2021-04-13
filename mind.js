@@ -427,7 +427,7 @@
   // 节点构造函数
   qjm.KeyNode = function (qjm, nodeJson) {
     this.qjm = qjm;
-    this.id = nodeJson.id || qjm.util.newid();
+    this.nid = nodeJson.nid;
     this.text = nodeJson.text || [];
     this.shape = nodeJson.shape || [];
     this.x = nodeJson.x;
@@ -927,6 +927,7 @@
         this.leftLevelMax = Math.max(this.leftLevelMax, group.leftLevelMax);
         this.rightLevelMax = Math.max(this.rightLevelMax, group.rightLevelMax);
       }
+      // 总高度
       this.totalHeight += (this.nodeGroupInfo.length - 1) * GROUP_DISTANCE;
       for (let i = 0, len = this.nodeGroupInfo.length; i < len; i++) {
         let group = this.nodeGroupInfo[i];
@@ -936,9 +937,6 @@
           group.topY = this.canvasCenter.y - this.totalHeight / 2;
         }
       }
-
-      // 总高度
-      this.totalHeight += (this.nodeGroupInfo.length - 1) * GROUP_DISTANCE;
     },
 
     // 获取上下左右四个边界值

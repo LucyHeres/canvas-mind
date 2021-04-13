@@ -79,7 +79,7 @@
       // canvas的实际渲染倍率
       this.ratio = devicePixelRatio / backingStoreRatio;
       if (this.ratio == 1) return;
-      
+
       this.canvas.width *= this.ratio;
       this.canvas.height *= this.ratio;
       this.canvasCenterPos = this.getCanvasCenterPos();
@@ -122,6 +122,17 @@
       var s = Math.round(this.scale * 100 + zoom * 100) / 100;
       if (s > 1.1 || s < 0.3) {
         return;
+      }
+      var limit = this.valid_move_boundary();
+      let cw = parseFloat(this.canvas.style.width);
+      let ch = parseFloat(this.canvas.style.height);
+      if (
+        limit.left > cw - 400 ||
+        limit.right <= 400 ||
+        limit.top > ch - 200 ||
+        limit.bottom < 200
+      ) {
+        if (zoom < 0) return;
       }
       this.clearCanvas();
       this.ctx.translate(cx, cy);

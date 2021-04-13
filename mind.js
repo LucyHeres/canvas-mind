@@ -39,6 +39,17 @@
         this.canvasCenterPos.y
       );
     },
+    chgCanvasSize() {
+      var w = this.canvasContainer.offsetWidth;
+      var h = this.canvasContainer.offsetHeight;
+      this.canvas.width = w;
+      this.canvas.height = h;
+      this.canvas.style.width = w + "px";
+      this.canvas.style.height = h + "px";
+      this.handleDevicePixelRatio();
+      this.clearCanvas();
+      this.create_mind();
+    },
     // 初始化画布
     init() {
       this.canvasContainer = document.querySelector(this.opts.container);
@@ -52,7 +63,9 @@
       this.canvas.height = h;
       this.canvas.style.width = w + "px";
       this.canvas.style.height = h + "px";
-
+      this.handleDevicePixelRatio();
+    },
+    handleDevicePixelRatio() {
       // 屏幕的设备像素比
       var devicePixelRatio = window.devicePixelRatio || 1;
       // 浏览器在渲染canvas之前存储画布信息的像素比
@@ -65,6 +78,8 @@
         1;
       // canvas的实际渲染倍率
       this.ratio = devicePixelRatio / backingStoreRatio;
+      if (this.ratio == 1) return;
+      
       this.canvas.width *= this.ratio;
       this.canvas.height *= this.ratio;
       this.canvasCenterPos = this.getCanvasCenterPos();
@@ -149,10 +164,10 @@
       );
 
       // canvas缩放
-      t.canvas.addEventListener("wheel",_wheel);
-      t.canvas.addEventListener("DOMMouseScroll",_wheel);
+      t.canvas.addEventListener("wheel", _wheel);
+      t.canvas.addEventListener("DOMMouseScroll", _wheel);
 
-      function _wheel(e){
+      function _wheel(e) {
         let zoom = 1;
         e.stopPropagation();
         e.preventDefault();
@@ -175,7 +190,7 @@
       var cw = parseFloat(t.canvas.style.width);
       var ch = parseFloat(t.canvas.style.height);
 
-      function _mousedown(e){
+      function _mousedown(e) {
         //获取x坐标和y坐标
         startX = x = e.clientX;
         startY = y = e.clientY;
@@ -184,7 +199,7 @@
         canvas.style.cursor = "grabbing";
         canvas.addEventListener("mousemove", _mousemove);
         canvas.addEventListener("mouseup", _mouseup);
-        canvas.removeEventListener("mousemove",_mouse_over_move);
+        canvas.removeEventListener("mousemove", _mouse_over_move);
         return false;
       }
       function _mousemove(e) {
@@ -200,7 +215,12 @@
         var dx = (e.clientX - x) / t.scale;
         var dy = (e.clientY - y) / t.scale;
 
-        if(limit.left > cw - 400 || limit.right <= 400 || limit.top > ch - 200 || limit.bottom < 200){
+        if (
+          limit.left > cw - 400 ||
+          limit.right <= 400 ||
+          limit.top > ch - 200 ||
+          limit.bottom < 200
+        ) {
           if (limit.left > cw - 400) {
             //右边界
             t.ctx.translate(
@@ -229,7 +249,7 @@
               dy > 0 ? dy : 0
             );
           }
-        }else{
+        } else {
           t.ctx.translate(dx, dy);
         }
         x = e.clientX;
@@ -253,27 +273,27 @@
         canvas.style.cursor = "default";
         canvas.removeEventListener("mousemove", _mousemove);
         canvas.removeEventListener("mouseup", _mouseup);
-        canvas.addEventListener("mousemove",_mouse_over_move);
+        canvas.addEventListener("mousemove", _mouse_over_move);
         isDown = false;
       }
-      function _mouseover(e){
-        canvas.addEventListener("mousemove",_mouse_over_move);
+      function _mouseover(e) {
+        canvas.addEventListener("mousemove", _mouse_over_move);
       }
       function _mouseout(e) {
         canvas.removeEventListener("mousemove", _mouse_over_move);
         canvas.removeEventListener("mousemove", _mousemove);
         canvas.removeEventListener("mouseup", _mouseup);
       }
-      function _mouse_over_move(e) {      
+      function _mouse_over_move(e) {
         t.hover_node(e);
       }
-      
+
       canvas.addEventListener("mousedown", _mousedown);
-      canvas.addEventListener("mouseover",_mouseover);
+      canvas.addEventListener("mouseover", _mouseover);
       canvas.addEventListener("mouseout", _mouseout);
     },
     // 画布事件：鼠标悬浮在 内容节点、分支枢纽节点上
-    hover_node(e){
+    hover_node(e) {
       var canvas = this.canvas;
       var ctx = this.ctx;
       // 矩阵换算鼠标点击位置对应的新坐标
@@ -932,7 +952,10 @@
       for (let i = 0, len = this.nodeGroupInfo.length; i < len; i++) {
         let group = this.nodeGroupInfo[i];
         if (this.nodeGroupInfo[i - 1]) {
-          group.topY = this.nodeGroupInfo[i - 1].topY + this.nodeGroupInfo[i - 1].height + GROUP_DISTANCE;
+          group.topY =
+            this.nodeGroupInfo[i - 1].topY +
+            this.nodeGroupInfo[i - 1].height +
+            GROUP_DISTANCE;
         } else {
           group.topY = this.canvasCenter.y - this.totalHeight / 2;
         }

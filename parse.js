@@ -5,11 +5,20 @@ var nodeObj = {
   dangerType: 1,
   schedule: "30",
   objectiveDesc: "1",
-  superCount: 1,
-  childCount: 1,
+  superCount: 2,
+  childCount: 3,
   superOkr: [
     {
-      id: "1.1",
+      employeeId: "uuid",
+      employeeName: "张",
+      departmentName: "策划部",
+      dangerType: 2,
+      schedule: "30",
+      objectiveDesc: "1.1",
+      superCount: 0,
+      childCount: 0,
+    },
+    {
       employeeId: "uuid",
       employeeName: "张",
       departmentName: "策划部",
@@ -22,7 +31,26 @@ var nodeObj = {
   ],
   childOkr: [
     {
-      id: "1.2",
+      employeeId: "uuid",
+      employeeName: "张",
+      departmentName: "策划部",
+      dangerType: 2,
+      schedule: "30",
+      objectiveDesc: "1.2",
+      superCount: 0,
+      childCount: 0,
+    },
+    {
+      employeeId: "uuid",
+      employeeName: "张",
+      departmentName: "策划部",
+      dangerType: 2,
+      schedule: "30",
+      objectiveDesc: "1.2",
+      superCount: 0,
+      childCount: 0,
+    },
+    {
       employeeId: "uuid",
       employeeName: "张",
       departmentName: "策划部",
@@ -40,10 +68,14 @@ for (var i = 1; i <= 10000; i++) {
   var newObj = JSON.parse(JSON.stringify(nodeObj));
   newObj.id = i;
   newObj.objectiveDesc = "" + i;
-  newObj.superOkr[0].id = "" + i + ".1";
-  newObj.superOkr[0].objectiveDesc = "" + i + ".1";
-  newObj.childOkr[0].id = "" + i + ".2";
-  newObj.childOkr[0].objectiveDesc = "" + i + ".2";
+  newObj.superCount.forEach((item,j)=>{
+    item.id = "" + i + "."+j;
+    item.objectiveDesc = "" + i + "."+j;
+  })
+  newObj.childCount.forEach((item,j)=>{
+    item.id = "" + i + "."+j;
+    item.objectiveDesc = "" + i + "."+j;
+  })
   array.push(newObj);
 }
 

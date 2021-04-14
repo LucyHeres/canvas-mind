@@ -430,6 +430,17 @@
         y: newY,
       };
     },
+    judgeNodeIsInCurView(x, y) {
+      let t = this;
+      let cT = t.ctx.getTransform();
+      let matrix = [cT.a, cT.b, cT.c, cT.d, cT.e, cT.f];
+      let pos = t._reverse_getXY(matrix, x, y);
+      let ch = parseFloat(t.canvas.style.height);
+      if (pos.y > -100 && pos.y < ch + 100) {
+        return true;
+      }
+      return false;
+    }
   };
 
   qjm.util = {
@@ -488,9 +499,6 @@
   };
   qjm.KeyNode.prototype = {
     show() {
-      if(!this.judgeIsShowNode(this.x,this.y)){
-        return;
-      }
       this.getHubPos();
       this.drawKeyNode();
       this.drawContent();
@@ -874,18 +882,17 @@
     _draw_mind_elements(nodeArray) {
       for (var i = 0; i < nodeArray.length; i++) {
         let node = nodeArray[i];
-        node.show();
-        if (node.parent) {
-          node.drawLine_to_parent();
-        }
-        if (
-          node.childrenCountLeft ||
-          node.childrenCountRight ||
-          node.childrenCount
-        ) {
-          node.drawLine_to_child();
-          this._draw_mind_elements(node.children);
-          node.drawHub();
+        // 如果根节点在当前view内，则渲染，否则不渲染
+        if (this.qjm.judgeNodeIsInCurView(node.x, node.y)) {
+          node.show();
+          if (node.parent) {
+            node.drawLine_to_parent();
+          }
+          if (node.childrenCountLeft || node.childrenCountRight || node.childrenCount) {
+            node.drawLine_to_child();
+            this._draw_mind_elements(node.children);
+            node.drawHub();
+          }
         }
       }
     },

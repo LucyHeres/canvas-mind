@@ -68,11 +68,11 @@ for (var i = 1; i <= 10000; i++) {
   var newObj = JSON.parse(JSON.stringify(nodeObj));
   newObj.id = i;
   newObj.objectiveDesc = "" + i;
-  newObj.superCount.forEach((item,j)=>{
+  newObj.superOkr.forEach((item,j)=>{
     item.id = "" + i + "."+j;
     item.objectiveDesc = "" + i + "."+j;
   })
-  newObj.childCount.forEach((item,j)=>{
+  newObj.childOkr.forEach((item,j)=>{
     item.id = "" + i + "."+j;
     item.objectiveDesc = "" + i + "."+j;
   })

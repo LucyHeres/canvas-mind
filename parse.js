@@ -1,379 +1,47 @@
-var array = [
-  {
-    id: "1",
-    employeeId: "uuid",
-    employeeName: "迪丽热aa",
-    departmentName: "策划部的技术部",
-    dangerType: 1,
-    schedule: "30",
-    objectiveDesc: "1",
-    superCount: 1,
-    childCount: 2,
-    superOkr: [
-      {
-        id: "1.1",
-        employeeId: "uuid",
-        employeeName: "张",
-        departmentName: "策划部",
-        dangerType: 2,
-        schedule: "30",
-        objectiveDesc: "1.1",
-        superCount: 2,
-        childCount: 0,
-        superOkr: [
-          {
-            id: "1.1.1",
-            employeeId: "uuid",
-            employeeName: "张",
-            departmentName: "策划部",
-            dangerType: 2,
-            schedule: "30",
-            objectiveDesc: "1.1.1",
-            superCount: 0,
-            childCount: 0,
-          },
-          {
-            id: "1.1.2",
-            employeeId: "uuid",
-            employeeName: "张",
-            departmentName: "策划部",
-            dangerType: 2,
-            schedule: "30",
-            objectiveDesc: "1.1.2!",
-            superCount: 0,
-            childCount: 0,
-          },
-        ],
-      },
-    ],
-    childOkr: [
-      {
-        id: "1.2",
-        employeeId: "uuid",
-        employeeName: "张",
-        departmentName: "策划部",
-        dangerType: 2,
-        schedule: "30",
-        objectiveDesc: "1.2",
-        superCount: 0,
-        childCount: 2,
-        childOkr: [
-          {
-            id: "1.2.1",
-            employeeId: "uuid",
-            employeeName: "张",
-            departmentName: "策划部",
-            dangerType: 2,
-            schedule: "30",
-            objectiveDesc: "1.2.1",
-            superCount: 0,
-            childCount: 1,
-            childOkr: [
-              {
-                id: "1.2.1.1",
-                employeeId: "uuid",
-                employeeName: "张",
-                departmentName: "策划部",
-                dangerType: 2,
-                schedule: "30",
-                objectiveDesc: "1.2.1.1",
-                superCount: 0,
-                childCount: 0,
-              },
-            ],
-          },
-          {
-            id: "1.2.2",
-            employeeId: "uuid",
-            employeeName: "张",
-            departmentName: "策划部",
-            dangerType: 2,
-            schedule: "30",
-            objectiveDesc: "1.2.2!",
-            superCount: 0,
-            childCount: 0,
-          },
-        ],
-      },
-      {
-        id: "1.3",
-        employeeId: "uuid",
-        employeeName: "张",
-        departmentName: "策划部",
-        dangerType: 2,
-        schedule: "30",
-        objectiveDesc: "这里是内容!1.3",
-        superCount: 0,
-        childCount: 3,
-        childOkr: [
-          {
-            id: "1.3.1",
-            employeeId: "uuid",
-            employeeName: "张",
-            departmentName: "策划部",
-            dangerType: 2,
-            schedule: "30",
-            objectiveDesc: "1.3.1",
-            superCount: 0,
-            childCount: 0,
-          },
-          {
-            id: "1.3.2",
-            employeeId: "uuid",
-            employeeName: "张",
-            departmentName: "策划部",
-            dangerType: 2,
-            schedule: "30",
-            objectiveDesc: "1.3.2!",
-            superCount: 0,
-            childCount: 0,
-          },
-          {
-            id: "1.3.3",
-            employeeId: "uuid",
-            employeeName: "张",
-            departmentName: "策划部",
-            dangerType: 2,
-            schedule: "30",
-            objectiveDesc: "1.3.3!",
-            superCount: 0,
-            childCount: 0,
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: "2",
-    employeeId: "uuid",
-    employeeName: "迪丽热aa",
-    departmentName: "策划部的技术部",
-    dangerType: 1,
-    schedule: "30",
-    objectiveDesc:"2",
-    superCount: 1,
-    childCount: 2,
-    superOkr: [
-      {
-        id: "2.1",
-        employeeId: "uuid",
-        employeeName: "张",
-        departmentName: "策划部",
-        dangerType: 2,
-        schedule: "30",
-        objectiveDesc: "2.1!",
-        superCount: 2,
-        childCount: 0,
-        superOkr: [
-          {
-            id: "2.1.1",
-            employeeId: "uuid",
-            employeeName: "张",
-            departmentName: "策划部",
-            dangerType: 2,
-            schedule: "30",
-            objectiveDesc: "2.1.1!",
-            superCount: 0,
-            childCount: 0,
-          },
-          {
-            id: "2.1.2",
-            employeeId: "uuid",
-            employeeName: "张",
-            departmentName: "策划部",
-            dangerType: 2,
-            schedule: "30",
-            objectiveDesc: "2.1.2!",
-            superCount: 0,
-            childCount: 0,
-          },
-        ],
-      },
-    ],
-    childOkr: [
-      {
-        id: "2.2",
-        employeeId: "uuid",
-        employeeName: "张",
-        departmentName: "策划部",
-        dangerType: 2,
-        schedule: "30",
-        objectiveDesc: "2.2!",
-        superCount: 0,
-        childCount: 2,
-        childOkr: [
-          {
-            id: "2.2.1",
-            employeeId: "uuid",
-            employeeName: "张",
-            departmentName: "策划部",
-            dangerType: 2,
-            schedule: "30",
-            objectiveDesc: "2.2.1!",
-            superCount: 0,
-            childCount: 0,
-          },
-          {
-            id: "2.2.2",
-            employeeId: "uuid",
-            employeeName: "张",
-            departmentName: "策划部",
-            dangerType: 2,
-            schedule: "30",
-            objectiveDesc: "2.2.2!",
-            superCount: 0,
-            childCount: 0,
-          },
-        ],
-      },
-      {
-        id: "2.3",
-        employeeId: "uuid",
-        employeeName: "张",
-        departmentName: "策划部",
-        dangerType: 2,
-        schedule: "30",
-        objectiveDesc: "2.3!",
-        superCount: 0,
-        childCount: 2,
-        childOkr: [
-          {
-            id: "2.3.1",
-            employeeId: "uuid",
-            employeeName: "张",
-            departmentName: "策划部",
-            dangerType: 2,
-            schedule: "30",
-            objectiveDesc: "2.3.1!",
-            superCount: 0,
-            childCount: 0,
-          },
-          {
-            id: "2.3.2",
-            employeeId: "uuid",
-            employeeName: "张",
-            departmentName: "策划部",
-            dangerType: 2,
-            schedule: "30",
-            objectiveDesc: "2.3.2!",
-            superCount: 0,
-            childCount: 0,
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: "3",
-    employeeId: "uuid",
-    employeeName: "迪丽热aa",
-    departmentName: "策划部的技术部",
-    dangerType: 1,
-    schedule: "30",
-    objectiveDesc:
-      "3",
-    superCount: 1,
-    childCount: 2,
-    superOkr: [
-      {
-        id: "3.1",
-        employeeId: "uuid",
-        employeeName: "张",
-        departmentName: "策划部",
-        dangerType: 2,
-        schedule: "30",
-        objectiveDesc: "3.1!",
-        superCount: 2,
-        childCount: 0,
-        superOkr: [
-          {
-            id: "3.1.1",
-            employeeId: "uuid",
-            employeeName: "张",
-            departmentName: "策划部",
-            dangerType: 2,
-            schedule: "30",
-            objectiveDesc: "3.1.1!",
-            superCount: 0,
-            childCount: 0,
-          },
-          {
-            id: "3.1.2",
-            employeeId: "uuid",
-            employeeName: "张",
-            departmentName: "策划部",
-            dangerType: 2,
-            schedule: "30",
-            objectiveDesc: "3.1.2!",
-            superCount: 0,
-            childCount: 0,
-          },
-        ],
-      },
-    ],
-    childOkr: [
-      {
-        id: "3.2",
-        employeeId: "uuid",
-        employeeName: "张",
-        departmentName: "策划部",
-        dangerType: 2,
-        schedule: "30",
-        objectiveDesc: "!3.2",
-        superCount: 0,
-        childCount: 2,
-        childOkr: [
-          {
-            id: "3.2.1",
-            employeeId: "uuid",
-            employeeName: "张",
-            departmentName: "策划部",
-            dangerType: 2,
-            schedule: "30",
-            objectiveDesc: "3.2.1!",
-            superCount: 0,
-            childCount: 0,
-          },
-          {
-            id: "3.2.2",
-            employeeId: "uuid",
-            employeeName: "张",
-            departmentName: "策划部",
-            dangerType: 2,
-            schedule: "30",
-            objectiveDesc: "3.2.2!",
-            superCount: 0,
-            childCount: 0,
-          },
-        ],
-      },
-      {
-        id: "3.3",
-        employeeId: "uuid",
-        employeeName: "张",
-        departmentName: "策划部",
-        dangerType: 2,
-        schedule: "30",
-        objectiveDesc: "!3.3",
-        superCount: 0,
-        childCount: 1,
-        childOkr: [
-          {
-            id: "3.3.1",
-            employeeId: "uuid",
-            employeeName: "张",
-            departmentName: "策划部",
-            dangerType: 2,
-            schedule: "30",
-            objectiveDesc: "3.3.1!",
-            superCount: 0,
-            childCount: 0,
-          },
-        ],
-      },
-    ],
-  },
-];
+var nodeObj = {
+  employeeId: "uuid",
+  employeeName: "迪丽热aa",
+  departmentName: "策划部的技术部",
+  dangerType: 1,
+  schedule: "30",
+  objectiveDesc: "1",
+  superCount: 0,
+  childCount: 0,
+  // superOkr: [
+  //   {
+  //     id: "1.1",
+  //     employeeId: "uuid",
+  //     employeeName: "张",
+  //     departmentName: "策划部",
+  //     dangerType: 2,
+  //     schedule: "30",
+  //     objectiveDesc: "1.1",
+  //     superCount: 0,
+  //     childCount: 0,
+  //   },
+  // ],
+  // childOkr: [
+  //   {
+  //     id: "1.2",
+  //     employeeId: "uuid",
+  //     employeeName: "张",
+  //     departmentName: "策划部",
+  //     dangerType: 2,
+  //     schedule: "30",
+  //     objectiveDesc: "1.2",
+  //     superCount: 0,
+  //     childCount: 0,
+  //   }
+  // ]
+};
+var array = [];
+// 大数据压测
+for (var i = 1; i <= 10000; i++) {
+  var newObj = JSON.parse(JSON.stringify(nodeObj));
+  newObj.id = i;
+  newObj.objectiveDesc = "" + i;
+  array.push(newObj);
+}
 
 const getScheduleInfo = (obj) => {
   let info = {
@@ -381,20 +49,20 @@ const getScheduleInfo = (obj) => {
     1: [`正常   ${obj.schedule}%`, "#16A0FF"],
     2: [`有风险 ${obj.schedule}%`, "#FFAE11"],
     3: [`已延期 ${obj.schedule}%`, "#F73838"],
-  }
+  };
   return info[obj.dangerType];
-}
+};
 const initRoot = (array) => {
   for (let i = 0; i < array.length; i++) {
     array[i].isRoot = true;
   }
-}
+};
 
-const newid = ()=>{
+const newid = () => {
   return (
     new Date().getTime().toString(16) + Math.random().toString(16).substr(2)
   ).substr(2, 16);
-}
+};
 
 /**
  * 格式化接口请求到的目标地图数据
@@ -408,7 +76,7 @@ const parseOkrJSON = (array, dir) => {
     let newObj = {};
     newObj.id = obj.id;
     newObj.nid = newObj.nid || newid();
-    if(!('canRead' in obj)){
+    if (!("canRead" in obj)) {
       obj.canRead = 1;
     }
     newObj.canRead = obj.canRead;
@@ -449,7 +117,7 @@ const parseOkrJSON = (array, dir) => {
     newArr.push(newObj);
   }
   return newArr;
-}
+};
 /**
  * 格式化单次请求到的数组
  * @param array
@@ -462,7 +130,7 @@ const parseSingleOkrJSON = (array, dir) => {
     let obj = array[i];
     newObj.id = obj.id;
     newObj.nid = newObj.nid || newid();
-    if(!('canRead' in obj)){
+    if (!("canRead" in obj)) {
       obj.canRead = 1;
     }
     newObj.canRead = obj.canRead;
@@ -475,7 +143,7 @@ const parseSingleOkrJSON = (array, dir) => {
     newArr.push(newObj);
   }
   return newArr;
-}
+};
 /**
  * 初始化图形数据
  * @param obj okr对象
@@ -492,18 +160,20 @@ const getShapeObj = (obj) => {
     },
   ];
   if (obj.canRead) {
-    let rect = [{
-      type: "rect",
-      background: info[1],
-      left: 0,
-      top: 0,
-      width: 3,
-      height: 100,
-    }];
+    let rect = [
+      {
+        type: "rect",
+        background: info[1],
+        left: 0,
+        top: 0,
+        width: 3,
+        height: 100,
+      },
+    ];
     arr = arr.concat(rect);
   }
   return arr;
-}
+};
 /**
  * 初始化文字数据
  * @param obj okr对象
@@ -542,50 +212,53 @@ const getTextObj = (obj) => {
       lineHeight: 16,
       color: "#666666",
     },
-
   ];
   if (obj.canRead) {
-    let desc = [{
-      value: info[0],
-      top: 22,
-      left: 212,
-      width: 110,
-      height: 14,
-      fontsize: 14,
-      lineHeight: 14,
-      textAlign: "left",
-      color: info[1],
-    },
-    {
-      value: obj.objectiveDesc || "",
-      top: 50,
-      left: 54,
-      width: 250,
-      height: 40,
-      fontsize: 14,
-      lineHeight: 20,
-      color: "#333333",
-    }];
+    let desc = [
+      {
+        value: info[0],
+        top: 22,
+        left: 212,
+        width: 110,
+        height: 14,
+        fontsize: 14,
+        lineHeight: 14,
+        textAlign: "left",
+        color: info[1],
+      },
+      {
+        value: obj.objectiveDesc || "",
+        top: 50,
+        left: 54,
+        width: 250,
+        height: 40,
+        fontsize: 14,
+        lineHeight: 20,
+        color: "#333333",
+      },
+    ];
     arr = arr.concat(desc);
-  }else{
-    let desc = [{
-      value: '暂无权限',
-      top: 60,
-      left: 130,
-      width: 250,
-      height: 40,
-      fontsize: 16,
-      lineHeight: 20,
-      color: "#999",
-    }];
+  } else {
+    let desc = [
+      {
+        value: "暂无权限",
+        top: 60,
+        left: 130,
+        width: 250,
+        height: 40,
+        fontsize: 16,
+        lineHeight: 20,
+        color: "#999",
+      },
+    ];
     arr = arr.concat(desc);
   }
   return arr;
-}
+};
 const getMindData = (data) => {
   initRoot(data);
   return parseOkrJSON(data);
-}
+};
 
 var nodeArray = getMindData(array);
 console.log(nodeArray);

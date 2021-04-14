@@ -488,9 +488,24 @@
   };
   qjm.KeyNode.prototype = {
     show() {
+      if(!this.judgeIsShowNode(this.x,this.y)){
+        return;
+      }
       this.getHubPos();
       this.drawKeyNode();
       this.drawContent();
+    },
+    judgeIsShowNode(x,y){
+      let t = this.qjm;
+      let cT = t.ctx.getTransform();
+      let matrix = [cT.a, cT.b, cT.c, cT.d, cT.e, cT.f];
+
+      let pos = t._reverse_getXY(matrix, x,y);
+      let ch = parseFloat(t.canvas.style.height);
+      if (pos.y > 0 && pos.y<ch) {
+        return true;
+      }
+      return false;
     },
     // 获取枢纽节点坐标
     getHubPos() {

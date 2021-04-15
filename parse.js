@@ -2,8 +2,8 @@ var nodeObj = {
   employeeId: "uuid",
   employeeName: "迪丽热aa",
   departmentName: "策划部的技术部",
-  dangerType: 1,
-  schedule: "30",
+  dangerType: 3,
+  schedule: "310.00",
   objectiveDesc: "1",
   superCount: 2,
   childCount: 3,
@@ -64,7 +64,7 @@ var nodeObj = {
 };
 var array = [];
 // 大数据压测
-for (var i = 1; i <= 10000; i++) {
+for (var i = 1; i <= 100; i++) {
   var newObj = JSON.parse(JSON.stringify(nodeObj));
   newObj.id = i;
   newObj.objectiveDesc = "" + i;
@@ -254,13 +254,14 @@ const getTextObj = (obj) => {
       {
         value: info[0],
         top: 22,
-        left: 212,
+        left: 310,
         width: 110,
         height: 14,
         fontsize: 14,
         lineHeight: 14,
-        textAlign: "left",
+        textAlign: "right",
         color: info[1],
+        isShowAll:true,
       },
       {
         value: obj.objectiveDesc || "",

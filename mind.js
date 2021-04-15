@@ -548,7 +548,7 @@
       ctx.restore();
       this.set_mind_pos_map("keynode", this);
     },
-    _drawText(str, x, y, w, h, fontsize, lineHeight, textAlign) {
+    _drawTextMulti(str, x, y, w, h, fontsize, lineHeight, textAlign) {
       var ctx = this.qjm.ctx;
       ctx.textAlign = textAlign || "left";
       var currSumWidth = 0;
@@ -567,6 +567,11 @@
           currSumWidth = 0;
         }
       }
+    },
+    _drawText(str, x, y,textAlign) {
+      var ctx = this.qjm.ctx;
+      ctx.textAlign = textAlign || "left";
+      ctx.fillText(str, x , y);
     },
     _drawCircle(left, top, r, centerText, bgcolor) {
       var ctx = this.qjm.ctx;
@@ -618,16 +623,25 @@
         ctx.font = textobj.fontsize + "px April";
         ctx.fillStyle = textobj.color;
         ctx.textBaseline = "top";
-        this._drawText(
-          textobj.value,
-          x0 + textobj.left,
-          y0 + textobj.top,
-          textobj.width,
-          textobj.height,
-          textobj.fontsize,
-          textobj.lineHeight,
-          textobj.textAlign
-        );
+        if(textobj.isShowAll){
+          this._drawText(
+            textobj.value,
+            x0 + textobj.left,
+            y0 + textobj.top,
+            textobj.textAlign
+          );
+        }else{
+          this._drawTextMulti(
+            textobj.value,
+            x0 + textobj.left,
+            y0 + textobj.top,
+            textobj.width,
+            textobj.height,
+            textobj.fontsize,
+            textobj.lineHeight,
+            textobj.textAlign
+          );
+        }
         ctx.restore();
       }
     },

@@ -440,7 +440,19 @@
         return true;
       }
       return false;
-    }
+    },
+    judgeGroupIsInCurView(x, y1, y2) {
+      let t = this;
+      let cT = t.ctx.getTransform();
+      let matrix = [cT.a, cT.b, cT.c, cT.d, cT.e, cT.f];
+      let pos1 = t._reverse_getXY(matrix, x, y1);
+      let pos2 = t._reverse_getXY(matrix, x, y2);
+      let ch = parseFloat(t.canvas.style.height);
+      if (pos1.y < -100 && pos2.y > ch + 100) {
+        return true;
+      }
+      return false;
+    },
   };
 
   qjm.util = {
@@ -503,18 +515,6 @@
       this.drawKeyNode();
       this.drawContent();
     },
-    judgeIsShowNode(x,y){
-      let t = this.qjm;
-      let cT = t.ctx.getTransform();
-      let matrix = [cT.a, cT.b, cT.c, cT.d, cT.e, cT.f];
-
-      let pos = t._reverse_getXY(matrix, x,y);
-      let ch = parseFloat(t.canvas.style.height);
-      if (pos.y > 0 && pos.y<ch) {
-        return true;
-      }
-      return false;
-    },
     // 获取枢纽节点坐标
     getHubPos() {
       if (this.isRoot) {
@@ -568,10 +568,10 @@
         }
       }
     },
-    _drawText(str, x, y,textAlign) {
+    _drawText(str, x, y, textAlign) {
       var ctx = this.qjm.ctx;
       ctx.textAlign = textAlign || "left";
-      ctx.fillText(str, x , y);
+      ctx.fillText(str, x, y);
     },
     _drawCircle(left, top, r, centerText, bgcolor) {
       var ctx = this.qjm.ctx;
@@ -623,14 +623,14 @@
         ctx.font = textobj.fontsize + "px April";
         ctx.fillStyle = textobj.color;
         ctx.textBaseline = "top";
-        if(textobj.isShowAll){
+        if (textobj.isShowAll) {
           this._drawText(
             textobj.value,
             x0 + textobj.left,
             y0 + textobj.top,
             textobj.textAlign
           );
-        }else{
+        } else {
           this._drawTextMulti(
             textobj.value,
             x0 + textobj.left,
@@ -891,18 +891,28 @@
 
     show_view() {
       this.qjm.allNodePosMap = {};
+      this.qjm.groupInfo = this.nodeGroupInfo;
       this._draw_mind_elements(this.nodes);
     },
     _draw_mind_elements(nodeArray) {
       for (var i = 0; i < nodeArray.length; i++) {
         let node = nodeArray[i];
-        // 如果根节点在当前view内，则渲染，否则不渲染
-        if (this.qjm.judgeNodeIsInCurView(node.x, node.y)) {
+        let groupInfo = this.qjm.groupInfo[node.groupIndex];
+        if (
+          this.qjm.judgeNodeIsInCurView(node.x, node.y) ||
+          this.qjm.judgeNodeIsInCurView(node.x, groupInfo.topY) ||
+          this.qjm.judgeNodeIsInCurView(node.x,groupInfo.topY + groupInfo.height) ||
+          this.qjm.judgeGroupIsInCurView(node.x,groupInfo.topY,groupInfo.topY + groupInfo.height)
+        ) {
           node.show();
           if (node.parent) {
             node.drawLine_to_parent();
           }
-          if (node.childrenCountLeft || node.childrenCountRight || node.childrenCount) {
+          if (
+            node.childrenCountLeft ||
+            node.childrenCountRight ||
+            node.childrenCount
+          ) {
             node.drawLine_to_child();
             this._draw_mind_elements(node.children);
             node.drawHub();

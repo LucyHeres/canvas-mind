@@ -430,29 +430,22 @@
         y: newY,
       };
     },
-    judgeNodeIsInCurView(x, y) {
-      let t = this;
-      let cT = t.ctx.getTransform();
+    judgeNodeGroupIsInCurView(nodeX,groupTopY,groupBottomY){
+      let ch = parseFloat(this.canvas.style.height);
+      let cT = this.ctx.getTransform();
       let matrix = [cT.a, cT.b, cT.c, cT.d, cT.e, cT.f];
-      let pos = t._reverse_getXY(matrix, x, y);
-      let ch = parseFloat(t.canvas.style.height);
-      if (pos.y > -100 && pos.y < ch + 100) {
+      let pos1 = this._reverse_getXY(matrix, nodeX, groupTopY);
+      let pos2 = this._reverse_getXY(matrix, nodeX, groupBottomY);
+
+      let c1 = pos1.y > -100 && pos1.y < ch + 100;
+      let c2 = pos2.y > -100 && pos2.y < ch + 100;
+      let c3 = pos1.y < -100 && pos2.y > ch + 100;
+     
+      if (c1 || c2 ||c3) {
         return true;
       }
       return false;
-    },
-    judgeGroupIsInCurView(x, y1, y2) {
-      let t = this;
-      let cT = t.ctx.getTransform();
-      let matrix = [cT.a, cT.b, cT.c, cT.d, cT.e, cT.f];
-      let pos1 = t._reverse_getXY(matrix, x, y1);
-      let pos2 = t._reverse_getXY(matrix, x, y2);
-      let ch = parseFloat(t.canvas.style.height);
-      if (pos1.y < -100 && pos2.y > ch + 100) {
-        return true;
-      }
-      return false;
-    },
+    }
   };
 
   qjm.util = {
@@ -898,12 +891,7 @@
       for (var i = 0; i < nodeArray.length; i++) {
         let node = nodeArray[i];
         let groupInfo = this.qjm.groupInfo[node.groupIndex];
-        if (
-          this.qjm.judgeNodeIsInCurView(node.x, node.y) ||
-          this.qjm.judgeNodeIsInCurView(node.x, groupInfo.topY) ||
-          this.qjm.judgeNodeIsInCurView(node.x,groupInfo.topY + groupInfo.height) ||
-          this.qjm.judgeGroupIsInCurView(node.x,groupInfo.topY,groupInfo.topY + groupInfo.height)
-        ) {
+        if(this.qjm.judgeNodeGroupIsInCurView(node.x,groupInfo.topY,groupInfo.topY+groupInfo.height)){
           node.show();
           if (node.parent) {
             node.drawLine_to_parent();

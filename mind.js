@@ -3,6 +3,7 @@
   const NODE_DISTANCE = 20;
   const LEVEL_DISTANCE = 110;
   const SCALE_STEP = 0.05;
+  const OFFSET_STEP = 6;
   var qjm = function (opts, fn) {
     this.opts = opts;
     this.fn = fn;
@@ -123,7 +124,7 @@
       if (s > 1.1 || s < 0.3) {
         return;
       }
-      var limit = this.valid_move_boundary();
+      var limit = this.get_boundary_limit();
       let cw = parseFloat(this.canvas.style.width);
       let ch = parseFloat(this.canvas.style.height);
       if (
@@ -146,7 +147,7 @@
         this.mind.show_view();
       });
     },
-    // 画布事件：缩放
+    // 画布事件：双指缩放、双指平移、鼠标滚轮平移
     add_event_zoom() {
       var t = this;
       // 禁用原生页面缩放
@@ -173,21 +174,105 @@
           passive: false,
         }
       );
-
       // canvas缩放
       t.canvas.addEventListener("wheel", _wheel);
       t.canvas.addEventListener("DOMMouseScroll", _wheel);
 
       function _wheel(e) {
-        let zoom = 1;
         e.stopPropagation();
         e.preventDefault();
-        if (e.deltaY > 0) {
-          t._scale(-SCALE_STEP, e.offsetX, e.offsetY);
+        // 左移
+        if (e.deltaX > 0 && Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+          t.valid_move_boundary(-OFFSET_STEP / t.scale, 0)
+          // t.ctx.translate(-OFFSET_STEP / t.scale, 0);
+          t.clearCanvas();
+          requestAnimationFrame(() => {
+            t.mind.show_view();
+          });
+          return;
         }
-        if (e.deltaY < 0) {
-          t._scale(SCALE_STEP, e.offsetX, e.offsetY);
+        // 右移
+        if (e.deltaX < 0 && Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+          t.valid_move_boundary(OFFSET_STEP / t.scale, 0)
+          t.clearCanvas();
+          requestAnimationFrame(() => {
+            t.mind.show_view();
+          });
+          return;
         }
+        if (e.ctrlKey) {
+          // 向内
+          if (e.deltaY > 0) {
+            t._scale(-SCALE_STEP, e.offsetX, e.offsetY);
+          }
+          // 向外
+          if (e.deltaY < 0) {
+            t._scale(SCALE_STEP, e.offsetX, e.offsetY);
+          }
+        } else {
+          // 上移
+          if (e.deltaY > 0 && Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+            t.valid_move_boundary(0, -OFFSET_STEP / t.scale)
+            t.clearCanvas();
+            requestAnimationFrame(() => {
+              t.mind.show_view();
+            });
+            return;
+          }
+          // 下移
+          if (e.deltaY < 0 && Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+            t.valid_move_boundary(0, OFFSET_STEP / t.scale)
+            t.clearCanvas();
+            requestAnimationFrame(() => {
+              t.mind.show_view();
+            });
+            return;
+          }
+        }
+      }
+    },
+    valid_move_boundary(dx, dy) {
+      var t = this;
+      var cw = parseFloat(t.canvas.style.width);
+      var ch = parseFloat(t.canvas.style.height);
+
+      var limit = t.get_boundary_limit();
+      if (
+        limit.left > cw - 400 ||
+        limit.right <= 400 ||
+        limit.top > ch - 200 ||
+        limit.bottom < 200
+      ) {
+        if (limit.left > cw - 400) {
+          //右边界
+          t.ctx.translate(
+            dx > 0 ? 0 : dx,
+            limit.bottom < 200 || limit.top > ch - 200 ? 0 : dy
+          );
+        }
+        if (limit.right <= 400) {
+          //左边界
+          t.ctx.translate(
+            dx > 0 ? dx : 0,
+            limit.bottom < 200 || limit.top > ch - 200 ? 0 : dy
+          );
+        }
+        if (limit.top > ch - 200) {
+          //下边界
+          t.ctx.translate(
+            limit.left > cw - 400 || limit.right <= 400 ? 0 : dx,
+            dy > 0 ? 0 : dy
+          );
+        }
+        if (limit.bottom < 200) {
+          //上边界
+          t.ctx.translate(
+            limit.left > cw - 400 || limit.right <= 400 ? 0 : dx,
+            dy > 0 ? dy : 0
+          );
+        }
+      } else {
+        t.ctx.translate(dx, dy);
       }
     },
     /**
@@ -198,8 +283,6 @@
       var canvas = this.canvas;
       var isDown = false;
       var x, y, startX, startY;
-      var cw = parseFloat(t.canvas.style.width);
-      var ch = parseFloat(t.canvas.style.height);
 
       function _mousedown(e) {
         //获取x坐标和y坐标
@@ -222,47 +305,11 @@
         ) {
           return;
         }
-        var limit = t.valid_move_boundary();
         var dx = (e.clientX - x) / t.scale;
         var dy = (e.clientY - y) / t.scale;
 
-        if (
-          limit.left > cw - 400 ||
-          limit.right <= 400 ||
-          limit.top > ch - 200 ||
-          limit.bottom < 200
-        ) {
-          if (limit.left > cw - 400) {
-            //右边界
-            t.ctx.translate(
-              dx > 0 ? 0 : dx,
-              limit.bottom < 200 || limit.top > ch - 200 ? 0 : dy
-            );
-          }
-          if (limit.right <= 400) {
-            //左边界
-            t.ctx.translate(
-              dx > 0 ? dx : 0,
-              limit.bottom < 200 || limit.top > ch - 200 ? 0 : dy
-            );
-          }
-          if (limit.top > ch - 200) {
-            //下边界
-            t.ctx.translate(
-              limit.left > cw - 400 || limit.right <= 400 ? 0 : dx,
-              dy > 0 ? 0 : dy
-            );
-          }
-          if (limit.bottom < 200) {
-            //上边界
-            t.ctx.translate(
-              limit.left > cw - 400 || limit.right <= 400 ? 0 : dx,
-              dy > 0 ? dy : 0
-            );
-          }
-        } else {
-          t.ctx.translate(dx, dy);
-        }
+        t.valid_move_boundary(dx, dy);
+
         x = e.clientX;
         y = e.clientY;
 
@@ -393,7 +440,7 @@
       }
     },
     // 移动时边界限制
-    valid_move_boundary() {
+    get_boundary_limit() {
       var t = this;
       var limit = {
         left: 0,
@@ -430,7 +477,7 @@
         y: newY,
       };
     },
-    judgeNodeGroupIsInCurView(nodeX,groupTopY,groupBottomY){
+    judgeNodeGroupIsInCurView(nodeX, groupTopY, groupBottomY) {
       let ch = parseFloat(this.canvas.style.height);
       let cT = this.ctx.getTransform();
       let matrix = [cT.a, cT.b, cT.c, cT.d, cT.e, cT.f];
@@ -440,12 +487,12 @@
       let c1 = pos1.y > -100 && pos1.y < ch + 100;
       let c2 = pos2.y > -100 && pos2.y < ch + 100;
       let c3 = pos1.y < -100 && pos2.y > ch + 100;
-     
-      if (c1 || c2 ||c3) {
+
+      if (c1 || c2 || c3) {
         return true;
       }
       return false;
-    }
+    },
   };
 
   qjm.util = {
@@ -891,7 +938,13 @@
       for (var i = 0; i < nodeArray.length; i++) {
         let node = nodeArray[i];
         let groupInfo = this.qjm.groupInfo[node.groupIndex];
-        if(this.qjm.judgeNodeGroupIsInCurView(node.x,groupInfo.topY,groupInfo.topY+groupInfo.height)){
+        if (
+          this.qjm.judgeNodeGroupIsInCurView(
+            node.x,
+            groupInfo.topY,
+            groupInfo.topY + groupInfo.height
+          )
+        ) {
           node.show();
           if (node.parent) {
             node.drawLine_to_parent();

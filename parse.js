@@ -154,7 +154,7 @@ var nodeObj = {
 };
 var array = [];
 // 大数据压测
-for (var i = 1; i <= 10000; i++) {
+for (var i = 1; i <= 10; i++) {
   var newObj = JSON.parse(JSON.stringify(nodeObj));
   newObj.id = i;
   newObj.objectiveDesc = "" + i;

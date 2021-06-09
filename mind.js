@@ -3,7 +3,7 @@
   const NODE_DISTANCE = 20;
   const LEVEL_DISTANCE = 110;
   const SCALE_STEP = 0.05;
-  const OFFSET_STEP = 6;
+  const OFFSET_STEP = 4;
   var qjm = function (opts, fn) {
     this.opts = opts;
     this.fn = fn;

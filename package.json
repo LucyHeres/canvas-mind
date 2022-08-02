@@ -4,7 +4,8 @@
   "description": "",
   "main": "mind.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s"
   },
   "repository": {
     "type": "git",
@@ -15,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/LucyHeres/canvas-mind/issues"
   },
-  "homepage": "https://github.com/LucyHeres/canvas-mind#readme"
+  "homepage": "https://github.com/LucyHeres/canvas-mind#readme",
+  "devDependencies": {
+    "conventional-changelog-cli": "^2.2.2"
+  }
 }

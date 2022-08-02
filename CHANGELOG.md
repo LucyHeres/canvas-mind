@@ -1,3 +1,12 @@
+## [1.2.11](https://github.com/LucyHeres/canvas-mind/compare/v1.2.10...v1.2.11) (2022-08-02)
+
+
+### Features
+
+* ceshiceshi ([f54ea12](https://github.com/LucyHeres/canvas-mind/commit/f54ea12d1278ee7b452137d38ef311cb225dbb8b))
+
+
+
 ## [1.2.10](https://github.com/LucyHeres/canvas-mind/compare/v1.2.9...v1.2.10) (2022-08-02)
 
 

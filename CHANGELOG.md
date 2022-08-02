@@ -1,5 +1,13 @@
 # Changelog
 
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+### [1.2.1](https://github.com/LucyHeres/canvas-mind/compare/v1.2.0...v1.2.1) (2022-08-02)
+
+
+### Features
+
+* 重构问题 ([668d497](https://github.com/LucyHeres/canvas-mind/commit/668d4974be46673674b9926f51aaec0e851b4bbb))
 
 ## [1.2.0](https://github.com/LucyHeres/canvas-mind/compare/v1.1.5...v1.2.0) (2022-08-02)
 

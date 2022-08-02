@@ -1,3 +1,13 @@
+## [1.2.5](https://github.com/LucyHeres/canvas-mind/compare/v1.2.4...v1.2.5) (2022-08-02)
+
+
+### Features
+
+* 修改配置文件3 ([6b7c429](https://github.com/LucyHeres/canvas-mind/commit/6b7c429f9c822921e8235f8b9351009e8e96f131))
+* 修改配置文件4 ([ee45ab0](https://github.com/LucyHeres/canvas-mind/commit/ee45ab08613c8bdfb7ddd7be33c78111a321e68e))
+
+
+
 ## [1.2.4](https://github.com/LucyHeres/canvas-mind/compare/v1.2.3...v1.2.4) (2022-08-02)
 
 

@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
-    "patch": "standard-version --release-as patch && git push --follow-tags origin master && npm publish",
+    "patch": "standard-version --release-as patch && git push --follow-tags origin master",
     "minor": "standard-version --release-as minor",
     "major": "standard-version --release-as major"
   },

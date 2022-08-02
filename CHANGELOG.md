@@ -1,3 +1,21 @@
+## [1.2.14](https://github.com/LucyHeres/canvas-mind/compare/v1.2.13...v1.2.14) (2022-08-02)
+
+
+### Features
+
+* 哈哈哈哈这次的提交 ([1a66935](https://github.com/LucyHeres/canvas-mind/commit/1a66935108f87b1a8c8c3abe4c094a450428c045))
+
+
+
+## [1.2.13](https://github.com/LucyHeres/canvas-mind/compare/v1.2.12...v1.2.13) (2022-08-02)
+
+
+### Features
+
+* changelog ([8cdd680](https://github.com/LucyHeres/canvas-mind/commit/8cdd680e29fea33253392973712c444462fdadfd))
+
+
+
 ## [1.2.12](https://github.com/LucyHeres/canvas-mind/compare/v1.2.11...v1.2.12) (2022-08-02)
 
 

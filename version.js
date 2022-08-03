@@ -7,6 +7,6 @@ const issue = args['issue'];
 // const cmd ='npm version patch -m "closes #'+issue +'" && git push && git push --tags'
 
 (async () => {
-  const { stdout } = await execa("npm", ["version", "patch"]);
+  const { stdout } = await execa("npm", ["version", "patch","-m","\"closes #"+issue+"\""]);
   console.log(stdout);
 })();

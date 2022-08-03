@@ -31,54 +31,52 @@ Note: eslint-config-* packages should be released separately & manually.
 
 */
 
-process.env.VUE_CLI_RELEASE = true
+process.env.VUE_CLI_RELEASE = true;
 
-const execa = require('execa')
-const semver = require('semver')
-const inquirer = require('inquirer')
-const minimist = require('minimist')
+const execa = require("execa");
+const semver = require("semver");
+const inquirer = require("inquirer");
+const minimist = require("minimist");
 // const { syncDeps } = require('./syncDeps')
 // const { buildEditorConfig } = require('./buildEditorConfig')
 
-const cliOptions = minimist(process.argv)
-const curVersion = require('./package.json').version
+const cliOptions = minimist(process.argv);
+const curVersion = require("./package.json").version;
 
 const release = async () => {
-  console.log(`Current version: ${curVersion}`)
+  console.log(`Current version: ${curVersion}`);
 
-  const bumps = ['patch', 'minor', 'major', 'prerelease']
-  const versions = {}
-  bumps.forEach(b => { versions[b] = semver.inc(curVersion, b) })
-  const bumpChoices = bumps.map(b => ({ name: `${b} (${versions[b]})`, value: b }))
+  const bumps = ["patch", "minor", "major", "prerelease"];
+  const versions = {};
+  bumps.forEach((b) => {
+    versions[b] = semver.inc(curVersion, b);
+  });
+  const bumpChoices = bumps.map((b) => ({ name: `${b} (${versions[b]})`, value: b }));
 
-  const { bump, customVersion } = cliOptions['local-registry']
-    ? { bump: 'minor' }
-    : await inquirer.prompt([
-      {
-        name: 'bump',
-        message: 'Select release type:',
-        type: 'list',
-        choices: [...bumpChoices, { name: 'custom', value: 'custom' }]
-      },
-      {
-        name: 'customVersion',
-        message: 'Input version:',
-        type: 'input',
-        when: (answers) => answers.bump === 'custom'
-      }
-    ])
+  const { bump, customVersion } = await inquirer.prompt([
+    {
+      name: "bump",
+      message: "Select release type:",
+      type: "list",
+      choices: [...bumpChoices, { name: "custom", value: "custom" }],
+    },
+    {
+      name: "customVersion",
+      message: "Input version:",
+      type: "input",
+      when: (answers) => answers.bump === "custom",
+    },
+  ]);
 
-  const version = customVersion || versions[bump]
+  const version = customVersion || versions[bump];
 
-  const { yes } = cliOptions['local-registry']
-    ? { yes: true }
-    : await inquirer.prompt([
-      {
-        name: 'yes',
-        message: `Confirm releasing ${version}?`,
-        type: 'confirm'
-      }
-    ])
+  const { yes } = await inquirer.prompt([
+    {
+      name: "yes",
+      message: `Confirm releasing ${version}?`,
+      type: "confirm",
+    },
+  ]);
 
   if (yes) {
     // await syncDeps({
@@ -86,40 +84,35 @@ const release = async () => {
     //   local: true,
     //   skipPrompt: true
     // })
-    delete process.env.PREFIX
+    delete process.env.PREFIX;
 
     // await buildEditorConfig()
 
     try {
-      await execa('git', ['add', '-A'], { stdio: 'inherit' })
-      await execa('git', ['commit', '-m', 'chore: pre release sync'], { stdio: 'inherit' })
+      await execa("git", ["add", "-A"], { stdio: "inherit" });
+      await execa("git", ["commit", "-m", "chore: pre release sync"], { stdio: "inherit" });
     } catch (e) {
       // if it's a patch release, there may be no local deps to sync
     }
   }
 
-  let distTag = cliOptions['dist-tag'] || 'latest'
-  if (bump === 'prerelease' || semver.prerelease(version)) {
-    distTag = 'next'
+  let distTag = cliOptions["dist-tag"] || "latest";
+  if (bump === "prerelease" || semver.prerelease(version)) {
+    distTag = "next";
   }
 
-  const lernaArgs = [
-    'publish',
-    version,
-    '--dist-tag',
-    distTag
-  ]
+  const lernaArgs = ["publish", version, "--dist-tag", distTag];
   // keep all packages' versions in sync
-  lernaArgs.push('--force-publish')
+  lernaArgs.push("--force-publish");
 
-  if (cliOptions['local-registry']) {
-    lernaArgs.push('--no-git-tag-version', '--no-commit-hooks', '--no-push', '--yes')
+  if (cliOptions["local-registry"]) {
+    lernaArgs.push("--no-git-tag-version", "--no-commit-hooks", "--no-push", "--yes");
   }
 
-  await execa(require.resolve('lerna/cli'), lernaArgs, { stdio: 'inherit' })
-}
+  await execa(require.resolve("lerna/cli"), lernaArgs, { stdio: "inherit" });
+};
 
-release().catch(err => {
-  console.error(err)
-  process.exit(1)
-})
+release().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});

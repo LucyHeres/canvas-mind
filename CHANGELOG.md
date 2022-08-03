@@ -1,3 +1,16 @@
+## [1.2.16](https://github.com/LucyHeres/canvas-mind/compare/v1.2.15...v1.2.16) (2022-08-03)
+
+
+### Features
+
+* 修改peizhixiang ([8dfdff2](https://github.com/LucyHeres/canvas-mind/commit/8dfdff24e32bc21aa785b5fb9891eae53bd342f2))
+
+
+
+## [1.2.15](https://github.com/LucyHeres/canvas-mind/compare/v1.2.14...v1.2.15) (2022-08-03)
+
+
+
 ## [1.2.14](https://github.com/LucyHeres/canvas-mind/compare/v1.2.13...v1.2.14) (2022-08-02)
 
 

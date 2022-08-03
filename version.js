@@ -8,6 +8,6 @@ const issue = args['issue'];
 
 (async () => {
   await execa("npm", ["version", "patch","-m","\"Update to %s , closes #"+issue+"\""]);
-  const { stdout } = await execa("git", ["push", "--follow", "-tags"]);
+  const { stdout } = await execa("git", ["push", "--follow-tags"]);
   console.log(stdout);
 })();

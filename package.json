@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/LucyHeres/canvas-mind#readme",
   "devDependencies": {
+    "conventional-changelog": "^3.1.25",
     "conventional-changelog-cli": "^2.2.2",
     "standard-version": "^9.5.0"
   }

@@ -1,3 +1,7 @@
+## [1.2.18](https://github.com/LucyHeres/canvas-mind/compare/v1.2.17...v1.2.18) (2022-08-03)
+
+
+
 ## [1.2.17](https://github.com/LucyHeres/canvas-mind/compare/v1.2.16...v1.2.17) (2022-08-03)
 
 

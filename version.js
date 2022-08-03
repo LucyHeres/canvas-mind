@@ -2,10 +2,11 @@
 const minimist = require('minimist');
 const args = minimist(process.argv.slice(2))
 const issue = args['issue'];
-console.log(issue)
+const exec = require("child_process").exec;
 
 const genVersion = ()=>{
-  process.exec('npm version patch -m '+"Upgrade to %s #"+issue+' && git push --follow-tags', (error, stdout, stderr) => {
+  const cmd ='npm version patch -m "#'+issue +'"'
+  exec(cmd, (error, stdout, stderr) => {
     if (!error) {
       console.log(123)
     } else {
@@ -13,3 +14,5 @@ const genVersion = ()=>{
     }
   });
 }
+
+genVersion()

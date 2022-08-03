@@ -6,8 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0 && git add CHANGELOG.md && git commit -m \"update changelog\"",
-    "patch": "npm version patch -m \"Upgrade to %s\" && npm run changelog && git push --follow-tags",
-    "release": "node ./release.js"
+    "patch": "npm version patch -m \"Upgrade to %s #%npm_config_issue% \" && git push --follow-tags"
   },
   "repository": {
     "type": "git",
@@ -27,6 +26,5 @@
   "dependencies": {
     "execa": "^4.1.0",
     "inquirer": "^8.0.0"
-
   }
 }

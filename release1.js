@@ -4,7 +4,7 @@ const execa = require("execa");
 const args = minimist(process.argv.slice(2));
 const issue = args["issue"];
 
-const commitMessage = "";
+let commitMessage = "";
 if(issue !==undefined) {
   commitMessage = "Update to %s , closes #" + issue
 }else{

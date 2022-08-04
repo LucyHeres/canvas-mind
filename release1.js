@@ -12,6 +12,6 @@ if(issue !==undefined) {
 }
 
 (async () => {
-  await execa("npm", ["version", "patch", "-m", commitMessage], { stdio: "inherit" });
+  await execa("npm", ["version", "patch", "-m", ""+commitMessage], { stdio: "inherit" });
   await execa("git", ["push", "--follow-tags"], { stdio: "inherit" });
 })();

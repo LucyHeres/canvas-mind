@@ -2,6 +2,8 @@
 
 ### 关联issue [#2](https://github.com/LucyHeres/canvas-mind/issues/2),[#3](https://github.com/LucyHeres/canvas-mind/issues/3),[#4](https://github.com/LucyHeres/canvas-mind/issues/4)
 
+### 关联issue [#2](https://github.com/LucyHeres/canvas-mind/issues/2),[#3](https://github.com/LucyHeres/canvas-mind/issues/3),[#4](https://github.com/LucyHeres/canvas-mind/issues/4)
+
 
 ### Features
 

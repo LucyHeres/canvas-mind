@@ -9,11 +9,11 @@ const issueIds = args["issue"]?args["issue"].split(","):[];
 
 let commitMessage = "";
 if (issueIds.length>0) {
-  commitMessage = `Update to %s , closes ` + issueIds.map(issueId=>`#${issueId}}`).join(",");
+  commitMessage = `Update to %s , closes ` + issueIds.map(issueId=>`#${issueId}`).join(",");
 } else {
   commitMessage = `Update to %s`;
 }
-
+console.log(commitMessage);
 const writeChangeLog = () => {
   const changelogPath = path.resolve(__dirname, "CHANGELOG.md");
   let data = fs.readFileSync(changelogPath, "utf8");

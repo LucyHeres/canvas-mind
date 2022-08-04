@@ -14,7 +14,8 @@ if (issue !== undefined) {
 }
 
 const writeChangeLog = () => {
-  fs.readFile("CHANGELOG.md", "utf8", function (err, data) {
+  const changelogPath  = path.resolve(__dirname, 'CHANGELOG.md');
+  fs.readFile(changelogPath, "utf8", function (err, data) {
     console.log(data);
   });
 };
@@ -24,6 +25,6 @@ const writeChangeLog = () => {
   await execa("npm", ["run", "changelog"], { stdio: "inherit" });
   writeChangeLog()
   await execa("git", ["add", "CHANGELOG.md"], { stdio: "inherit" });
-  await execa("git", ["commit", "-m", commitMessage], { stdio: "inherit" });
-  await execa("git", ["push", "--follow-tags"], { stdio: "inherit" });
+  // await execa("git", ["commit", "-m", commitMessage], { stdio: "inherit" });
+  // await execa("git", ["push", "--follow-tags"], { stdio: "inherit" });
 })();

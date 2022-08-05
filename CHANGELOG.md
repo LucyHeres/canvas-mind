@@ -1,3 +1,12 @@
+## [1.2.38](https://github.com/LucyHeres/canvas-mind/compare/v1.2.37...v1.2.38) (2022-08-05)
+
+
+### Features
+
+* issues ([77f90a9](https://github.com/LucyHeres/canvas-mind/commit/77f90a9508c3d6830dd016afde259f62e85da14e))
+
+
+
 ## [1.2.37](https://github.com/LucyHeres/canvas-mind/compare/v1.2.36...v1.2.37) (2022-08-05)
 
 

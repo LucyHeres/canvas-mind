@@ -1,6 +1,17 @@
-## [1.2.34](https://github.com/LucyHeres/canvas-mind/compare/v1.2.33...v1.2.34) (2022-08-04)
+## [1.2.35](https://github.com/LucyHeres/canvas-mind/compare/v1.2.34...v1.2.35) (2022-08-05)
 
-### 关联issue [#2](https://github.com/LucyHeres/canvas-mind/issues/2),[#3](https://github.com/LucyHeres/canvas-mind/issues/3),[#4](https://github.com/LucyHeres/canvas-mind/issues/4)
+### Issues
+[#2](https://github.com/LucyHeres/canvas-mind/issues/2),[#3](https://github.com/LucyHeres/canvas-mind/issues/3),[#4](https://github.com/LucyHeres/canvas-mind/issues/4)
+
+
+### Features
+
+* issues ([b3e3a1a](https://github.com/LucyHeres/canvas-mind/commit/b3e3a1ac3524d702dca928c19f90c4d5dff9829e))
+* issues ([777d34b](https://github.com/LucyHeres/canvas-mind/commit/777d34bdae9186b28c015a5c1a74f67ff06ef25b))
+
+
+
+## [1.2.34](https://github.com/LucyHeres/canvas-mind/compare/v1.2.33...v1.2.34) (2022-08-04)
 
 
 ### Features

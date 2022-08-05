@@ -61,7 +61,7 @@ const main = async () => {
       await execa("npm", ["run", "changelog"], { stdio: "inherit" });
       writeChangeLog();
       await execa("git", ["add", "CHANGELOG.md"], { stdio: "inherit" });
-      await execa("git", ["commit", "-m", `Update to %s`], { stdio: "inherit" });
+      await execa("git", ["commit", "-m", `Update to v${version}`], { stdio: "inherit" });
       await execa("git", ["push", "--follow-tags"], { stdio: "inherit" });
     } catch (e) {
       //

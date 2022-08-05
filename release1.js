@@ -54,15 +54,21 @@ const main = async () => {
   }]);
 
   const issueIds = issues ? issues.split(",") : [];
+  console.log(yes);
 
   if (yes) {
     try {
       await execa("npm", ["version", version], { stdio: "inherit" });
+      step('\nUpdating package versions...')
       await execa("npm", ["run", "changelog"], { stdio: "inherit" });
       writeChangeLog();
+      step('\nGenerating changelog...')
       await execa("git", ["add", "CHANGELOG.md"], { stdio: "inherit" });
       await execa("git", ["commit", "-m", `Update to v${version}`], { stdio: "inherit" });
+      step('\nPushing ...')
       await execa("git", ["push", "--follow-tags"], { stdio: "inherit" });
+      step('\nDone ...')
+      
     } catch (e) {
       //
     }

@@ -19,7 +19,7 @@ const spliceStr = (str, index, newStr) => {
   return str.slice(0, index) + newStr + str.slice(index);
 };
 
-const main = () => {
+const main = async() => {
   await execa("npm", ["version", "patch"], { stdio: "inherit" });
   await execa("npm", ["run", "changelog"], { stdio: "inherit" });
   writeChangeLog();

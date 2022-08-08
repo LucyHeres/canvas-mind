@@ -11,7 +11,7 @@ const step = (msg) => console.log(chalk.cyan(msg));
 const getPackageVersion = () => packageJsonData.version;
 const writePackageVersion = (newVersion) => {
   packageJsonData.version = newVersion;
-  fs.writeFileSync(path.resolve(__dirname, "package.json");, JSON.stringify(packageJsonData, null, 2));
+  fs.writeFileSync(path.resolve(__dirname, "package.json"), JSON.stringify(packageJsonData, null, 2));
 };
 
 // 生成可选的版本号

@@ -70,16 +70,17 @@ const main = async () => {
     try {
       step("\nUpdating package version...");
       // await execa("npm", ["version", version], { stdio: "inherit" });
-      await execa("git", ["tag", "v" + version], { stdio: "inherit" });
+      
       writePackageVersion(version);
 
       step("\nGenerating changelog...");
       await execa("npm", ["run", "changelog"], { stdio: "inherit" });
       writeChangeLog();
-      await execa("git", ["add", "."], { stdio: "inherit" });
+      await execa("git", ["add", "-A"], { stdio: "inherit" });
       await execa("git", ["commit", "-m", `Update to v${version}`], { stdio: "inherit" });
 
       step("\nPushing ...");
+      await execa("git", ["tag", "v" + version], { stdio: "inherit" });
       await execa("git", ["push", "--follow-tags"], { stdio: "inherit" });
 
       step("\nDone ...");

@@ -73,16 +73,16 @@ const main = async () => {
       // await execa("npm", ["version", version], { stdio: "inherit" });
       writePackageVersion(version);
 
-      // step("\nGenerating changelog...");
-      // await execa("npm", ["run", "changelog"], { stdio: "inherit" });
-      // writeChangeLog();
-      // await execa("git", ["add", "CHANGELOG.md"], { stdio: "inherit" });
-      // await execa("git", ["commit", "-m", `Update to v${version}`], { stdio: "inherit" });
+      step("\nGenerating changelog...");
+      await execa("npm", ["run", "changelog"], { stdio: "inherit" });
+      writeChangeLog();
+      await execa("git", ["add", "CHANGELOG.md"], { stdio: "inherit" });
+      await execa("git", ["commit", "-m", `Update to v${version}`], { stdio: "inherit" });
 
-      // step("\nPushing ...");
-      // await execa("git", ["push", "--follow-tags"], { stdio: "inherit" });
+      step("\nPushing ...");
+      await execa("git", ["push", "--follow-tags"], { stdio: "inherit" });
 
-      // step("\nDone ...");
+      step("\nDone ...");
     } catch (e) {
       //
     }

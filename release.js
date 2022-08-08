@@ -29,7 +29,7 @@ const spliceStr = (str, index, newStr) => {
 };
 
 // 在changelog中写入issue相关内容
-const writeChangeLog = (issues) => {
+const writeChangeLog = (issues,version) => {
   const issueIds = issues ? issues.split(",") : [];
   try{
 
@@ -90,7 +90,7 @@ const main = async () => {
 
     step("\nGenerating changelog...");
     await execa("npm", ["run", "changelog"], { stdio: "inherit" });
-    writeChangeLog(issues);
+    writeChangeLog(issues,version);
 
     await execa("git", ["add", "-A"], { stdio: "inherit" });
     await execa("git", ["commit", "-m", `Update to v${version}`], { stdio: "inherit" });

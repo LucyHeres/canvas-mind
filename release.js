@@ -11,7 +11,7 @@ const step = (msg) => console.log(chalk.cyan(msg));
 const getPackageVersion = () => packageJsonData.version;
 const writePackageVersion = (newVersion) => {
   packageJsonData.version = newVersion;
-  fs.writeFileSync("./package.json", JSON.stringify(packageJsonData, "", "\t"));
+  fs.writeFileSync(path.resolve(__dirname, "package.json");, JSON.stringify(packageJsonData, null, 2));
 };
 
 // 生成可选的版本号
@@ -31,22 +31,16 @@ const spliceStr = (str, index, newStr) => {
 // 在changelog中写入issue相关内容
 const writeChangeLog = (issues,version) => {
   const issueIds = issues ? issues.split(",") : [];
-  try{
-
   if (issueIds && issueIds.length > 0) {
     const changelogPath = path.resolve(__dirname, "CHANGELOG.md");
     let data = fs.readFileSync(changelogPath, "utf8");
     const i = data.indexOf("\n");
-    console.log(111111,version,data.slice(0,i).includes(`[${version}]`));
     if(!data.slice(0,i).includes(`[${version}]`)){
       return;
     }
     data = spliceStr(data, i, `\n\n### Issues\n` + issueIds.map((issueId) => `[#${issueId}](https://github.com/LucyHeres/canvas-mind/issues/${issueId})`).join(","));
     fs.writeFileSync(changelogPath, data, "utf8");
   }
-}catch(e){
-  console.error(e)
-}
 
 };
 
@@ -101,7 +95,7 @@ const main = async () => {
 
     step("\nDone");
   } catch (e) {
-    //
+    console.error(e)
   }
 };
 

@@ -14,6 +14,7 @@ const writePackageVersion = (newVersion) => {
   fs.writeFileSync("./package.json", JSON.stringify(packageJsonData, "", "\t"));
 };
 
+// 生成可选的版本号
 const curVersion = getPackageVersion();
 const bumps = ["patch", "minor", "major", "prepatch"];
 const versions = {};
@@ -22,8 +23,21 @@ bumps.forEach((b) => {
 });
 const bumpChoices = bumps.map((b) => ({ name: `${b} (${versions[b]})`, value: b }));
 
+
 const spliceStr = (str, index, newStr) => {
   return str.slice(0, index) + newStr + str.slice(index);
+};
+
+// 在changelog中写入issue相关内容
+const writeChangeLog = (issues) => {
+  const issueIds = issues ? issues.split(",") : [];
+  if (issueIds && issueIds.length > 0) {
+    const changelogPath = path.resolve(__dirname, "CHANGELOG.md");
+    let data = fs.readFileSync(changelogPath, "utf8");
+    const i = data.indexOf("\n");
+    data = spliceStr(data, i, `\n\n### Issues\n` + issueIds.map((issueId) => `[#${issueId}](https://github.com/LucyHeres/canvas-mind/issues/${issueId})`).join(","));
+    fs.writeFileSync(changelogPath, data, "utf8");
+  }
 };
 
 const main = async () => {
@@ -48,6 +62,10 @@ const main = async () => {
     },
   ]);
 
+  if (!yes) {
+    return;
+  }
+
   const { issues } = await inquirer.prompt([
     {
       name: "issues",
@@ -56,37 +74,24 @@ const main = async () => {
     },
   ]);
 
-  const issueIds = issues ? issues.split(",") : [];
+  try {
+    step("\nUpdating package version...");
+    writePackageVersion(version);
 
-  const writeChangeLog = () => {
-    const changelogPath = path.resolve(__dirname, "CHANGELOG.md");
-    let data = fs.readFileSync(changelogPath, "utf8");
-    const i = data.indexOf("\n");
-    data = spliceStr(data, i, `\n\n### Issues\n` + issueIds.map((issueId) => `[#${issueId}](https://github.com/LucyHeres/canvas-mind/issues/${issueId})`).join(","));
-    fs.writeFileSync(changelogPath, data, "utf8");
-  };
+    step("\nGenerating changelog...");
+    await execa("npm", ["run", "changelog"], { stdio: "inherit" });
+    writeChangeLog(issues);
 
-  if (yes) {
-    try {
-      step("\nUpdating package version...");
-      // await execa("npm", ["version", version], { stdio: "inherit" });
-      
-      writePackageVersion(version);
+    await execa("git", ["add", "-A"], { stdio: "inherit" });
+    await execa("git", ["commit", "-m", `Update to v${version}`], { stdio: "inherit" });
 
-      step("\nGenerating changelog...");
-      await execa("npm", ["run", "changelog"], { stdio: "inherit" });
-      writeChangeLog();
-      await execa("git", ["add", "-A"], { stdio: "inherit" });
-      await execa("git", ["commit", "-m", `Update to v${version}`], { stdio: "inherit" });
+    step("\nPushing ...");
+    await execa("git", ["tag", "v" + version], { stdio: "inherit" });
+    await execa("git", ["push", "--follow-tags"], { stdio: "inherit" });
 
-      step("\nPushing ...");
-      await execa("git", ["tag", "v" + version], { stdio: "inherit" });
-      await execa("git", ["push", "--follow-tags"], { stdio: "inherit" });
-
-      step("\nDone ...");
-    } catch (e) {
-      //
-    }
+    step("\nDone");
+  } catch (e) {
+    //
   }
 };
 

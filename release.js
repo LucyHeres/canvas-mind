@@ -35,6 +35,9 @@ const writeChangeLog = (issues) => {
     const changelogPath = path.resolve(__dirname, "CHANGELOG.md");
     let data = fs.readFileSync(changelogPath, "utf8");
     const i = data.indexOf("\n");
+    if(!data.slice(0,i).includes(`[${version}]`)){
+      return;
+    }
     data = spliceStr(data, i, `\n\n### Issues\n` + issueIds.map((issueId) => `[#${issueId}](https://github.com/LucyHeres/canvas-mind/issues/${issueId})`).join(","));
     fs.writeFileSync(changelogPath, data, "utf8");
   }

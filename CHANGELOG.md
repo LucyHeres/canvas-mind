@@ -1,3 +1,15 @@
+## [1.6.7-1](https://github.com/LucyHeres/canvas-mind/compare/v1.6.7-0...v1.6.7-1) (2022-08-08)
+
+### Issues
+[#3](https://github.com/LucyHeres/canvas-mind/issues/3)
+
+
+### Features
+
+* 更新release脚本 ([ff2cad0](https://github.com/LucyHeres/canvas-mind/commit/ff2cad0c72804eed98e2756cbdb05e963f6f0928))
+
+
+
 ## [1.6.7-0](https://github.com/LucyHeres/canvas-mind/compare/v1.6.5...v1.6.7-0) (2022-08-08)
 
 

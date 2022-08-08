@@ -1,3 +1,15 @@
+## [1.5.9](https://github.com/LucyHeres/canvas-mind/compare/v1.5.8...v1.5.9) (2022-08-08)
+
+### Issues
+[#7](https://github.com/LucyHeres/canvas-mind/issues/7)
+
+
+### Features
+
+* release脚本111333334Hhh ([89503c8](https://github.com/LucyHeres/canvas-mind/commit/89503c879a262f091981cf8afad1eac1811abde5))
+
+
+
 ## [1.5.8](https://github.com/LucyHeres/canvas-mind/compare/v1.5.7...v1.5.8) (2022-08-08)
 
 ### Issues

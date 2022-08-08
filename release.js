@@ -35,6 +35,7 @@ const writeChangeLog = (issues) => {
     const changelogPath = path.resolve(__dirname, "CHANGELOG.md");
     let data = fs.readFileSync(changelogPath, "utf8");
     const i = data.indexOf("\n");
+    console.log(111111,version,data.slice(0,i).includes(`[${version}]`));
     if(!data.slice(0,i).includes(`[${version}]`)){
       return;
     }

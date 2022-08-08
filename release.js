@@ -76,7 +76,7 @@ const main = async () => {
       step("\nGenerating changelog...");
       await execa("npm", ["run", "changelog"], { stdio: "inherit" });
       writeChangeLog();
-      await execa("git", ["add", "CHANGELOG.md"], { stdio: "inherit" });
+      await execa("git", ["add", "."], { stdio: "inherit" });
       await execa("git", ["commit", "-m", `Update to v${version}`], { stdio: "inherit" });
 
       step("\nPushing ...");

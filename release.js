@@ -16,7 +16,7 @@ const writePackageVersion = (newVersion) => {
 
 // 生成可选的版本号
 const curVersion = getPackageVersion();
-const bumps = ["patch", "minor", "major", "prepatch"];
+const bumps = ["patch", "minor", "major", "prerelease"];
 const versions = {};
 bumps.forEach((b) => {
   versions[b] = semver.inc(curVersion, b);

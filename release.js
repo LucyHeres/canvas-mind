@@ -91,7 +91,8 @@ const main = async () => {
 
     step("\nPushing ...");
     await execa("git", ["tag", "v" + version], { stdio: "inherit" });
-    await execa("git", ["push", "--follow-tags"], { stdio: "inherit" });
+    await execa("git", ["push"], { stdio: "inherit" });
+    await execa("git", ["push", "--tags"], { stdio: "inherit" });
 
     step("\nDone");
   } catch (e) {

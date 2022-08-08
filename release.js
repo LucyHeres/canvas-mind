@@ -1,4 +1,3 @@
-const child_process = require("child_process");
 const minimist = require("minimist");
 const execa = require("execa");
 const semver = require("semver");

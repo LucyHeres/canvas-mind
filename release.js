@@ -31,6 +31,8 @@ const spliceStr = (str, index, newStr) => {
 // 在changelog中写入issue相关内容
 const writeChangeLog = (issues) => {
   const issueIds = issues ? issues.split(",") : [];
+  try{
+
   if (issueIds && issueIds.length > 0) {
     const changelogPath = path.resolve(__dirname, "CHANGELOG.md");
     let data = fs.readFileSync(changelogPath, "utf8");
@@ -42,6 +44,10 @@ const writeChangeLog = (issues) => {
     data = spliceStr(data, i, `\n\n### Issues\n` + issueIds.map((issueId) => `[#${issueId}](https://github.com/LucyHeres/canvas-mind/issues/${issueId})`).join(","));
     fs.writeFileSync(changelogPath, data, "utf8");
   }
+}catch(e){
+  console.error(e)
+}
+
 };
 
 const main = async () => {

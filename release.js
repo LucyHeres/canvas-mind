@@ -71,8 +71,8 @@ const main = async () => {
     try {
       step("\nUpdating package version...");
       // await execa("npm", ["version", version], { stdio: "inherit" });
-      writePackageVersion(version);
       await execa("git", ["tag", "v" + version], { stdio: "inherit" });
+      writePackageVersion(version);
 
       step("\nGenerating changelog...");
       await execa("npm", ["run", "changelog"], { stdio: "inherit" });

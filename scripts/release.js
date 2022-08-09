@@ -50,7 +50,7 @@ const getIssueIds = async () => {
     const tags = stdout.match(regex);
     const str = stdout.slice(0, tags.index);
     console.log(44444,str);
-    const issues = str.match(/\s+Closes #\d+\\n/gi) || [];
+    const issues = str.match(/\s+Closes #\d+/gi) || [];
     const issueIds = issues.map((issue) => issue.replace(/[^\d]/gi, ""));
     console.log(111111,issues,issueIds);
     return issueIds;

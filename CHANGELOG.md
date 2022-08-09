@@ -1,3 +1,12 @@
+## [1.6.9](https://github.com/LucyHeres/canvas-mind/compare/v1.6.7-1...v1.6.9) (2022-08-09)
+
+
+### Features
+
+* 测试获取issue号 ([a558a8d](https://github.com/LucyHeres/canvas-mind/commit/a558a8dfd4b9b14dbf4d8a025fff897393eb695b))
+
+
+
 ## [1.6.8](https://github.com/LucyHeres/canvas-mind/compare/v1.6.7-1...v1.6.8) (2022-08-09)
 
 

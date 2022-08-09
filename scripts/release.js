@@ -76,7 +76,7 @@ const main = async () => {
 
     writeChangeLog(targetVersion);
     await execa("git", ["add", "-A"], { stdio: "inherit" });
-    await execa("git", ["commit", "-m", `chore: update v${targetVersion}-changelog`], { stdio: "inherit" });
+    // await execa("git", ["commit", "-m", `chore: update v${targetVersion}-changelog`], { stdio: "inherit" });
 
     // step("\nPushing ...");
     // await execa("git", ["tag", "v" + targetVersion], { stdio: "inherit" });

@@ -75,15 +75,15 @@ const main = async () => {
     await execa("git", ["commit", "-m", `chore: update to v${targetVersion}`], { stdio: "inherit" });
 
     writeChangeLog(targetVersion);
-    await execa("git", ["add", "-A"], { stdio: "inherit" });
-    await execa("git", ["commit", "-m", `chore: update v${targetVersion}-changelog`], { stdio: "inherit" });
+    // await execa("git", ["add", "-A"], { stdio: "inherit" });
+    // await execa("git", ["commit", "-m", `chore: update v${targetVersion}-changelog`], { stdio: "inherit" });
 
-    step("\nPushing ...");
-    await execa("git", ["tag", "v" + targetVersion], { stdio: "inherit" });
-    await execa("git", ["push"], { stdio: "inherit" });
-    await execa("git", ["push", "--tags"], { stdio: "inherit" });
+    // step("\nPushing ...");
+    // await execa("git", ["tag", "v" + targetVersion], { stdio: "inherit" });
+    // await execa("git", ["push"], { stdio: "inherit" });
+    // await execa("git", ["push", "--tags"], { stdio: "inherit" });
 
-    step("\nSuccess 版本发布成功!");
+    // step("\nSuccess 版本发布成功!");
   } catch (e) {
     step("\noh no 版本发布失败了！");
     console.error(e);

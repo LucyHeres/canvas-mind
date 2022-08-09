@@ -1,3 +1,12 @@
+## [1.6.13](https://github.com/LucyHeres/canvas-mind/compare/v1.6.12...v1.6.13) (2022-08-09)
+
+
+### Features
+
+* Merge branch 85-xin-feature-score into master'+ ([80abe51](https://github.com/LucyHeres/canvas-mind/commit/80abe5140a929b58d66f3d63bcdb6770818ed79b))
+
+
+
 ## [1.6.12](https://github.com/LucyHeres/canvas-mind/compare/v1.6.7-1...v1.6.12) (2022-08-09)
 
 

@@ -49,6 +49,7 @@ const getIssueIds = async () => {
     const { stdout } = await execa("git", ["log", "--decorate", "--no-color"], { maxBuffer: Infinity });
     const tags = stdout.match(regex);
     const str = stdout.slice(0, tags.index);
+    console.log(44444,str);
     const issues = str.match(/\s+Closes #\d+\\n/gi) || [];
     const issueIds = issues.map((issue) => issue.replace(/[^\d]/gi, ""));
     console.log(111111,issues,issueIds);

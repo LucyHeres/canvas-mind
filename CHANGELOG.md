@@ -1,3 +1,7 @@
+## [1.6.27-0](https://github.com/LucyHeres/canvas-mind/compare/v1.6.26...v1.6.27-0) (2022-08-09)
+
+
+
 ## [1.6.26](https://github.com/LucyHeres/canvas-mind/compare/v1.6.19...v1.6.26) (2022-08-09)
 
 ### Issues

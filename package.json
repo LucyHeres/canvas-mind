@@ -1,6 +1,6 @@
 {
   "name": "canvas-mind",
-  "version": "1.6.26",
+  "version": "1.6.27-0",
   "description": "",
   "main": "mind.js",
   "scripts": {
@@ -9,7 +9,8 @@
     "release": "node ./release.js",
     "patch": "node ./scripts/release.js --version=patch",
     "minor": "node ./scripts/release.js --version=minor",
-    "major": "node ./scripts/release.js --version=major"
+    "major": "node ./scripts/release.js --version=major",
+    "prerelease": "node ./scripts/release.js --version=prerelease"
   },
   "repository": {
     "type": "git",

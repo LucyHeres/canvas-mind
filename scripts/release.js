@@ -10,7 +10,7 @@ const step = (msg) => console.log(chalk.cyan(msg));
 
 // 获取参数中的版本类型
 const argv = minimist(process.argv.slice(2));
-const bump = argv['version'] || "patch";
+const bump = argv["version"] || "patch";
 
 // 获取package.json中的version
 const packageJsonData = require("../package.json");
@@ -23,7 +23,7 @@ const targetVersion = semver.inc(curVersion, bump);
 // 修改package.json中的version
 const writePackageVersion = (newVersion) => {
   packageJsonData.version = newVersion;
-  const pkgPath = path.resolve(__dirname, '../package.json')
+  const pkgPath = path.resolve(__dirname, "../package.json");
   fs.writeFileSync(pkgPath, JSON.stringify(packageJsonData, null, 2));
 };
 
@@ -32,35 +32,30 @@ const spliceStr = (str, index, newStr) => {
 };
 
 // 在changelog中写入issue相关内容
-const writeChangeLog = (version) => {
-  const issueIds = getIssueIds();
-  // const issueIds = issues ? issues.split(",") : [];
-  if (issueIds && issueIds.length > 0) {
-    const changelogPath = path.resolve(__dirname, "../CHANGELOG.md");
-    let data = fs.readFileSync(changelogPath, "utf8");
-    const i = data.indexOf("\n");
-    if(!data.slice(0,i).includes(`[${version}]`)){
-      return;
-    }
-    data = spliceStr(data, i, `\n\n### Issues\n` + issueIds.map((issueId) => `[#${issueId}](https://github.com/LucyHeres/canvas-mind/issues/${issueId})`).join(","));
-    fs.writeFileSync(changelogPath, data, "utf8");
+const writeIssueToChangeLog = (version) => {
+  const changelogPath = path.resolve(__dirname, "../CHANGELOG.md");
+  let data = fs.readFileSync(changelogPath, "utf8");
+  const i = data.indexOf("\n");
+  if (!data.slice(0, i).includes(`[${version}]`)) {
+    return;
   }
+  data = spliceStr(data, i, `\n\n### Issues\n` + issueIds.map((issueId) => `[#${issueId}](https://github.com/LucyHeres/canvas-mind/issues/${issueId})`).join(","));
+  fs.writeFileSync(changelogPath, data, "utf8");
 };
 
 // 从git log中获取issues
 const getIssueIds = async () => {
   try {
     const { stdout } = await execa("git", ["log", "--decorate", "--no-color"], { maxBuffer: Infinity });
-    const tags = stdout.match(regex)
-    const str = stdout.slice(0,tags.index)
-    const issues = str.match(/\s+Closes #\d+\\n/ig) || [];
-    const issueIds = issues.map(issue => issue.replace(/[^\d]/ig,""));
+    const tags = stdout.match(regex);
+    const str = stdout.slice(0, tags.index);
+    const issues = str.match(/\s+Closes #\d+\\n/gi) || [];
+    const issueIds = issues.map((issue) => issue.replace(/[^\d]/gi, ""));
     return issueIds;
   } catch (e) {
     console.error(e);
   }
 };
-
 
 const main = async () => {
   step(`Current version: ${curVersion} , Target version: ${targetVersion}`);
@@ -74,9 +69,12 @@ const main = async () => {
     await execa("git", ["add", "-A"], { stdio: "inherit" });
     await execa("git", ["commit", "-m", `chore: update to v${targetVersion}`], { stdio: "inherit" });
 
-    writeChangeLog(targetVersion);
-    await execa("git", ["add", "-A"], { stdio: "inherit" });
-    // await execa("git", ["commit", "-m", `chore: update v${targetVersion}-changelog`], { stdio: "inherit" });
+    const issueIds = getIssueIds();
+    if (issueIds && issueIds.length > 0) {
+      writeIssueToChangeLog(targetVersion);
+      await execa("git", ["add", "-A"], { stdio: "inherit" });
+      await execa("git", ["commit", "-m", `chore: update v${targetVersion}-changelog`], { stdio: "inherit" });
+    }
 
     // step("\nPushing ...");
     // await execa("git", ["tag", "v" + targetVersion], { stdio: "inherit" });

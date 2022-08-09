@@ -1,3 +1,12 @@
+## [1.6.15](https://github.com/LucyHeres/canvas-mind/compare/v1.6.14...v1.6.15) (2022-08-09)
+
+
+### Features
+
+* hhhhhhh ([db34729](https://github.com/LucyHeres/canvas-mind/commit/db347292bb0416e2e36baa8fd15b551190388c01)), closes [#33](https://github.com/LucyHeres/canvas-mind/issues/33)
+
+
+
 ## [1.6.14](https://github.com/LucyHeres/canvas-mind/compare/v1.6.13...v1.6.14) (2022-08-09)
 
 

@@ -32,7 +32,7 @@ const spliceStr = (str, index, newStr) => {
 };
 
 // 在changelog中写入issue相关内容
-const writeIssueToChangeLog = (version) => {
+const writeIssueToChangeLog = (issueIds,version) => {
   const changelogPath = path.resolve(__dirname, "../CHANGELOG.md");
   let data = fs.readFileSync(changelogPath, "utf8");
   const i = data.indexOf("\n");
@@ -69,21 +69,18 @@ const main = async () => {
 
     step("\nGenerating changelog...");
     await execa("npm", ["run", "changelog"], { stdio: "inherit" });
+    const issueIds = await getIssueIds();
+    console.log(12,issueIds);
+    if (issueIds && issueIds.length > 0) {
+      writeIssueToChangeLog(issueIds,targetVersion);
+    }
     await execa("git", ["add", "-A"], { stdio: "inherit" });
     await execa("git", ["commit", "-m", `chore: update to v${targetVersion}`], { stdio: "inherit" });
 
-    const issueIds = getIssueIds();
-    console.log(12,issueIds);
-    if (issueIds && issueIds.length > 0) {
-      writeIssueToChangeLog(targetVersion);
-      // await execa("git", ["add", "-A"], { stdio: "inherit" });
-      // await execa("git", ["commit", "-m", `chore: update v${targetVersion}-changelog`], { stdio: "inherit" });
-    }
-
-    // step("\nPushing ...");
-    // await execa("git", ["tag", "v" + targetVersion], { stdio: "inherit" });
-    // await execa("git", ["push"], { stdio: "inherit" });
-    // await execa("git", ["push", "--tags"], { stdio: "inherit" });
+    step("\nPushing ...");
+    await execa("git", ["tag", "v" + targetVersion], { stdio: "inherit" });
+    await execa("git", ["push"], { stdio: "inherit" });
+    await execa("git", ["push", "--tags"], { stdio: "inherit" });
 
     step("\nSuccess 版本发布成功!");
   } catch (e) {

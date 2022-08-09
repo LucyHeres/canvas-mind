@@ -1,3 +1,54 @@
+## [1.6.25](https://github.com/LucyHeres/canvas-mind/compare/v1.6.19...v1.6.25) (2022-08-09)
+
+### Issues
+[#33](https://github.com/LucyHeres/canvas-mind/issues/33),[#99](https://github.com/LucyHeres/canvas-mind/issues/99)
+
+
+### Features
+
+* hhhhhhh ([4e0c4fd](https://github.com/LucyHeres/canvas-mind/commit/4e0c4fd604c63573393d0d23ccb47349b2c4c01b)), closes [#33](https://github.com/LucyHeres/canvas-mind/issues/33) [#99](https://github.com/LucyHeres/canvas-mind/issues/99)
+
+
+
+## [1.6.24](https://github.com/LucyHeres/canvas-mind/compare/v1.6.19...v1.6.24) (2022-08-09)
+
+### Issues
+[#33](https://github.com/LucyHeres/canvas-mind/issues/33),[#99](https://github.com/LucyHeres/canvas-mind/issues/99)
+
+
+### Features
+
+* hhhhhhh ([4e0c4fd](https://github.com/LucyHeres/canvas-mind/commit/4e0c4fd604c63573393d0d23ccb47349b2c4c01b)), closes [#33](https://github.com/LucyHeres/canvas-mind/issues/33) [#99](https://github.com/LucyHeres/canvas-mind/issues/99)
+
+
+
+## [1.6.23](https://github.com/LucyHeres/canvas-mind/compare/v1.6.19...v1.6.23) (2022-08-09)
+
+
+### Features
+
+* hhhhhhh ([4e0c4fd](https://github.com/LucyHeres/canvas-mind/commit/4e0c4fd604c63573393d0d23ccb47349b2c4c01b)), closes [#33](https://github.com/LucyHeres/canvas-mind/issues/33) [#99](https://github.com/LucyHeres/canvas-mind/issues/99)
+
+
+
+## [1.6.22](https://github.com/LucyHeres/canvas-mind/compare/v1.6.19...v1.6.22) (2022-08-09)
+
+
+### Features
+
+* hhhhhhh ([4e0c4fd](https://github.com/LucyHeres/canvas-mind/commit/4e0c4fd604c63573393d0d23ccb47349b2c4c01b)), closes [#33](https://github.com/LucyHeres/canvas-mind/issues/33) [#99](https://github.com/LucyHeres/canvas-mind/issues/99)
+
+
+
+## [1.6.21](https://github.com/LucyHeres/canvas-mind/compare/v1.6.19...v1.6.21) (2022-08-09)
+
+
+### Features
+
+* hhhhhhh ([4e0c4fd](https://github.com/LucyHeres/canvas-mind/commit/4e0c4fd604c63573393d0d23ccb47349b2c4c01b)), closes [#33](https://github.com/LucyHeres/canvas-mind/issues/33) [#99](https://github.com/LucyHeres/canvas-mind/issues/99)
+
+
+
 ## [1.6.20](https://github.com/LucyHeres/canvas-mind/compare/v1.6.19...v1.6.20) (2022-08-09)
 
 

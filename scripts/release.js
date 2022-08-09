@@ -76,8 +76,8 @@ const main = async () => {
     console.log(12,issueIds);
     if (issueIds && issueIds.length > 0) {
       writeIssueToChangeLog(targetVersion);
-      await execa("git", ["add", "-A"], { stdio: "inherit" });
-      await execa("git", ["commit", "-m", `chore: update v${targetVersion}-changelog`], { stdio: "inherit" });
+      // await execa("git", ["add", "-A"], { stdio: "inherit" });
+      // await execa("git", ["commit", "-m", `chore: update v${targetVersion}-changelog`], { stdio: "inherit" });
     }
 
     // step("\nPushing ...");
